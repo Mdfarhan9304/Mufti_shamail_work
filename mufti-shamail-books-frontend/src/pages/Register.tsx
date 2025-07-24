@@ -1,0 +1,157 @@
+import { motion } from "framer-motion";
+import { Mail, Lock, ArrowRight, User, Loader2 } from "lucide-react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { toast } from "react-toastify";
+import { AxiosError } from "axios";
+
+const Register = () => {
+	const [name, setName] = useState("");
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const [confirmPassword, setConfirmPassword] = useState("");
+	const navigate = useNavigate();
+	const { login, isLoading, register, isAuthenticated, user } = useAuth();
+
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		if (password !== confirmPassword) {
+			toast.error("Passwords do not match");
+			return;
+		}
+
+		try {
+			await register(name, email, password); // Register the user
+			await login(email, password, "user"); // Log the user in after registration
+			toast.success("Registration successful! You are logged in.");
+			navigate("/dashboard");
+		} catch (err: unknown) {
+			if (err instanceof AxiosError && err.response) {
+				toast.error("Registration failed: " + err.response.data.error);
+			} else {
+				toast.error("Registration failed: " + (err as Error).message);
+			}
+		}
+	};
+
+	if (isAuthenticated) {
+		if (user?.role === "admin") {
+			return <Navigate to="/admin/dashboard" replace />;
+		} else {
+			return <Navigate to="/dashboard" replace />;
+		}
+	}
+
+	return (
+		<main className="min-h-screen bg-[#121510] pt-20 md:pt-24">
+			<section className="relative h-[90vh] grid place-items-center">
+				<div className="absolute inset-0 bg-gradient-to-b from-[#1a1f17] to-[#191a13]" />
+
+				<div className="mx-auto min-w-[35vw]">
+					<motion.div
+						className="bg-[#191b14] rounded-2xl p-4 md:p-8 shadow-xl relative z-10"
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.8 }}
+					>
+						<div className="space-y-8">
+							<div className="text-center">
+								<h1 className="text-3xl md:text-4xl font-bold text-[#c3e5a5] mb-4">
+									Create Account
+								</h1>
+								<p className="text-gray-400">
+									Join our bookstore community
+								</p>
+							</div>
+
+							<form className="space-y-6" onSubmit={handleSubmit}>
+								<div className="space-y-4">
+									<div className="relative">
+										<User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
+										<input
+											type="text"
+											placeholder="Full name"
+											value={name}
+											onChange={(e) =>
+												setName(e.target.value)
+											}
+											className="w-full bg-[#24271b] text-white rounded-lg pl-12 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#c3e5a5] transition-all"
+										/>
+									</div>
+
+									<div className="relative">
+										<Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
+										<input
+											type="email"
+											placeholder="Email address"
+											value={email}
+											onChange={(e) =>
+												setEmail(e.target.value)
+											}
+											className="w-full bg-[#24271b] text-white rounded-lg pl-12 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#c3e5a5] transition-all"
+										/>
+									</div>
+
+									<div className="relative">
+										<Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
+										<input
+											type="password"
+											placeholder="Password"
+											value={password}
+											onChange={(e) =>
+												setPassword(e.target.value)
+											}
+											className="w-full bg-[#24271b] text-white rounded-lg pl-12 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#c3e5a5] transition-all"
+										/>
+									</div>
+
+									<div className="relative">
+										<Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
+										<input
+											type="password"
+											placeholder="Confirm password"
+											value={confirmPassword}
+											onChange={(e) =>
+												setConfirmPassword(
+													e.target.value
+												)
+											}
+											className="w-full bg-[#24271b] text-white rounded-lg pl-12 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#c3e5a5] transition-all"
+										/>
+									</div>
+								</div>
+
+								<button
+									type="submit"
+									className="w-full group flex items-center justify-center gap-2 px-8 py-4 bg-[#c3e5a5] text-gray-600 rounded-full font-medium text-lg hover:bg-[#a1c780] transition-all"
+								>
+									Create Account
+									{isLoading ? (
+										<Loader2 className="w-5 h-5 animate-spin" />
+									) : (
+										<ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+									)}
+								</button>
+							</form>
+
+							<div className="text-center">
+								<p className="text-gray-400">
+									Already have an account?{" "}
+									<Link
+										to="/login"
+										className="text-[#c3e5a5] hover:text-[#a1c780] font-medium"
+									>
+										Sign in
+									</Link>
+								</p>
+							</div>
+						</div>
+					</motion.div>
+				</div>
+			</section>
+		</main>
+	);
+};
+
+export default Register;

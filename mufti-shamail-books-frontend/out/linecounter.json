@@ -1,0 +1,1688 @@
+{
+    "extension": "linecounter",
+    "version": "0.2.7",
+    "workspace": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks",
+    "linecount": [
+        {
+            "version": "0.2.7",
+            "counttime": "2025-01-04 00:36:00",
+            "filesum": 125,
+            "codesum": 8968,
+            "commentsum": 362,
+            "blanksum": 1071,
+            "statistics": {
+                ".json": {
+                    "code": 2585,
+                    "comment": 94,
+                    "blank": 12
+                },
+                "": {
+                    "code": 22,
+                    "comment": 11,
+                    "blank": 4
+                },
+                ".ts": {
+                    "code": 1036,
+                    "comment": 42,
+                    "blank": 124
+                },
+                ".lock": {
+                    "code": 3027,
+                    "comment": 12,
+                    "blank": 742
+                },
+                ".html": {
+                    "code": 37,
+                    "comment": 0,
+                    "blank": 6
+                },
+                ".js": {
+                    "code": 148,
+                    "comment": 139,
+                    "blank": 7
+                },
+                ".tsx": {
+                    "code": 2038,
+                    "comment": 55,
+                    "blank": 162
+                },
+                ".css": {
+                    "code": 15,
+                    "comment": 0,
+                    "blank": 4
+                },
+                ".svg": {
+                    "code": 26,
+                    "comment": 0,
+                    "blank": 0
+                },
+                ".md": {
+                    "code": 34,
+                    "comment": 9,
+                    "blank": 10
+                }
+            },
+            "filelist": [
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 1,
+                    "filename": ".env"
+                },
+                {
+                    "blank": 2,
+                    "code": 14,
+                    "comment": 9,
+                    "filename": ".gitignore"
+                },
+                {
+                    "blank": 2,
+                    "code": 4,
+                    "comment": 1,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\.env"
+                },
+                {
+                    "blank": 0,
+                    "code": 3,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\.gitignore"
+                },
+                {
+                    "blank": 0,
+                    "code": 2454,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\package-lock.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 32,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\package.json"
+                },
+                {
+                    "blank": 3,
+                    "code": 13,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\configs\\db.ts"
+                },
+                {
+                    "blank": 34,
+                    "code": 167,
+                    "comment": 4,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\controllers\\authController.ts"
+                },
+                {
+                    "blank": 12,
+                    "code": 53,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\controllers\\authControllerO.ts"
+                },
+                {
+                    "blank": 10,
+                    "code": 91,
+                    "comment": 7,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\controllers\\bookController.ts"
+                },
+                {
+                    "blank": 6,
+                    "code": 42,
+                    "comment": 1,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\middlewares\\auth.ts"
+                },
+                {
+                    "blank": 3,
+                    "code": 21,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\middlewares\\errorHandler.ts"
+                },
+                {
+                    "blank": 4,
+                    "code": 35,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\models\\Book.ts"
+                },
+                {
+                    "blank": 6,
+                    "code": 47,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\models\\User.ts"
+                },
+                {
+                    "blank": 3,
+                    "code": 14,
+                    "comment": 1,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\routes\\authRoutes.ts"
+                },
+                {
+                    "blank": 3,
+                    "code": 28,
+                    "comment": 5,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\routes\\bookRoutes.ts"
+                },
+                {
+                    "blank": 8,
+                    "code": 27,
+                    "comment": 6,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\server.ts"
+                },
+                {
+                    "blank": 5,
+                    "code": 33,
+                    "comment": 3,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\services\\uploadService.ts"
+                },
+                {
+                    "blank": 4,
+                    "code": 32,
+                    "comment": 2,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\types\\index.ts"
+                },
+                {
+                    "blank": 3,
+                    "code": 19,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\utils\\errors.ts"
+                },
+                {
+                    "blank": 8,
+                    "code": 11,
+                    "comment": 90,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\tsconfig.json"
+                },
+                {
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\uploads\\images-1735881754447.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\uploads\\images-1735930079579.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "blank": 258,
+                    "code": 1279,
+                    "comment": 6,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\yarn.lock"
+                },
+                {
+                    "filename": "dist\\assets\\aalimiyat-C61pwCOr.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "dist\\assets\\arabicSpeech-B5ddivd2.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "dist\\assets\\bookMockupCompact-L0DmZd72.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "dist\\assets\\fazeelat-DfFKv6eC.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "dist\\assets\\ijazah1-I2VgAG5M.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "dist\\assets\\ijazah10-D2HjYhnY.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "dist\\assets\\ijazah11-LqIZpkux.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "dist\\assets\\ijazah12-BjBgJjaT.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "dist\\assets\\ijazah13-0CB1fruN.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "dist\\assets\\ijazah14-By890Xzi.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "dist\\assets\\ijazah15-DBGI3-sQ.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "dist\\assets\\ijazah16-BT-YmM7-.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "dist\\assets\\ijazah17-ggcDzLZl.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "dist\\assets\\ijazah2-BT2bTGgp.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "dist\\assets\\ijazah3-DXhwobtt.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "dist\\assets\\ijazah4-Ctt0oxyx.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "dist\\assets\\ijazah5-CVBWudI2.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "dist\\assets\\ijazah6-DSF6iONV.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "dist\\assets\\ijazah7-HQJiLcuj.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "dist\\assets\\ijazah8-ap32CDq_.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "dist\\assets\\ijazah9-HcZXIAuU.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": "dist\\assets\\index-BlhQtj4q.css"
+                },
+                {
+                    "blank": 5,
+                    "code": 91,
+                    "comment": 130,
+                    "filename": "dist\\assets\\index-BRiDoltU.js"
+                },
+                {
+                    "filename": "dist\\assets\\muftiHeroVideo-DaJ7hxXM.mp4",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "dist\\assets\\muftiportrait-BBXTEHK9.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "dist\\assets\\qiraah-BNy762W1.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "dist\\assets\\tadreebalalifta-CWo4Xs6i.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "dist\\assets\\tafseer-Dj-WNb2T.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "blank": 3,
+                    "code": 19,
+                    "comment": 0,
+                    "filename": "dist\\index.html"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": "dist\\vite.svg"
+                },
+                {
+                    "blank": 1,
+                    "code": 27,
+                    "comment": 0,
+                    "filename": "eslint.config.js"
+                },
+                {
+                    "blank": 3,
+                    "code": 18,
+                    "comment": 0,
+                    "filename": "index.html"
+                },
+                {
+                    "blank": 0,
+                    "code": 39,
+                    "comment": 0,
+                    "filename": "package.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 6,
+                    "comment": 0,
+                    "filename": "postcss.config.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": "public\\vite.svg"
+                },
+                {
+                    "blank": 10,
+                    "code": 34,
+                    "comment": 9,
+                    "filename": "README.md"
+                },
+                {
+                    "blank": 8,
+                    "code": 101,
+                    "comment": 0,
+                    "filename": "src\\apis\\books.api.ts"
+                },
+                {
+                    "blank": 5,
+                    "code": 69,
+                    "comment": 15,
+                    "filename": "src\\App.tsx"
+                },
+                {
+                    "filename": "src\\assets\\Book mockup english new.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\Book Mocup Urdu.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\bookMockupCompact.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\bookMockupCompactUrdu.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\bookMockupTransparent.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\certificate\\aalimiyat.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\certificate\\arabicSpeech.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\certificate\\fazeelat.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\certificate\\qiraah.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\certificate\\tadreebalalifta.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\certificate\\tafseer.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\ijazah\\ijazah1.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\ijazah\\ijazah10.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\ijazah\\ijazah11.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\ijazah\\ijazah12.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\ijazah\\ijazah13.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\ijazah\\ijazah14.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\ijazah\\ijazah15.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\ijazah\\ijazah16.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\ijazah\\ijazah17.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\ijazah\\ijazah2.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\ijazah\\ijazah3.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\ijazah\\ijazah4.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\ijazah\\ijazah5.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\ijazah\\ijazah6.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\ijazah\\ijazah7.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\ijazah\\ijazah8.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\ijazah\\ijazah9.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\IMG_3864.PNG",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\IMG_3865.PNG",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "blank": 0,
+                    "code": 24,
+                    "comment": 0,
+                    "filename": "src\\assets\\mosqueSilhouette.svg"
+                },
+                {
+                    "filename": "src\\assets\\muftiHeroVideo.mp4",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\assets\\muftiportrait.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "blank": 3,
+                    "code": 63,
+                    "comment": 1,
+                    "filename": "src\\components\\books\\BookCard.tsx"
+                },
+                {
+                    "blank": 7,
+                    "code": 125,
+                    "comment": 0,
+                    "filename": "src\\components\\Footer.tsx"
+                },
+                {
+                    "blank": 3,
+                    "code": 43,
+                    "comment": 0,
+                    "filename": "src\\components\\ImageUploadPreview.tsx"
+                },
+                {
+                    "blank": 5,
+                    "code": 42,
+                    "comment": 7,
+                    "filename": "src\\components\\InstagramEmbed.tsx"
+                },
+                {
+                    "blank": 17,
+                    "code": 244,
+                    "comment": 13,
+                    "filename": "src\\components\\Navbar.tsx"
+                },
+                {
+                    "blank": 7,
+                    "code": 35,
+                    "comment": 5,
+                    "filename": "src\\components\\ProtectedRoute.tsx"
+                },
+                {
+                    "blank": 4,
+                    "code": 40,
+                    "comment": 1,
+                    "filename": "src\\components\\Reveal.tsx"
+                },
+                {
+                    "blank": 4,
+                    "code": 17,
+                    "comment": 1,
+                    "filename": "src\\components\\ScrollToTop.tsx"
+                },
+                {
+                    "blank": 7,
+                    "code": 36,
+                    "comment": 0,
+                    "filename": "src\\components\\ScrollToTopButton.tsx"
+                },
+                {
+                    "blank": 7,
+                    "code": 46,
+                    "comment": 7,
+                    "filename": "src\\config\\axios.config.ts"
+                },
+                {
+                    "blank": 13,
+                    "code": 140,
+                    "comment": 6,
+                    "filename": "src\\contexts\\AuthContext.tsx"
+                },
+                {
+                    "blank": 10,
+                    "code": 68,
+                    "comment": 1,
+                    "filename": "src\\contexts\\CartContext.tsx"
+                },
+                {
+                    "blank": 4,
+                    "code": 262,
+                    "comment": 4,
+                    "filename": "src\\helper.ts"
+                },
+                {
+                    "blank": 4,
+                    "code": 14,
+                    "comment": 0,
+                    "filename": "src\\index.css"
+                },
+                {
+                    "blank": 1,
+                    "code": 9,
+                    "comment": 0,
+                    "filename": "src\\main.tsx"
+                },
+                {
+                    "blank": 10,
+                    "code": 155,
+                    "comment": 0,
+                    "filename": "src\\pages\\AddBook.tsx"
+                },
+                {
+                    "blank": 7,
+                    "code": 196,
+                    "comment": 0,
+                    "filename": "src\\pages\\AdminDashboard.tsx"
+                },
+                {
+                    "blank": 7,
+                    "code": 78,
+                    "comment": 0,
+                    "filename": "src\\pages\\Books.tsx"
+                },
+                {
+                    "blank": 7,
+                    "code": 81,
+                    "comment": 0,
+                    "filename": "src\\pages\\Cart.tsx"
+                },
+                {
+                    "blank": 9,
+                    "code": 110,
+                    "comment": 0,
+                    "filename": "src\\pages\\Dashboard.tsx"
+                },
+                {
+                    "blank": 13,
+                    "code": 146,
+                    "comment": 0,
+                    "filename": "src\\pages\\Login.tsx"
+                },
+                {
+                    "blank": 10,
+                    "code": 197,
+                    "comment": 3,
+                    "filename": "src\\pages\\ManageBooks.tsx"
+                },
+                {
+                    "blank": 13,
+                    "code": 144,
+                    "comment": 2,
+                    "filename": "src\\pages\\Register.tsx"
+                },
+                {
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 1,
+                    "filename": "src\\vite-env.d.ts"
+                },
+                {
+                    "blank": 1,
+                    "code": 24,
+                    "comment": 9,
+                    "filename": "tailwind.config.js"
+                },
+                {
+                    "blank": 2,
+                    "code": 22,
+                    "comment": 2,
+                    "filename": "tsconfig.app.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 7,
+                    "comment": 0,
+                    "filename": "tsconfig.json"
+                },
+                {
+                    "blank": 2,
+                    "code": 20,
+                    "comment": 2,
+                    "filename": "tsconfig.node.json"
+                },
+                {
+                    "blank": 1,
+                    "code": 5,
+                    "comment": 1,
+                    "filename": "vite.config.ts"
+                },
+                {
+                    "blank": 484,
+                    "code": 1748,
+                    "comment": 6,
+                    "filename": "yarn.lock"
+                }
+            ]
+        },
+        {
+            "version": "0.2.7",
+            "counttime": "2025-02-04 02:45:42",
+            "filesum": 123,
+            "codesum": 14061,
+            "commentsum": 803,
+            "blanksum": 1370,
+            "statistics": {
+                "": {
+                    "code": 30,
+                    "comment": 16,
+                    "blank": 6
+                },
+                ".html": {
+                    "code": 37,
+                    "comment": 0,
+                    "blank": 6
+                },
+                ".json": {
+                    "code": 2587,
+                    "comment": 94,
+                    "blank": 12
+                },
+                ".ts": {
+                    "code": 2081,
+                    "comment": 182,
+                    "blank": 243
+                },
+                ".js": {
+                    "code": 1654,
+                    "comment": 388,
+                    "blank": 3
+                },
+                ".md": {
+                    "code": 34,
+                    "comment": 9,
+                    "blank": 10
+                },
+                ".svg": {
+                    "code": 2,
+                    "comment": 0,
+                    "blank": 0
+                },
+                ".tsx": {
+                    "code": 4542,
+                    "comment": 97,
+                    "blank": 334
+                },
+                ".css": {
+                    "code": 15,
+                    "comment": 0,
+                    "blank": 4
+                },
+                ".lock": {
+                    "code": 3069,
+                    "comment": 12,
+                    "blank": 750
+                },
+                ".prod": {
+                    "code": 10,
+                    "comment": 5,
+                    "blank": 2
+                }
+            },
+            "filelist": [
+                {
+                    "blank": 0,
+                    "code": 2,
+                    "comment": 2,
+                    "filename": ".env"
+                },
+                {
+                    "blank": 2,
+                    "code": 14,
+                    "comment": 9,
+                    "filename": ".gitignore"
+                },
+                {
+                    "blank": 3,
+                    "code": 10,
+                    "comment": 5,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\.env"
+                },
+                {
+                    "blank": 2,
+                    "code": 10,
+                    "comment": 5,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\.env.prod"
+                },
+                {
+                    "blank": 1,
+                    "code": 4,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\.gitignore"
+                },
+                {
+                    "blank": 0,
+                    "code": 28,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\configs\\db.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 124,
+                    "comment": 3,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\controllers\\addressController.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 160,
+                    "comment": 4,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\controllers\\authController.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 91,
+                    "comment": 7,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\controllers\\bookController.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 113,
+                    "comment": 15,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\controllers\\cartController.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 30,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\controllers\\orderController.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 127,
+                    "comment": 17,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\controllers\\paymentController.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 60,
+                    "comment": 1,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\controllers\\userController.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 51,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\middlewares\\auth.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 21,
+                    "comment": 1,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\middlewares\\errorHandler.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 50,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\models\\Book.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 180,
+                    "comment": 28,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\models\\Order.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 176,
+                    "comment": 1,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\models\\User.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 11,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\routes\\addressRoutes.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 33,
+                    "comment": 2,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\routes\\authRoutes.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 16,
+                    "comment": 2,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\routes\\bookRoutes.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 14,
+                    "comment": 1,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\routes\\cartRoutes.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 11,
+                    "comment": 1,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\routes\\orderRoutes.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 12,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\routes\\paymentRoutes.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 10,
+                    "comment": 1,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\routes\\userRoutes.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 59,
+                    "comment": 43,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\server.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 31,
+                    "comment": 3,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\services\\uploadService.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 47,
+                    "comment": 1,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\types\\index.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 24,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\utils\\errors.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 31,
+                    "comment": 3,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\dist\\utils\\helper.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 2454,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\package-lock.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 34,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\package.json"
+                },
+                {
+                    "blank": 3,
+                    "code": 13,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\configs\\db.ts"
+                },
+                {
+                    "blank": 25,
+                    "code": 132,
+                    "comment": 3,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\controllers\\addressController.ts"
+                },
+                {
+                    "blank": 36,
+                    "code": 183,
+                    "comment": 4,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\controllers\\authController.ts"
+                },
+                {
+                    "blank": 10,
+                    "code": 91,
+                    "comment": 7,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\controllers\\bookController.ts"
+                },
+                {
+                    "blank": 22,
+                    "code": 105,
+                    "comment": 15,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\controllers\\cartController.ts"
+                },
+                {
+                    "blank": 1,
+                    "code": 20,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\controllers\\orderController.ts"
+                },
+                {
+                    "blank": 16,
+                    "code": 152,
+                    "comment": 20,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\controllers\\paymentController.ts"
+                },
+                {
+                    "blank": 7,
+                    "code": 52,
+                    "comment": 1,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\controllers\\userController.ts"
+                },
+                {
+                    "blank": 11,
+                    "code": 64,
+                    "comment": 3,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\middlewares\\auth.ts"
+                },
+                {
+                    "blank": 4,
+                    "code": 23,
+                    "comment": 1,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\middlewares\\errorHandler.ts"
+                },
+                {
+                    "blank": 4,
+                    "code": 35,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\models\\Book.ts"
+                },
+                {
+                    "blank": 6,
+                    "code": 170,
+                    "comment": 39,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\models\\Order.ts"
+                },
+                {
+                    "blank": 6,
+                    "code": 143,
+                    "comment": 1,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\models\\User.ts"
+                },
+                {
+                    "blank": 3,
+                    "code": 14,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\routes\\addressRoutes.ts"
+                },
+                {
+                    "blank": 4,
+                    "code": 24,
+                    "comment": 2,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\routes\\authRoutes.ts"
+                },
+                {
+                    "blank": 4,
+                    "code": 23,
+                    "comment": 2,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\routes\\bookRoutes.ts"
+                },
+                {
+                    "blank": 3,
+                    "code": 14,
+                    "comment": 1,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\routes\\cartRoutes.ts"
+                },
+                {
+                    "blank": 3,
+                    "code": 6,
+                    "comment": 1,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\routes\\orderRoutes.ts"
+                },
+                {
+                    "blank": 3,
+                    "code": 14,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\routes\\paymentRoutes.ts"
+                },
+                {
+                    "blank": 3,
+                    "code": 5,
+                    "comment": 1,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\routes\\userRoutes.ts"
+                },
+                {
+                    "blank": 14,
+                    "code": 61,
+                    "comment": 43,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\server.ts"
+                },
+                {
+                    "blank": 5,
+                    "code": 33,
+                    "comment": 3,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\services\\uploadService.ts"
+                },
+                {
+                    "blank": 8,
+                    "code": 94,
+                    "comment": 4,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\types\\index.ts"
+                },
+                {
+                    "blank": 3,
+                    "code": 19,
+                    "comment": 0,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\utils\\errors.ts"
+                },
+                {
+                    "blank": 3,
+                    "code": 23,
+                    "comment": 3,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\src\\utils\\helper.ts"
+                },
+                {
+                    "blank": 8,
+                    "code": 11,
+                    "comment": 90,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\tsconfig.json"
+                },
+                {
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\uploads\\images-1738443874511.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\uploads\\images-1738443874540.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\uploads\\images-1738443874565.PNG",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\uploads\\images-1738443874635.PNG",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "blank": 266,
+                    "code": 1321,
+                    "comment": 6,
+                    "filename": "c:\\Users\\Zaid\\OneDrive\\Desktop\\personal\\freelance\\muftishamailbooks-server\\yarn.lock"
+                },
+                {
+                    "blank": 1,
+                    "code": 87,
+                    "comment": 245,
+                    "filename": "dist\\assets\\index-BSlTqf8O.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": "dist\\assets\\index-DvFNjuNw.css"
+                },
+                {
+                    "blank": 3,
+                    "code": 19,
+                    "comment": 0,
+                    "filename": "dist\\index.html"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": "dist\\vite.svg"
+                },
+                {
+                    "blank": 1,
+                    "code": 27,
+                    "comment": 0,
+                    "filename": "eslint.config.js"
+                },
+                {
+                    "blank": 3,
+                    "code": 18,
+                    "comment": 0,
+                    "filename": "index.html"
+                },
+                {
+                    "blank": 0,
+                    "code": 39,
+                    "comment": 0,
+                    "filename": "package.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 6,
+                    "comment": 0,
+                    "filename": "postcss.config.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": "public\\vite.svg"
+                },
+                {
+                    "blank": 10,
+                    "code": 34,
+                    "comment": 9,
+                    "filename": "README.md"
+                },
+                {
+                    "blank": 7,
+                    "code": 126,
+                    "comment": 5,
+                    "filename": "src\\apis\\addresses.api.ts"
+                },
+                {
+                    "blank": 8,
+                    "code": 97,
+                    "comment": 0,
+                    "filename": "src\\apis\\books.api.ts"
+                },
+                {
+                    "blank": 6,
+                    "code": 83,
+                    "comment": 14,
+                    "filename": "src\\apis\\cart.api.ts"
+                },
+                {
+                    "blank": 1,
+                    "code": 16,
+                    "comment": 0,
+                    "filename": "src\\apis\\orders.api.ts"
+                },
+                {
+                    "blank": 4,
+                    "code": 86,
+                    "comment": 0,
+                    "filename": "src\\apis\\payment.api.ts"
+                },
+                {
+                    "blank": 2,
+                    "code": 12,
+                    "comment": 0,
+                    "filename": "src\\apis\\user.api.ts"
+                },
+                {
+                    "blank": 5,
+                    "code": 88,
+                    "comment": 15,
+                    "filename": "src\\App.tsx"
+                },
+                {
+                    "blank": 8,
+                    "code": 51,
+                    "comment": 0,
+                    "filename": "src\\components\\bookPage\\BookDetails.tsx"
+                },
+                {
+                    "blank": 7,
+                    "code": 62,
+                    "comment": 0,
+                    "filename": "src\\components\\bookPage\\ImageCarousel.tsx"
+                },
+                {
+                    "blank": 7,
+                    "code": 123,
+                    "comment": 1,
+                    "filename": "src\\components\\books\\BookCard.tsx"
+                },
+                {
+                    "blank": 3,
+                    "code": 81,
+                    "comment": 1,
+                    "filename": "src\\components\\books\\BookCardN.tsx"
+                },
+                {
+                    "blank": 7,
+                    "code": 125,
+                    "comment": 0,
+                    "filename": "src\\components\\Footer.tsx"
+                },
+                {
+                    "blank": 3,
+                    "code": 43,
+                    "comment": 0,
+                    "filename": "src\\components\\ImageUploadPreview.tsx"
+                },
+                {
+                    "blank": 5,
+                    "code": 42,
+                    "comment": 7,
+                    "filename": "src\\components\\InstagramEmbed.tsx"
+                },
+                {
+                    "blank": 18,
+                    "code": 241,
+                    "comment": 13,
+                    "filename": "src\\components\\Navbar.tsx"
+                },
+                {
+                    "blank": 7,
+                    "code": 35,
+                    "comment": 5,
+                    "filename": "src\\components\\ProtectedRoute.tsx"
+                },
+                {
+                    "blank": 4,
+                    "code": 40,
+                    "comment": 1,
+                    "filename": "src\\components\\Reveal.tsx"
+                },
+                {
+                    "blank": 4,
+                    "code": 17,
+                    "comment": 1,
+                    "filename": "src\\components\\ScrollToTop.tsx"
+                },
+                {
+                    "blank": 7,
+                    "code": 36,
+                    "comment": 0,
+                    "filename": "src\\components\\ScrollToTopButton.tsx"
+                },
+                {
+                    "blank": 21,
+                    "code": 349,
+                    "comment": 0,
+                    "filename": "src\\components\\user\\Addresses.tsx"
+                },
+                {
+                    "blank": 15,
+                    "code": 133,
+                    "comment": 0,
+                    "filename": "src\\components\\user\\Dashboard.tsx"
+                },
+                {
+                    "blank": 10,
+                    "code": 148,
+                    "comment": 0,
+                    "filename": "src\\components\\user\\Orders.tsx"
+                },
+                {
+                    "blank": 6,
+                    "code": 112,
+                    "comment": 14,
+                    "filename": "src\\components\\user\\Profile.tsx"
+                },
+                {
+                    "blank": 4,
+                    "code": 34,
+                    "comment": 0,
+                    "filename": "src\\components\\user\\TabNavigation.tsx"
+                },
+                {
+                    "blank": 7,
+                    "code": 46,
+                    "comment": 7,
+                    "filename": "src\\config\\axios.config.ts"
+                },
+                {
+                    "blank": 22,
+                    "code": 244,
+                    "comment": 15,
+                    "filename": "src\\contexts\\AuthContext.tsx"
+                },
+                {
+                    "blank": 15,
+                    "code": 97,
+                    "comment": 0,
+                    "filename": "src\\contexts\\GuestCartContext.tsx"
+                },
+                {
+                    "blank": 0,
+                    "code": 97,
+                    "comment": 0,
+                    "filename": "src\\helper.ts"
+                },
+                {
+                    "blank": 4,
+                    "code": 14,
+                    "comment": 0,
+                    "filename": "src\\index.css"
+                },
+                {
+                    "blank": 1,
+                    "code": 4,
+                    "comment": 1,
+                    "filename": "src\\main.tsx"
+                },
+                {
+                    "blank": 16,
+                    "code": 224,
+                    "comment": 0,
+                    "filename": "src\\pages\\AddAddress.tsx"
+                },
+                {
+                    "blank": 10,
+                    "code": 155,
+                    "comment": 0,
+                    "filename": "src\\pages\\AddBook.tsx"
+                },
+                {
+                    "blank": 7,
+                    "code": 196,
+                    "comment": 0,
+                    "filename": "src\\pages\\AdminDashboard.tsx"
+                },
+                {
+                    "blank": 7,
+                    "code": 68,
+                    "comment": 0,
+                    "filename": "src\\pages\\BookPage.tsx"
+                },
+                {
+                    "blank": 11,
+                    "code": 118,
+                    "comment": 0,
+                    "filename": "src\\pages\\Books.tsx"
+                },
+                {
+                    "blank": 11,
+                    "code": 194,
+                    "comment": 7,
+                    "filename": "src\\pages\\Cart.tsx"
+                },
+                {
+                    "blank": 18,
+                    "code": 321,
+                    "comment": 0,
+                    "filename": "src\\pages\\Checkout.tsx"
+                },
+                {
+                    "blank": 9,
+                    "code": 110,
+                    "comment": 0,
+                    "filename": "src\\pages\\Dashboard.tsx"
+                },
+                {
+                    "blank": 16,
+                    "code": 295,
+                    "comment": 0,
+                    "filename": "src\\pages\\GuestCheckout.tsx"
+                },
+                {
+                    "blank": 13,
+                    "code": 146,
+                    "comment": 0,
+                    "filename": "src\\pages\\Login.tsx"
+                },
+                {
+                    "blank": 11,
+                    "code": 199,
+                    "comment": 3,
+                    "filename": "src\\pages\\ManageBooks.tsx"
+                },
+                {
+                    "blank": 13,
+                    "code": 267,
+                    "comment": 11,
+                    "filename": "src\\pages\\PaymentStatus.tsx"
+                },
+                {
+                    "blank": 13,
+                    "code": 144,
+                    "comment": 2,
+                    "filename": "src\\pages\\Register.tsx"
+                },
+                {
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 1,
+                    "filename": "src\\vite-env.d.ts"
+                },
+                {
+                    "blank": 1,
+                    "code": 24,
+                    "comment": 9,
+                    "filename": "tailwind.config.js"
+                },
+                {
+                    "blank": 2,
+                    "code": 22,
+                    "comment": 2,
+                    "filename": "tsconfig.app.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 7,
+                    "comment": 0,
+                    "filename": "tsconfig.json"
+                },
+                {
+                    "blank": 2,
+                    "code": 20,
+                    "comment": 2,
+                    "filename": "tsconfig.node.json"
+                },
+                {
+                    "blank": 1,
+                    "code": 5,
+                    "comment": 1,
+                    "filename": "vite.config.ts"
+                },
+                {
+                    "blank": 484,
+                    "code": 1748,
+                    "comment": 6,
+                    "filename": "yarn.lock"
+                }
+            ]
+        }
+    ]
+}
