@@ -13,6 +13,8 @@ interface OrderStats {
 	};
 }
 
+
+
 interface Order {
 	_id: string;
 	user: {
@@ -60,6 +62,7 @@ const AdminDashboard = () => {
 		totalRevenue: 0,
 		ordersByStatus: {},
 	});
+	const [filtered, setFilter] = useState("all");
 	const { user, isAuthenticated } = useAuth();
 
 	const copyToClipboard = (text: string) => {
@@ -105,6 +108,11 @@ const AdminDashboard = () => {
 			toast.error("Failed to update order status");
 		}
 	};
+
+	const filteredOrders = orders.filter((order) => {
+		if (filtered === "all") return true;
+		return order.status === filtered;
+	});
 
 	return (
 		<main className="min-h-screen bg-[#121510] pt-20 md:pt-24">
@@ -157,11 +165,19 @@ const AdminDashboard = () => {
 					>
 						<div className="space-y-8">
 							<div className="text-center md:text-left">
+								<div className="flex justify-between items-center">
 								<h2 className="text-2xl font-bold text-[#c3e5a5] mb-4">
 									Recent Orders
 								</h2>
+								<select value={filtered} onChange={(e) => setFilter(e.target.value)} className="bg-[#24271b] text-white rounded px-3 py-1 border border-[#c3e5a5] focus:outline-none focus:ring-2 focus:ring-[#c3e5a5]">
+									<option value="all">All</option>
+									<option value="pending">Pending</option>
+									<option value="shipped">Shipped</option>
+									<option value="delivered">Delivered</option>
+								</select>
+								</div>
 								<div className="space-y-4">
-									{orders.map((order) => (
+									{filteredOrders.map((order) => (
 										<div
 											key={order._id}
 											className="bg-[#24271b] p-4 rounded-lg shadow-md"

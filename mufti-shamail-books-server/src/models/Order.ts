@@ -18,21 +18,9 @@ export interface OrderDocument extends Document {
 	shippingAddress: string;
 	txnId: string;
 	isGuestOrder: boolean;
-	status: {
-		type: String,
-		enum: ["pending", "processing", "shipped", "delivered", "cancelled"],
-		default: "pending",
-		required: true,
-	};
-	// paymentDetails: {
-	//   subtotal: number;
-	//   shippingCost: number;
-	//   total: number;
-	// };
-	// status: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
-	// paymentStatus: "pending" | "paid" | "failed";
-	// trackingInfo?: string;
-	// notes?: string;
+	status: string;
+	paymentStatus: string;
+	amount: number;
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -176,38 +164,22 @@ const orderSchema = new Schema(
 			default: "pending",
 			required: true,
 		},
+		paymentStatus: {
+			type: String,
+			enum: ["pending", "paid", "failed"],
+			default: "pending",
+			required: true,
+		},
+		amount: {
+			type: Number,
+			required: true,
+			min: 0,
+		},
 		isGuestOrder: {
 			type: Boolean,
 			required: true,
 			default: false,
 		},
-		// paymentDetails: {
-		//   subtotal: {
-		//     type: Number,
-		//     required: true,
-		//   },
-		//   shippingCost: {
-		//     type: Number,
-		//     required: true,
-		//     default: 0,
-		//   },
-		//   total: {
-		//     type: Number,
-		//     required: true,
-		//   },
-		// },
-		// status: {
-		//   type: String,
-		//   enum: ["pending", "confirmed", "shipped", "delivered", "cancelled"],
-		//   default: "pending",
-		// },
-		// paymentStatus: {
-		//   type: String,
-		//   enum: ["pending", "paid", "failed"],
-		//   default: "pending",
-		// },
-		// trackingInfo: String,
-		// notes: String,
 	},
 	{ timestamps: true }
 );

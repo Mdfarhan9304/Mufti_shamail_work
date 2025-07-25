@@ -35,6 +35,11 @@ const PaymentStatus = () => {
 				// Get cart and address from localStorage
 				const localCart = JSON.parse(localStorage.getItem("localCart") || "[]");
 				const selectedAddress = JSON.parse(localStorage.getItem("selectedAddress") || "{}");
+				const guestInfo = JSON.parse(localStorage.getItem("guestInfo") || "null");
+
+				console.log("Payment verification - localCart:", localCart);
+				console.log("Payment verification - selectedAddress:", selectedAddress);
+				console.log("Payment verification - guestInfo:", guestInfo);
 
 				if (!localCart.length) {
 					setError("No order details found");
@@ -48,21 +53,34 @@ const PaymentStatus = () => {
 					price: item.price,
 				}));
 
+				console.log("Calling checkPaymentStatus with:", {
+					txnId,
+					orderItems,
+					selectedAddress,
+					guestInfo
+				});
+
 				const response = await checkPaymentStatus(
 					txnId,
 					orderItems,
-					selectedAddress
+					selectedAddress,
+					guestInfo
 				);
+
+				console.log("Payment verification response:", response);
 
 				if (response.success) {
 					setOrder(response.order);
 					// Clear local storage after successful order
 					localStorage.removeItem("selectedAddress");
 					localStorage.removeItem("localCart");
+					localStorage.removeItem("guestInfo");
+					console.log("Order set successfully:", response.order);
 				} else {
 					setError(response.error || "Payment verification failed");
 				}
 			} catch (error) {
+				console.error("Payment verification error:", error);
 				const errorMessage = error instanceof Error ? error.message : "Something went wrong";
 				setError(errorMessage);
 				toast.error(errorMessage);
@@ -90,8 +108,12 @@ const PaymentStatus = () => {
 		);
 	}
 
-	// Redirect to login if not authenticated and no guest cart
-	if (!user && !localStorage.getItem("localCart")) {
+	// Check if this is a guest order in progress or user is authenticated
+	const hasGuestInfo = localStorage.getItem("guestInfo");
+	const hasLocalCart = localStorage.getItem("localCart");
+	
+	// Only redirect if user is not authenticated AND there's no guest order data
+	if (!user && !hasGuestInfo && !hasLocalCart && !order) {
 		return <Navigate to="/login" replace />;
 	}
 
@@ -193,6 +215,9 @@ const PaymentStatus = () => {
 						</div>
 						<div className="space-y-2">
 							<p className="text-gray-400">Contact Details:</p>
+							<p className="text-white">
+								{order?.contactDetails.name}
+							</p>
 							<p className="text-white">
 								{order?.contactDetails.phone}
 							</p>

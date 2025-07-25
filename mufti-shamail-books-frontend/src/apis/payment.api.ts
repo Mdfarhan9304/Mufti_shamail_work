@@ -8,6 +8,20 @@ export interface PaymentResponse {
 	error?: string;
 }
 
+export interface GuestInfo {
+	name: string;
+	email: string;
+	phone: string;
+	address: {
+		addressLine1: string;
+		addressLine2?: string;
+		city: string;
+		state: string;
+		pincode: string;
+		addressType?: string;
+	};
+}
+
 export interface OrderResponse {
 	success: boolean;
 	order?: {
@@ -63,7 +77,7 @@ export const checkPaymentStatus = async (
 		price: number;
 	}[],
 	selectedAddress: Address,
-	guestInfo?: Record<string, string>
+	guestInfo?: GuestInfo
 ): Promise<OrderResponse> => {
 	try {
 		console.log(cartItems);

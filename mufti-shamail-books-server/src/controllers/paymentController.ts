@@ -21,6 +21,7 @@ interface GuestInfo {
 		city: string;
 		state: string;
 		pincode: string;
+		addressType?: string;
 	};
 }
 
@@ -98,7 +99,12 @@ export const checkOrderPaymentStatus = async (
 		PAYMENT_SALT_KEY!
 	);
 
-	console.log(cartItems);
+	console.log("=== PAYMENT VERIFICATION ===");
+	console.log("Transaction ID:", merchantTransactionId);
+	console.log("Cart Items:", JSON.stringify(cartItems, null, 2));
+	console.log("Guest Info:", JSON.stringify(guestInfo, null, 2));
+	console.log("Selected Address:", JSON.stringify(selectedAddress, null, 2));
+	console.log("User:", req.user ? req.user._id : "GUEST");
 
 	const options = {
 		method: "GET",
@@ -114,18 +120,44 @@ export const checkOrderPaymentStatus = async (
 		const response = await axios.request(options);
 		const payRes = response.data.data;
 		const amountInRs = payRes.amount / 100; // Convert paise to rupees
+		
+		console.log("Payment gateway response:", JSON.stringify(response.data, null, 2));
+		
 		if (response.data.success) {
 			// Check if the order already exists
 			const existingOrder = await Order.findOne({
 				txnId: merchantTransactionId,
-			});
+			}).populate('items.book');
+			
 			if (existingOrder) {
-				res.status(200).json({
+				console.log("Found existing order:", existingOrder._id);
+				const orderResponse = {
 					success: true,
-					order: existingOrder,
-				});
+					order: {
+						_id: (existingOrder._id as any).toString(),
+						orderNumber: existingOrder.orderNumber,
+						items: existingOrder.items,
+						contactDetails: existingOrder.contactDetails,
+						shippingAddress: existingOrder.shippingAddress,
+						status: existingOrder.status,
+						paymentStatus: "paid",
+						createdAt: existingOrder.createdAt.toISOString(),
+						updatedAt: existingOrder.updatedAt.toISOString(),
+					},
+				};
+				console.log("Sending existing order response:", JSON.stringify(orderResponse, null, 2));
+				res.status(200).json(orderResponse);
 				return;
 			}
+
+			// Prepare shipping address based on whether it's a guest order or not
+			const shippingAddress = guestInfo ? {
+				...guestInfo.address,
+				addressType: guestInfo.address.addressType || "Home",
+				isDefault: false
+			} : selectedAddress;
+
+			console.log("Prepared shipping address:", JSON.stringify(shippingAddress, null, 2));
 
 			// Create a new order
 			const orderData = {
@@ -136,7 +168,7 @@ export const checkOrderPaymentStatus = async (
 				items: cartItems,
 				contactDetails: req.user
 					? {
-							phone: "9875639258", // Hardcoded for now
+							phone: req.user?.phone || "", // Use actual user phone if available
 							email: req.user?.email || "",
 							name: req.user?.name || "",
 					  }
@@ -145,28 +177,51 @@ export const checkOrderPaymentStatus = async (
 							email: guestInfo?.email || "",
 							name: guestInfo?.name || "",
 					  },
-				shippingAddress: guestInfo?.address || selectedAddress || "",
-				notes: `Payment Transaction ID: ${merchantTransactionId}`,
+				shippingAddress,
 				txnId: merchantTransactionId,
 				isGuestOrder: !req.user,
 				amount: amountInRs,
+				status: "pending",
+				paymentStatus: "paid"
 			};
+
+			console.log("Creating order with data:", JSON.stringify(orderData, null, 2));
 
 			const order = new Order(orderData);
 			await order.save();
+			const populatedOrder = await order.populate('items.book');
 
-			res.status(200).json({
+			console.log("Order created successfully:", populatedOrder._id);
+
+			const orderResponse = {
 				success: true,
-				order: order,
-			});
+				order: {
+					_id: (populatedOrder._id as any).toString(),
+					orderNumber: populatedOrder.orderNumber,
+					items: populatedOrder.items,
+					contactDetails: populatedOrder.contactDetails,
+					shippingAddress: populatedOrder.shippingAddress,
+					status: populatedOrder.status,
+					paymentStatus: "paid",
+					createdAt: populatedOrder.createdAt.toISOString(),
+					updatedAt: populatedOrder.updatedAt.toISOString(),
+				},
+			};
+
+			console.log("Sending new order response:", JSON.stringify(orderResponse, null, 2));
+			res.status(200).json(orderResponse);
 		} else {
+			console.log("Payment failed from gateway");
 			res.status(400).json({
 				success: false,
 				error: "Payment failed. Please try again.",
 			});
 		}
 	} catch (error) {
-		console.log(error);
-		next(error);
+		console.log("Error in payment verification:", error);
+		res.status(500).json({
+			success: false,
+			error: "Payment verification failed. Please try again.",
+		});
 	}
 };

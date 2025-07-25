@@ -71,6 +71,7 @@ export interface UserDocument extends Document {
 	addresses?: Address[];
 	cart: CartItem[];
 	password: string;
+	phone: string;
 	role: "user" | "admin";
 	refreshToken?: string;
 	comparePassword(candidatePassword: string): Promise<boolean>;
