@@ -16,6 +16,7 @@ import addressRoutes from "./routes/addressRoutes";
 import orderRoutes from "./routes/orderRoutes";
 import passwordRoutes from "./routes/passwordRoutes";
 import { errorHandler } from "./middlewares/errorHandler";
+import { sendOrderShippedEmail, sendOrderDeliveredEmail } from "./services/emailService";
 import path from "path";
 
 // const envFile =
@@ -110,6 +111,15 @@ app.use("/api/payments", paymentRoutes);
 app.use("/api/addresses", addressRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/password", passwordRoutes);
+app.post("/api/email/test", (req, res) => {
+    sendOrderShippedEmail({
+        orderNumber: "1234567890",
+        contactDetails: {
+            email: "mdfarhan9304@gmail.com",
+        },
+    });
+    res.json({ message: "Email sent successfully" });
+});
 app.use(errorHandler);
 
 // Start the server

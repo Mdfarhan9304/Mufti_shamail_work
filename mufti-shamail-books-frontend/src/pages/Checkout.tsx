@@ -132,7 +132,7 @@ const Checkout = () => {
 
 		try {
 			setPaymentLoading(true);
-			const { redirectUrl } = await generatePaymentUrl(total);
+			const { redirectUrl } = await generatePaymentUrl(total, user);
 			if (redirectUrl) {
 				// Store complete address object instead of just the string
 				localStorage.setItem(
@@ -275,6 +275,12 @@ const Checkout = () => {
 										<span className="text-gray-400">Email</span>
 										<p className="text-white bg-[#24271b] rounded-lg p-3">
 											{user?.email}
+										</p>
+									</div>
+									<div className="space-y-2">
+										<span className="text-gray-400">Phone</span>
+										<p className="text-white bg-[#24271b] rounded-lg p-3">
+											<input type="text"  />
 										</p>
 									</div>
 									<div className="space-y-2">

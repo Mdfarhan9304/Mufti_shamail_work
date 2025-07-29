@@ -26,6 +26,11 @@ const userSchema = new Schema(
 			minlength: 6,
 			select: false,
 		},
+		phone: {
+			type: String,
+			required: [false, "Please provide a phone number"],
+			trim: true,
+		},
 		role: {
 			type: String,
 			enum: ["user", "admin"],

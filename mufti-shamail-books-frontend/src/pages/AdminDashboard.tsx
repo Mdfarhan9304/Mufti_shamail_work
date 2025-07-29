@@ -1,9 +1,22 @@
 import { motion } from "framer-motion";
-import { Copy, IndianRupee } from "lucide-react";
+import { 
+    Copy, 
+    IndianRupee, 
+    Eye, 
+    Package, 
+    Truck, 
+    CheckCircle, 
+    Clock, 
+    Search,
+    Filter,
+    ChevronLeft,
+    ChevronRight
+} from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getAdminOrders } from "../apis/orders.api";
+import { getAdminOrders, updateOrderStatus } from "../apis/orders.api";
+import { toast } from "react-hot-toast";
 
 interface OrderStats {
 	totalOrders: number;
@@ -13,7 +26,13 @@ interface OrderStats {
 	};
 }
 
-
+interface PaginationInfo {
+    currentPage: number;
+    totalPages: number;
+    totalOrders: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+}
 
 interface Order {
 	_id: string;
@@ -50,7 +69,16 @@ interface Order {
 		_id: string;
 	};
 	status: string;
-	notes: string;
+    amount: number;
+    fulfillment?: {
+        trackingNumber?: string;
+        shippingProvider?: string;
+        trackingUrl?: string;
+        shippedAt?: string;
+        deliveredAt?: string;
+        estimatedDelivery?: string;
+        notes?: string;
+    };
 	createdAt: string;
 	updatedAt: string;
 }
@@ -62,27 +90,61 @@ const AdminDashboard = () => {
 		totalRevenue: 0,
 		ordersByStatus: {},
 	});
-	const [filtered, setFilter] = useState("all");
+    const [pagination, setPagination] = useState<PaginationInfo>({
+        currentPage: 1,
+        totalPages: 1,
+        totalOrders: 0,
+        hasNextPage: false,
+        hasPrevPage: false,
+    });
+    const [loading, setLoading] = useState(false);
+    const [statusFilter, setStatusFilter] = useState("all");
+    const [searchTerm, setSearchTerm] = useState("");
 	const { user, isAuthenticated } = useAuth();
+    const navigate = useNavigate();
+
+    const statusColors = {
+        pending: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+        processing: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+        shipped: "bg-orange-500/20 text-orange-400 border-orange-500/30",
+        delivered: "bg-green-500/20 text-green-400 border-green-500/30",
+        cancelled: "bg-red-500/20 text-red-400 border-red-500/30",
+    };
+
+    const statusIcons = {
+        pending: Clock,
+        processing: Package,
+        shipped: Truck,
+        delivered: CheckCircle,
+        cancelled: Copy,
+    };
 
 	const copyToClipboard = (text: string) => {
 		navigator.clipboard.writeText(text);
-		alert("Copied to clipboard!");
+        toast.success("Copied to clipboard!");
 	};
 
-	useEffect(() => {
-		const fetchOrders = async () => {
+    const fetchOrders = async (page: number = 1, status?: string) => {
+        setLoading(true);
 			try {
-				const response = await getAdminOrders();
-				console.log("response", response.data.orders);
+            const filters = status && status !== "all" ? { status } : undefined;
+            const response = await getAdminOrders(page, filters);
 				setOrders(response.data.orders);
+            if (response.data.stats) {
 				setStats(response.data.stats);
+            }
+            setPagination(response.data.pagination);
 			} catch (error) {
 				console.error("Failed to fetch orders:", error);
-			}
-		};
-		fetchOrders();
-	}, []);
+            toast.error("Failed to fetch orders");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchOrders(1, statusFilter);
+    }, [statusFilter]);
 
 	if (isAuthenticated) {
 		if (user?.role !== "admin") {
@@ -100,234 +162,286 @@ const AdminDashboard = () => {
 		});
 	};
 
-	const handleStatusChange = async (orderId: string, newStatus: string) => {
-		try {
-			await updateOrderStatus(orderId, newStatus);
-			toast.success("Order status updated successfully");
-		} catch (error) {
-			toast.error("Failed to update order status");
-		}
+    const handlePageChange = (page: number) => {
+        fetchOrders(page, statusFilter);
+    };
+
+    const handleStatusFilterChange = (status: string) => {
+        setStatusFilter(status);
+        setPagination(prev => ({ ...prev, currentPage: 1 }));
+    };
+
+    const viewOrderDetails = (orderId: string) => {
+        navigate(`/admin/orders/${orderId}`);
 	};
 
 	const filteredOrders = orders.filter((order) => {
-		if (filtered === "all") return true;
-		return order.status === filtered;
+        if (!searchTerm) return true;
+        return (
+            order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            order.contactDetails.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            order.contactDetails.email.toLowerCase().includes(searchTerm.toLowerCase())
+        );
 	});
 
 	return (
 		<main className="min-h-screen bg-[#121510] pt-20 md:pt-24">
-			<div className="flex flex-col md:flex-row">
-				{/* Sidebar */}
-				<aside className="bg-[#191b14] w-full md:w-1/4 h-[90vh] p-6 md:p-8 shadow-xl">
-					<div className="text-center md:text-left space-y-6">
-						<div>
-							<h1 className="text-3xl md:text-4xl font-bold text-[#c3e5a5] mb-4">
-								Admin Dashboard
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                {/* Header */}
+                <motion.div
+                    className="mb-8"
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                >
+                    <h1 className="text-4xl font-bold text-[#c3e5a5] mb-2">
+                        📦 Order Management
 							</h1>
-							<p className="text-gray-400">
-								Manage orders and customers
-							</p>
+                    <p className="text-gray-400 text-lg">
+                        Manage orders, track shipments, and fulfill customer requests
+                    </p>
+                </motion.div>
+
+                {/* Stats Cards */}
+                <motion.div
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.1 }}
+                >
+                    <div className="bg-[#191b14] rounded-xl p-6 border border-[#c3e5a5]/20">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-gray-400 text-sm font-medium">Total Orders</p>
+                                <p className="text-3xl font-bold text-white">{stats.totalOrders || 0}</p>
+                            </div>
+                            <Package className="w-8 h-8 text-[#c3e5a5]" />
+                        </div>
 						</div>
 
-						{/* Stats */}
-						<div className="space-y-4">
-							<div className="bg-[#24271b] p-4 rounded-lg">
-								<h3 className="text-[#c3e5a5] font-bold mb-2">Total Orders</h3>
-								<p className="text-2xl text-white">{stats.totalOrders}</p>
+                    <div className="bg-[#191b14] rounded-xl p-6 border border-[#c3e5a5]/20">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-gray-400 text-sm font-medium">Total Revenue</p>
+                                <p className="text-3xl font-bold text-white flex items-center">
+                                    <IndianRupee className="w-6 h-6 mr-1" />
+                                    {(stats.totalRevenue || 0).toLocaleString()}
+                                </p>
+                            </div>
+                            <IndianRupee className="w-8 h-8 text-[#c3e5a5]" />
+                        </div>
 							</div>
-							<div className="bg-[#24271b] p-4 rounded-lg">
-								<h3 className="text-[#c3e5a5] font-bold mb-2">Total Revenue</h3>
-								<p className="text-2xl text-white flex items-center">
-									<IndianRupee className="w-5 h-5 mr-1" />
-									{stats.totalRevenue}
+
+                    <div className="bg-[#191b14] rounded-xl p-6 border border-[#c3e5a5]/20">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-gray-400 text-sm font-medium">Pending Orders</p>
+                                <p className="text-3xl font-bold text-yellow-400">
+                                    {stats.ordersByStatus?.pending || 0}
 								</p>
 							</div>
-							<div className="bg-[#24271b] p-4 rounded-lg">
-								<h3 className="text-[#c3e5a5] font-bold mb-2">Order Status</h3>
-								{Object.entries(stats.ordersByStatus).map(([status, count]) => (
-									<div key={status} className="flex justify-between text-white">
-										<span className="capitalize">{status}</span>
-										<span>{count}</span>
+                            <Clock className="w-8 h-8 text-yellow-400" />
+                        </div>
+                    </div>
+
+                    <div className="bg-[#191b14] rounded-xl p-6 border border-[#c3e5a5]/20">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-gray-400 text-sm font-medium">Delivered</p>
+                                <p className="text-3xl font-bold text-green-400">
+                                    {stats.ordersByStatus?.delivered || 0}
+                                </p>
 									</div>
-								))}
+                            <CheckCircle className="w-8 h-8 text-green-400" />
 							</div>
 						</div>
-					</div>
-				</aside>
+                </motion.div>
 
-				{/* Main Content */}
-				<section className="flex-1 p-6 md:p-8">
+                {/* Filters and Search */}
 					<motion.div
-						className="bg-[#191b14] rounded-2xl p-4 md:p-8 shadow-xl"
+                    className="bg-[#191b14] rounded-xl p-6 mb-8 border border-[#c3e5a5]/20"
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
-						transition={{ duration: 0.8 }}
-					>
-						<div className="space-y-8">
-							<div className="text-center md:text-left">
-								<div className="flex justify-between items-center">
-								<h2 className="text-2xl font-bold text-[#c3e5a5] mb-4">
-									Recent Orders
-								</h2>
-								<select value={filtered} onChange={(e) => setFilter(e.target.value)} className="bg-[#24271b] text-white rounded px-3 py-1 border border-[#c3e5a5] focus:outline-none focus:ring-2 focus:ring-[#c3e5a5]">
-									<option value="all">All</option>
-									<option value="pending">Pending</option>
-									<option value="shipped">Shipped</option>
-									<option value="delivered">Delivered</option>
-								</select>
-								</div>
-								<div className="space-y-4">
-									{filteredOrders.map((order) => (
-										<div
-											key={order._id}
-											className="bg-[#24271b] p-4 rounded-lg shadow-md"
-										>
-											<div className="flex justify-between items-center">
-												<div className="space-y-2">
-													<p className="text-white">
-														<strong>Order ID:</strong>{" "}
-														<span className="text-gray-400">{order.orderNumber}</span>
-													</p>
-													<p className="text-white">
-														<strong>Transaction ID:</strong>{" "}
-														<span className="text-gray-400">{order.txnId}</span>
-													</p>
-													<p className="text-white">
-														<strong>Date:</strong>{" "}
-														<span className="text-gray-400">
-															{formatDate(order.createdAt)}
-														</span>
-													</p>
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                >
+                    <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+                        <div className="flex items-center gap-4 w-full lg:w-auto">
+                            <div className="relative flex-1 lg:flex-none lg:w-80">
+                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                                <input
+                                    type="text"
+                                    placeholder="Search orders, customers..."
+                                    className="w-full bg-[#24271b] border border-[#c3e5a5]/30 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#c3e5a5] focus:border-transparent"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
 												</div>
 											</div>
 
-											<div className="mt-4">
-												<h3 className="text-xl font-bold text-[#c3e5a5] mb-2">
-													Customer Details
-												</h3>
-												<div className="space-y-2">
-													<p
-														className="text-gray-400 cursor-pointer"
-														onClick={() =>
-															copyToClipboard(order.contactDetails.name)
-														}
-													>
-														<strong>Name:</strong> {order.contactDetails.name}{" "}
-														<Copy className="inline w-4 h-4 ml-2" />
-													</p>
-													<p
-														className="text-gray-400 cursor-pointer"
-														onClick={() =>
-															copyToClipboard(order.contactDetails.email)
-														}
-													>
-														<strong>Email:</strong> {order.contactDetails.email}{" "}
-														<Copy className="inline w-4 h-4 ml-2" />
-													</p>
-													<p
-														className="text-gray-400 cursor-pointer"
-														onClick={() =>
-															copyToClipboard(order.contactDetails.phone)
-														}
-													>
-														<strong>Phone:</strong> {order.contactDetails.phone}{" "}
-														<Copy className="inline w-4 h-4 ml-2" />
-													</p>
-												</div>
-											</div>
-											<div className="mt-4">
-												<h3 className="text-xl font-bold text-[#c3e5a5] mb-2">
-													Order Status
-												</h3>
-												<p className="text-gray-400">{order.status}</p>
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2">
+                                <Filter className="w-5 h-5 text-gray-400" />
 												<select
-													value={order.status}
-													onChange={(e) => handleStatusChange(order._id, e.target.value)}
-													className="bg-[#24271b] text-white rounded px-3 py-1 border border-[#c3e5a5] focus:outline-none focus:ring-2 focus:ring-[#c3e5a5]"
-												>
+                                    value={statusFilter}
+                                    onChange={(e) => handleStatusFilterChange(e.target.value)}
+                                    className="bg-[#24271b] border border-[#c3e5a5]/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#c3e5a5] focus:border-transparent"
+                                >
+                                    <option value="all">All Orders</option>
 													<option value="pending">Pending</option>
+                                    <option value="processing">Processing</option>
 													<option value="shipped">Shipped</option>
 													<option value="delivered">Delivered</option>
+                                    <option value="cancelled">Cancelled</option>
 												</select>
 											</div>
+                        </div>
+                    </div>
+                </motion.div>
 
-											<div className="mt-4">
-												<h3 className="text-xl font-bold text-[#c3e5a5] mb-2">
-													Shipping Address
-												</h3>
-												<p
-													className="text-gray-400 cursor-pointer"
-													onClick={() =>
-														copyToClipboard(
-															`${order.shippingAddress.addressLine1}, ${
-																order.shippingAddress.addressLine2
-																	? order.shippingAddress.addressLine2 + ", "
-																	: ""
-															}${
-																order.shippingAddress.landmark
-																	? order.shippingAddress.landmark + ", "
-																	: ""
-															}${order.shippingAddress.city}, ${
-																order.shippingAddress.state
-															} - ${order.shippingAddress.pincode}`
-														)
-													}
-												>
-													{order.shippingAddress.addressLine1}
-													{order.shippingAddress.addressLine2 && (
-														<>, {order.shippingAddress.addressLine2}</>
-													)}
-													{order.shippingAddress.landmark && (
-														<>, {order.shippingAddress.landmark}</>
-													)}
-													<br />
-													{order.shippingAddress.city},{" "}
-													{order.shippingAddress.state} -{" "}
-													{order.shippingAddress.pincode}
-													<Copy className="inline w-4 h-4 ml-2" />
-												</p>
+                {/* Orders Table */}
+                <motion.div
+                    className="bg-[#191b14] rounded-xl border border-[#c3e5a5]/20 overflow-hidden"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.3 }}
+                >
+                    {loading ? (
+                        <div className="flex items-center justify-center py-12">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#c3e5a5]"></div>
+                        </div>
+                    ) : filteredOrders.length === 0 ? (
+                        <div className="text-center py-12">
+                            <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                            <p className="text-gray-400 text-lg">No orders found</p>
 											</div>
-
-											<div className="mt-4">
-												<h3 className="text-xl font-bold text-[#c3e5a5] mb-2">
-													Order Details
-												</h3>
-												<div className="space-y-2">
-													{order.items.map((item) => (
-														<div
-															key={item._id}
-															className="flex justify-between text-gray-400"
-														>
+                    ) : (
+                        <div className="overflow-x-auto">
+                            <table className="w-full">
+                                <thead className="bg-[#24271b] border-b border-[#c3e5a5]/20">
+                                    <tr>
+                                        <th className="text-left py-4 px-6 text-[#c3e5a5] font-semibold">Order</th>
+                                        <th className="text-left py-4 px-6 text-[#c3e5a5] font-semibold">Customer</th>
+                                        <th className="text-left py-4 px-6 text-[#c3e5a5] font-semibold">Amount</th>
+                                        <th className="text-left py-4 px-6 text-[#c3e5a5] font-semibold">Status</th>
+                                        <th className="text-left py-4 px-6 text-[#c3e5a5] font-semibold">Date</th>
+                                        <th className="text-center py-4 px-6 text-[#c3e5a5] font-semibold">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-[#c3e5a5]/10">
+                                    {filteredOrders.map((order, index) => {
+                                        const StatusIcon = statusIcons[order.status as keyof typeof statusIcons];
+                                        return (
+                                            <motion.tr
+                                                key={order._id}
+                                                className="hover:bg-[#24271b]/50 transition-colors"
+                                                initial={{ opacity: 0, x: -20 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                transition={{ duration: 0.3, delay: index * 0.05 }}
+                                            >
+                                                <td className="py-4 px-6">
+                                                    <div>
+                                                        <p className="text-white font-medium">{order.orderNumber}</p>
+                                                        <p className="text-gray-400 text-sm">{order.items.length} item(s)</p>
+                                                    </div>
+                                                </td>
+                                                <td className="py-4 px-6">
 															<div>
-																<p>
-																	<strong>Book:</strong> {item.name}
-																</p>
-																<p>
-																	<strong>Author:</strong> {item.author}
-																</p>
+                                                        <p className="text-white font-medium">{order.contactDetails.name}</p>
+                                                        <p className="text-gray-400 text-sm">{order.contactDetails.email}</p>
+                                                    </div>
+                                                </td>
+                                                <td className="py-4 px-6">
+                                                    <div className="flex items-center text-white font-semibold">
+                                                        <IndianRupee className="w-4 h-4 mr-1" />
+                                                        {(order.amount || 0).toLocaleString()}
+                                                    </div>
+                                                </td>
+                                                <td className="py-4 px-6">
+                                                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-sm font-medium ${statusColors[order.status as keyof typeof statusColors]}`}>
+                                                        {StatusIcon && <StatusIcon className="w-4 h-4" />}
+                                                        <span className="capitalize">{order.status}</span>
 															</div>
-															<div className="text-right">
-																<p>
-																	<strong>Quantity:</strong>{" "}
-																	{item.quantity}
-																</p>
-																<p>
-																	<strong>Price:</strong>{" "}
-																	<IndianRupee className="inline w-4 h-4" />
-																	{item.price}
-																</p>
+                                                </td>
+                                                <td className="py-4 px-6">
+                                                    <div className="text-gray-400">
+                                                        {formatDate(order.createdAt)}
 															</div>
+                                                </td>
+                                                <td className="py-4 px-6">
+                                                    <div className="flex items-center justify-center gap-2">
+                                                        <button
+                                                            onClick={() => viewOrderDetails(order._id)}
+                                                            className="bg-[#c3e5a5] text-[#191b14] p-2 rounded-lg hover:bg-[#b3d595] transition-colors"
+                                                            title="View Details"
+                                                        >
+                                                            <Eye className="w-4 h-4" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => copyToClipboard(order.orderNumber)}
+                                                            className="bg-[#24271b] text-white p-2 rounded-lg hover:bg-[#2a2f1f] transition-colors border border-[#c3e5a5]/30"
+                                                            title="Copy Order Number"
+                                                        >
+                                                            <Copy className="w-4 h-4" />
+                                                        </button>
 														</div>
-													))}
+                                                </td>
+                                            </motion.tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
 												</div>
+                    )}
+
+                    {/* Pagination */}
+                    {!loading && filteredOrders.length > 0 && (
+                        <div className="bg-[#24271b] px-6 py-4 border-t border-[#c3e5a5]/20">
+                            <div className="flex items-center justify-between">
+                                <div className="text-gray-400 text-sm">
+                                    Showing {((pagination.currentPage - 1) * 10) + 1} to {Math.min(pagination.currentPage * 10, pagination.totalOrders)} of {pagination.totalOrders} orders
 											</div>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={() => handlePageChange(pagination.currentPage - 1)}
+                                        disabled={!pagination.hasPrevPage}
+                                        className="flex items-center gap-2 px-4 py-2 text-sm bg-[#191b14] text-white rounded-lg border border-[#c3e5a5]/30 hover:bg-[#24271b] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                    >
+                                        <ChevronLeft className="w-4 h-4" />
+                                        Previous
+                                    </button>
+                                    
+                                    <div className="flex items-center gap-1">
+                                        {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                                            const page = i + 1;
+                                            return (
+                                                <button
+                                                    key={page}
+                                                    onClick={() => handlePageChange(page)}
+                                                    className={`px-3 py-2 text-sm rounded-lg transition-colors ${
+                                                        page === pagination.currentPage
+                                                            ? 'bg-[#c3e5a5] text-[#191b14] font-semibold'
+                                                            : 'bg-[#191b14] text-white border border-[#c3e5a5]/30 hover:bg-[#24271b]'
+                                                    }`}
+                                                >
+                                                    {page}
+                                                </button>
+                                            );
+                                        })}
 										</div>
-									))}
+                                    
+                                    <button
+                                        onClick={() => handlePageChange(pagination.currentPage + 1)}
+                                        disabled={!pagination.hasNextPage}
+                                        className="flex items-center gap-2 px-4 py-2 text-sm bg-[#191b14] text-white rounded-lg border border-[#c3e5a5]/30 hover:bg-[#24271b] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                    >
+                                        Next
+                                        <ChevronRight className="w-4 h-4" />
+                                    </button>
 								</div>
 							</div>
 						</div>
+                    )}
 					</motion.div>
-				</section>
 			</div>
 		</main>
 	);

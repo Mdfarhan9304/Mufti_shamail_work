@@ -62,16 +62,44 @@ export const getAdminOrders = async (
 	}
 };
 
-export const updateOrderStatus = async (orderId: string, newStatus: string) => {
+export const updateOrderStatus = async (
+    orderId: string, 
+    updateData: {
+        status: string;
+        trackingNumber?: string;
+        shippingProvider?: string;
+        trackingUrl?: string;
+        estimatedDelivery?: string;
+        notes?: string;
+    }
+) => {
 	try {
-		const response = await axiosInstance.patch(`/orders/admin/${orderId}/status`, {
-			headers: {
-				Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-			},
-			status: newStatus,
-		});
+		const response = await axiosInstance.patch(
+            `/orders/admin/${orderId}/status`, 
+            updateData,
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                },
+            }
+        );
 		return response.data;
 	} catch (error) {
-		throw new Error("Failed to update order status");
+        if (axios.isAxiosError(error)) {
+            throw new Error(
+                error.response?.data?.error || "Failed to update order status"
+            );
+        } else {
+            throw new Error("An unexpected error occurred");
+        }
+	}
+};
+
+export const getOrderById = async (orderId: string) => {
+	try {
+		const response = await axiosInstance.get(`/orders/admin/${orderId}`);
+		return response.data;
+	} catch (error) {
+		throw new Error("Failed to get order by id");
 	}
 };

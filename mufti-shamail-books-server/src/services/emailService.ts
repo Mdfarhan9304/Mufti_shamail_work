@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { createOrderShippedTemplate, createOrderDeliveredTemplate } from "./emailTemplates/orderConfirmation";
 
 const transporter = nodemailer.createTransport({
 	host: process.env.SMTP_HOST,
@@ -118,3 +119,27 @@ export const sendPasswordResetEmail = async (
 		html: createPasswordResetTemplate(name, resetUrl),
 	});
 };
+
+export const sendOrderShippedEmail = async (orderData: any) => {
+	await transporter.sendMail({
+		from: process.env.SMTP_FROM,
+		// to: orderData.contactDetails.email,
+        to: "mdfarhan9304@gmail.com",
+		subject: `📦 Your Order ${orderData.orderNumber} Has Been Shipped!`,
+		html: createOrderShippedTemplate(orderData),
+	});
+};
+
+export const sendOrderDeliveredEmail = async (orderData: any) => {
+	await transporter.sendMail({
+		from: process.env.SMTP_FROM,
+		// to: orderData.contactDetails.email,
+        to: "mdfarhan9304@gmail.com",
+		subject: `✅ Your Order ${orderData.orderNumber} Has Been Delivered!`,
+		html: createOrderDeliveredTemplate(orderData),
+	});
+};
+
+
+
+

@@ -26,6 +26,7 @@ const generateTokens = (
 interface RegisterRequestBody {
 	name: string;
 	email: string;
+	phone: string;
 	password: string;
 	cart: CartItem[];
 }
@@ -37,7 +38,7 @@ export const register = async (
 	next: NextFunction
 ): Promise<void> => {
 	try {
-		const { name, email, password, cart } = req.body;
+		const { name, email, password, phone, cart } = req.body;
 
 		const userExists = await User.findOne({ email });
 		if (userExists) {
@@ -47,6 +48,7 @@ export const register = async (
 		const user = await User.create({
 			name,
 			email,
+			phone,
 			password,
 			cart,
 		});
@@ -70,6 +72,7 @@ export const register = async (
 					_id: userId,
 					name: user.name,
 					email: user.email,
+					phone: user.phone,
 					addresses: user.addresses || [],
 					cart: fixedCart,
 					role: user.role,
@@ -136,6 +139,7 @@ export const login = async (
 					_id: userId,
 					name: user.name,
 					email: user.email,
+					phone: user.phone,
 					addresses: user.addresses || [],
 					cart: fixedCart,
 					role: user.role,

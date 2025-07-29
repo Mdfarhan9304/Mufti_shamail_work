@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Order, OrderDocument } from "../models/Order";
 import { fixCart } from "../utils/helper";
 import { ApiError } from "../utils/errors";
+import { sendOrderShippedEmail, sendOrderDeliveredEmail } from "../services/emailService";
 
 // Extend Express Request to include user property
 interface AuthRequest extends Request {
@@ -121,6 +122,8 @@ export const getAllOrders = async (req: AuthRequest, res: Response) => {
             success: true,
             data: {
                 orders: newOrders,
+
+
                 stats: {
                     totalOrders,
                     totalRevenue,
@@ -144,11 +147,18 @@ export const getAllOrders = async (req: AuthRequest, res: Response) => {
     }
 };
 
-// Update order status (admin only)
+// Update order status with fulfillment details (admin only)
 export const updateOrderStatus = async (req: AuthRequest, res: Response) => {
     try {
         const { orderId } = req.params;
-        const { status } = req.body;
+        const { 
+            status, 
+            trackingNumber, 
+            shippingProvider, 
+            trackingUrl, 
+            estimatedDelivery,
+            notes 
+        } = req.body;
 
         // Check if user is admin
         if (req.user?.role !== "admin") {
@@ -161,9 +171,45 @@ export const updateOrderStatus = async (req: AuthRequest, res: Response) => {
             throw new ApiError(400, "Invalid status value");
         }
 
+        // Get the current order to compare status
+        const currentOrder = await Order.findById(orderId);
+        if (!currentOrder) {
+            throw new ApiError(404, "Order not found");
+        }
+
+        // Prepare update data
+        const updateData: any = { status };
+        
+        // Update fulfillment details if provided
+        if (trackingNumber || shippingProvider || trackingUrl || estimatedDelivery || notes) {
+            updateData.fulfillment = {
+                ...currentOrder.fulfillment,
+                ...(trackingNumber && { trackingNumber }),
+                ...(shippingProvider && { shippingProvider }),
+                ...(trackingUrl && { trackingUrl }),
+                ...(estimatedDelivery && { estimatedDelivery: new Date(estimatedDelivery) }),
+                ...(notes && { notes }),
+            };
+        }
+
+        // Set shipping/delivery timestamps
+        if (status === "shipped" && currentOrder.status !== "shipped") {
+            updateData.fulfillment = {
+                ...updateData.fulfillment,
+                shippedAt: new Date(),
+            };
+        }
+        
+        if (status === "delivered" && currentOrder.status !== "delivered") {
+            updateData.fulfillment = {
+                ...updateData.fulfillment,
+                deliveredAt: new Date(),
+            };
+        }
+
         const order = await Order.findByIdAndUpdate(
             orderId,
-            { status },
+            updateData,
             { new: true }
         )
             .populate("items.book")
@@ -179,9 +225,23 @@ export const updateOrderStatus = async (req: AuthRequest, res: Response) => {
             items: fixCart(order.items),
         };
 
+        // Send email notifications for status changes
+        try {
+            if (status === "shipped" && currentOrder.status !== "shipped") {
+                await sendOrderShippedEmail(updatedOrder);
+                console.log("Shipped email sent successfully");
+            } else if (status === "delivered" && currentOrder.status !== "delivered") {
+                await sendOrderDeliveredEmail(updatedOrder);
+            }
+        } catch (emailError) {
+            console.error("Error sending status update email:", emailError);
+            // Don't fail the request if email fails
+        }
+
         res.status(200).json({
             success: true,
             data: { order: updatedOrder },
+            message: `Order status updated to ${status}${status === 'shipped' || status === 'delivered' ? '. Email notification sent.' : ''}`
         });
     } catch (error) {
         console.error("Error updating order status:", error);
@@ -189,5 +249,42 @@ export const updateOrderStatus = async (req: AuthRequest, res: Response) => {
             throw error;
         }
         throw new ApiError(500, "Failed to update order status");
+    }
+};
+
+// Get single order details (admin only)
+export const getOrderById = async (req: AuthRequest, res: Response) => {
+    try {
+        const { orderId } = req.params;
+
+        // Check if user is admin
+        if (req.user?.role !== "admin") {
+            throw new ApiError(403, "Access denied. Admin only route.");
+        }
+
+        const order = await Order.findById(orderId)
+            .populate("items.book")
+            .populate("user", "name email")
+            .lean();
+
+        if (!order) {
+            throw new ApiError(404, "Order not found");
+        }
+
+        const orderWithFixedCart = {
+            ...order,
+            items: fixCart(order.items),
+        };
+
+        res.status(200).json({
+            success: true,
+            data: { order: orderWithFixedCart },
+        });
+    } catch (error) {
+        console.error("Error fetching order:", error);
+        if (error instanceof ApiError) {
+            throw error;
+        }
+        throw new ApiError(500, "Failed to fetch order");
     }
 };

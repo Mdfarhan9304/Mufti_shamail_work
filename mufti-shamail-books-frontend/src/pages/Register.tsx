@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Mail, Lock, ArrowRight, User, Loader2 } from "lucide-react";
+import { Mail, Lock, ArrowRight, User, Loader2, Phone } from "lucide-react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
@@ -10,6 +10,7 @@ const Register = () => {
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [phone, setPhone] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const navigate = useNavigate();
 	const { login, isLoading, register, isAuthenticated, user } = useAuth();
@@ -22,7 +23,7 @@ const Register = () => {
 		}
 
 		try {
-			await register(name, email, password); // Register the user
+			await register(name, email, phone, password); // Register the user
 			await login(email, password, "user"); // Log the user in after registration
 			toast.success("Registration successful! You are logged in.");
 			navigate("/dashboard");
@@ -76,6 +77,17 @@ const Register = () => {
 											onChange={(e) =>
 												setName(e.target.value)
 											}
+											className="w-full bg-[#24271b] text-white rounded-lg pl-12 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#c3e5a5] transition-all"
+										/>
+									</div>
+
+									<div className="relative">
+										<Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
+										<input
+											type="text"
+											placeholder="Phone number"
+											value={phone}
+											onChange={(e) => setPhone(e.target.value)}
 											className="w-full bg-[#24271b] text-white rounded-lg pl-12 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#c3e5a5] transition-all"
 										/>
 									</div>

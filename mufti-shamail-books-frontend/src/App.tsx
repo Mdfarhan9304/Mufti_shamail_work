@@ -23,6 +23,7 @@ import GuestCheckout from "./pages/GuestCheckout";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import AdminLogin from "./pages/AdminLogin";
+import OrderDetails from "./pages/OrderDetails";
 
 const AppContent = () => {
 	// const location = useLocation();
@@ -74,6 +75,11 @@ const AppContent = () => {
 						<Route
 							path="/admin/dashboard"
 							element={<AdminDashboard />}
+						/>
+						{/* ----- Order Details ----- */}
+						<Route
+							path="/admin/orders/:orderId"
+							element={<OrderDetails />}
 						/>
 						{/* ----- Manage Books ----- */}
 						<Route path="/manage-books" element={<ManageBooks />} />

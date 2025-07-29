@@ -16,6 +16,7 @@ export interface User {
 	_id: string;
 	name: string;
 	email: string;
+	phone?: string; // Optional since it's only for regular users, not admins
 	addresses?: Address[];
 	role: string;
 	cart: CartItem[];
@@ -29,7 +30,7 @@ interface AuthContextType {
 	login: (email: string, password: string, role: string) => Promise<void>;
 	logout: () => void;
 	refreshTokens: () => Promise<void>;
-	register: (name: string, email: string, password: string) => Promise<void>;
+	register: (name: string, email: string, phone: string, password: string) => Promise<void>;
 	isLoading: boolean;
 	addToCart: (book: CartItem) => Promise<void>;
 	removeFromCart: (bookId: string) => Promise<void>;
@@ -54,34 +55,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	// Check if user is authenticated based on accessToken
 	useEffect(() => {
 		const initAuth = async () => {
+			setIsLoading(true);
 			const accessToken = localStorage.getItem("accessToken");
 			const refreshToken = localStorage.getItem("refreshToken");
-			// const storedUser = localStorage.getItem("user");
+			const storedUser = localStorage.getItem("user");
 
 			if (!accessToken || !refreshToken) {
 				setIsAuthenticated(false);
 				setUser(null);
 				setIsLoading(false);
-				redirect("/");
 				return;
 			}
 
-			// if (storedUser) {
-			// 	const parsedUser = JSON.parse(storedUser);
-			// 	setUser(parsedUser);
-			// 	setIsAuthenticated(true);
-			// 	setIsLoading(false);
-			// 	return;
-			// }
+			// First set the stored user data to avoid UI flicker
+			if (storedUser) {
+				const parsedUser = JSON.parse(storedUser);
+				setUser(parsedUser);
+				setIsAuthenticated(true);
+			}
 
 			try {
+				// Then fetch fresh user data from the server
 				const { data } = await axiosInstance.get("/auth/me");
-				console.log(data);
+				console.log("Fresh user data:", data);
 				localStorage.setItem("user", JSON.stringify(data.data.user));
 				setUser(data.data.user);
 				setIsAuthenticated(true);
-				// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			} catch (_) {
+			} catch (error) {
+				console.error("Auth initialization failed:", error);
 				// Clear tokens if auth fails
 				localStorage.removeItem("accessToken");
 				localStorage.removeItem("refreshToken");
@@ -150,12 +151,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		}
 	};
 
-	const register = async (name: string, email: string, password: string) => {
+	const register = async (name: string, email: string, phone: string, password: string) => {
 		setIsLoading(true);
 		try {
 			const { data } = await axiosInstance.post("/auth/register", {
 				name,
 				email,
+				phone,
 				password,
 			});
 			const {

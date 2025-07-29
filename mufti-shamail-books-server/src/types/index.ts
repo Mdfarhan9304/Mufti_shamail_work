@@ -96,6 +96,7 @@ export interface AuthResponse {
 			_id: string;
 			name: string;
 			email: string;
+			phone: string;
 			addresses?: Address[];
 			cart: CartItem[];
 			role: string;

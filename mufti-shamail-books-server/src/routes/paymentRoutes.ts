@@ -3,7 +3,7 @@ import {
 	generatePaymentUrl,
 	checkOrderPaymentStatus,
 } from "../controllers/paymentController";
-import { optionalAuth } from "../middlewares/auth";
+import { optionalAuth, protect } from "../middlewares/auth";
 
 const router: Router = express.Router();
 
@@ -13,5 +13,6 @@ router.post(
 	optionalAuth,
 	checkOrderPaymentStatus
 );
+
 
 export default router;

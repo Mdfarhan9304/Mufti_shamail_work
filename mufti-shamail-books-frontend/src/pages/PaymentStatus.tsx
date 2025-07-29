@@ -40,6 +40,7 @@ const PaymentStatus = () => {
 				console.log("Payment verification - localCart:", localCart);
 				console.log("Payment verification - selectedAddress:", selectedAddress);
 				console.log("Payment verification - guestInfo:", guestInfo);
+				console.log("Current user:", user);
 
 				if (!localCart.length) {
 					setError("No order details found");
@@ -47,7 +48,25 @@ const PaymentStatus = () => {
 					return;
 				}
 
-				const orderItems = localCart.map((item: any) => ({
+				// Wait for user state to be properly initialized
+				if (authLoading) {
+					console.log("Waiting for auth state...");
+					return;
+				}
+
+				// if (!user && !guestInfo) {
+				// 	setError(`Guest information not found ${user}`);
+				// 	setLoading(false);
+				// 	return;
+				// }
+
+				interface CartItem {
+					_id: string;
+					quantity: number;
+					price: number;
+				}
+
+				const orderItems = localCart.map((item: CartItem) => ({
 					book: item._id,
 					quantity: item.quantity,
 					price: item.price,
@@ -64,7 +83,7 @@ const PaymentStatus = () => {
 					txnId,
 					orderItems,
 					selectedAddress,
-					guestInfo
+					guestInfo,
 				);
 
 				console.log("Payment verification response:", response);
@@ -94,7 +113,7 @@ const PaymentStatus = () => {
 		if (!verificationAttempted && !authLoading) {
 			verifyPayment();
 		}
-	}, [txnId, authLoading, verificationAttempted]);
+	}, [txnId, authLoading, verificationAttempted, user]);
 
 	// Show loading while auth is being checked
 	if (authLoading) {
@@ -111,7 +130,7 @@ const PaymentStatus = () => {
 	// Check if this is a guest order in progress or user is authenticated
 	const hasGuestInfo = localStorage.getItem("guestInfo");
 	const hasLocalCart = localStorage.getItem("localCart");
-	
+
 	// Only redirect if user is not authenticated AND there's no guest order data
 	if (!user && !hasGuestInfo && !hasLocalCart && !order) {
 		return <Navigate to="/login" replace />;
