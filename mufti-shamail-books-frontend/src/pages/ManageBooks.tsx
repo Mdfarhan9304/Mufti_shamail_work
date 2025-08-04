@@ -4,6 +4,7 @@ import { Book, getAllBooks, updateBook, deleteBook } from "../apis/books.api";
 import { Edit, Save, Plus, Trash, X } from "lucide-react";
 import { toast } from "react-toastify";
 import { useAuth } from "../contexts/AuthContext";
+import { getImageUrl } from "../utils/imageUtils";
 
 const ManageBooks = () => {
 	const [books, setBooks] = useState<Book[]>([]);
@@ -157,9 +158,7 @@ const ManageBooks = () => {
 									<>
 										<div className="aspect-[4/3] relative overflow-hidden">
 											<img
-												src={`${
-													import.meta.env.VITE_API_URL
-												}/${book.images[0]}`}
+												src={getImageUrl(book.images[0])}
 												alt={book.name}
 												className="absolute inset-0 w-full h-full object-cover"
 											/>

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Mail, Lock, ArrowRight, UserCircle, Loader2 } from "lucide-react";
+import { Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
@@ -9,7 +9,6 @@ import { AxiosError } from "axios";
 const Login = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const [role, setRole] = useState("user");
 	const [rememberMe, setRememberMe] = useState(false);
 
 	const { login, isLoading, isAuthenticated, user } = useAuth();
@@ -18,10 +17,13 @@ const Login = () => {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		try {
-			await login(email, password, role);
+			const user = await login(email, password, "user");
+			if (user.role === "admin") {
+				toast.error("Please use the admin login page");
+				return;
+			}
 			toast.success("Login successful!");
-			if (role === "admin") navigate("/admin/dashboard");
-			else navigate("/dashboard");
+			navigate("/dashboard");
 		} catch (err: unknown) {
 			if (err instanceof AxiosError && err.response) {
 				toast.error("Login failed: " + err.response.data.error);
@@ -63,20 +65,6 @@ const Login = () => {
 
 							<form className="space-y-6" onSubmit={handleSubmit}>
 								<div className="space-y-4">
-									<div className="relative">
-										<UserCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
-										<select
-											value={role}
-											onChange={(e) =>
-												setRole(e.target.value)
-											}
-											className="w-full bg-[#24271b] text-white rounded-lg pl-12 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#c3e5a5] transition-all appearance-none"
-										>
-											<option value="user">User</option>
-											<option value="admin">Admin</option>
-										</select>
-									</div>
-
 									<div className="relative">
 										<Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
 										<input

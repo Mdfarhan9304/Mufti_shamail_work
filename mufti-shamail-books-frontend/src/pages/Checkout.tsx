@@ -15,6 +15,7 @@ import { Address, AddressType } from "../apis/addresses.api";
 import { toast } from "react-toastify";
 import { generatePaymentUrl } from "../apis/payment.api";
 import { getAddressIcon } from "../components/user/Addresses";
+import { getImageUrl } from "../utils/imageUtils";
 
 const AddressSelector = ({
 	addresses,
@@ -48,9 +49,8 @@ const AddressSelector = ({
 			>
 				<span>Select Delivery Address</span>
 				<ChevronDown
-					className={`w-5 h-5 transition-transform ${
-						isOpen ? "rotate-180" : ""
-					}`}
+					className={`w-5 h-5 transition-transform ${isOpen ? "rotate-180" : ""
+						}`}
 				/>
 			</button>
 
@@ -69,11 +69,10 @@ const AddressSelector = ({
 									onSelect(address);
 									setIsOpen(false);
 								}}
-								className={`w-full p-4 flex items-start gap-3 hover:bg-[#24271b] transition-colors ${
-									selectedAddress?._id === address._id
-										? "bg-[#24271b]"
-										: ""
-								}`}
+								className={`w-full p-4 flex items-start gap-3 hover:bg-[#24271b] transition-colors ${selectedAddress?._id === address._id
+									? "bg-[#24271b]"
+									: ""
+									}`}
 							>
 								{getAddressIcon(address.addressType)}
 								<div className="text-left">
@@ -132,7 +131,7 @@ const Checkout = () => {
 
 		try {
 			setPaymentLoading(true);
-			const { redirectUrl } = await generatePaymentUrl(total, user);
+			const { redirectUrl } = await generatePaymentUrl(total);
 			if (redirectUrl) {
 				// Store complete address object instead of just the string
 				localStorage.setItem(
@@ -280,7 +279,7 @@ const Checkout = () => {
 									<div className="space-y-2">
 										<span className="text-gray-400">Phone</span>
 										<p className="text-white bg-[#24271b] rounded-lg p-3">
-											<input type="text"  />
+											{user?.phone}
 										</p>
 									</div>
 									<div className="space-y-2">
@@ -311,9 +310,10 @@ const Checkout = () => {
 											className="flex gap-4 py-4 border-b border-gray-800"
 										>
 											<img
-												src={`${
-													import.meta.env.VITE_API_URL
-												}/${item.images[0]}`}
+												src={item.images && item.images.length > 0 
+													? getImageUrl(item.images[0])
+													: '/vite.svg' // fallback image
+												}
 												alt={item.name}
 												className="w-20 h-20 object-contain rounded-lg"
 											/>

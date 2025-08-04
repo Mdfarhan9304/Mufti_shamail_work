@@ -11,6 +11,7 @@ import {
 import { useAuth } from "../contexts/AuthContext";
 import { useGuestCart } from "../contexts/GuestCartContext";
 import { CartItem } from "../apis/cart.api";
+import { getImageUrl } from "../utils/imageUtils";
 
 const Cart = () => {
 	const {
@@ -103,9 +104,7 @@ const Cart = () => {
 								>
 									<div className="w-full md:w-32 h-32">
 										<img
-											src={`${
-												import.meta.env.VITE_API_URL
-											}/${item.images[0]}`}
+											src={`${getImageUrl(item.images[0])}`}
 											alt={item.name}
 											className="w-full h-full object-contain rounded-lg"
 										/>

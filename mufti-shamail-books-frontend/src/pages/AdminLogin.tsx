@@ -17,7 +17,11 @@ const AdminLogin = () => {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		try {
-			await login(email, password, "admin");
+			const user = await login(email, password, "admin");
+			if (user.role !== "admin") {
+				toast.error("This account is not an admin account");
+				return;
+			}
 			toast.success("Admin login successful!");
 			navigate("/admin/dashboard");
 		} catch (err: unknown) {

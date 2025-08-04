@@ -5,6 +5,7 @@ import BookCard from "../components/books/BookCard";
 import { useEffect, useState } from "react";
 import { Book, getAllBooks } from "../apis/books.api";
 import { toast } from "react-toastify";
+import { getImageUrl } from "../utils/imageUtils";
 
 const Books = () => {
 	const [books, setBooks] = useState<Book[]>([]);
@@ -57,9 +58,7 @@ const Books = () => {
 							<Link to={`/book/${latestBook._id}`}>
 								<div className="relative  w-full max-w-[500px] mx-auto">
 									<img
-										src={`${import.meta.env.VITE_API_URL}/${
-											latestBook.images[0]
-										}`}
+										src={getImageUrl(latestBook.images[0])}
 										alt={latestBook.name}
 										className="relative rounded-2xl w-full h-full object-cover shadow-xl"
 									/>

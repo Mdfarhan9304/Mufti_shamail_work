@@ -54,35 +54,44 @@ const Navbar = () => {
 	const total = user ? totalItems : guestTotalItems;
 	const userRole = user?.role; // e.g. 'admin' or 'user'
 
+	// Common items that appear for everyone
+	const commonItems: NavItem[] = [
+		{ label: "Fatwah", href: "/fatwah" },
+	];
+
 	// Decide the menu items based on auth state & role
-	let menuItems: NavItem[] = [];
+	let authItems: NavItem[] = [];
 
 	if (!isAuthenticated) {
 		// Normal (not authenticated)
-		menuItems = [
+		authItems = [
 			{ label: "Cart", href: "/cart", icon: <ShoppingCart /> },
 			{ label: "Login", href: "/login", icon: <LogIn /> },
 			{ label: "Register", href: "/register", icon: <UserPlus /> },
 		];
 	} else if (userRole === "admin") {
 		// Admin
-		menuItems = [
+		authItems = [
 			{ label: "Dashboard", href: "/admin/dashboard", icon: <User /> },
 			{
 				label: "Manage Books",
 				href: "/manage-books",
 				icon: <BookOpen />,
 			},
+			{ label: "Manage Fatwahs", href: "/admin/fatwahs" },
 			{ label: "Logout", icon: <LogOut /> }, // We'll handle this with a function
 		];
 	} else {
 		// Regular User
-		menuItems = [
+		authItems = [
 			{ label: "Dashboard", href: "/dashboard", icon: <User /> },
 			{ label: "Cart", href: "/cart", icon: <ShoppingCart /> },
 			{ label: "Logout", icon: <LogOut /> }, // We'll handle this with a function
 		];
 	}
+
+	// Combine common and auth items
+	const menuItems = [...commonItems, ...authItems];
 
 	// const menuItems = [
 	// 	{ label: "Home", href: "/" },

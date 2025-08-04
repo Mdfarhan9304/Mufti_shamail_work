@@ -11,6 +11,16 @@ export const errorHandler = (
 		return next(err);
 	}
 
+	// Log the error for debugging
+	console.error("Error occurred:", {
+		message: err.message,
+		stack: err.stack,
+		url: req.url,
+		method: req.method,
+		body: req.body,
+		files: req.files ? 'Files present' : 'No files'
+	});
+
 	if (err instanceof CustomError) {
 		res.status(err.statusCode).json({
 			success: false,
@@ -19,10 +29,8 @@ export const errorHandler = (
 		return;
 	}
 
-	// console.error("Error:", err);
-
 	res.status(500).json({
 		success: false,
-		error: "Internal server error",
+		error: process.env.NODE_ENV === 'production' ? "Internal server error" : err.message,
 	});
 };

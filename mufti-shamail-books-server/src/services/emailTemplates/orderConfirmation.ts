@@ -187,6 +187,7 @@ export const createOrderShippedTemplate = (orderData: any) => {
                 <p>Great news! Your order <strong>${orderData?.orderNumber ?? "N/A"}</strong> has been shipped and is on its way to you.</p>
                 
                 <div class="order-details">
+            
                     <h3>Shipping Details</h3>
                     <div class="detail-row">
                         <span class="label">Tracking Number:</span>

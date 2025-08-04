@@ -15,6 +15,8 @@ import paymentRoutes from "./routes/paymentRoutes";
 import addressRoutes from "./routes/addressRoutes";
 import orderRoutes from "./routes/orderRoutes";
 import passwordRoutes from "./routes/passwordRoutes";
+import uploadRoutes from "./routes/uploadRoutes";
+import fatwahRoutes from "./routes/fatwahRoutes";
 import { errorHandler } from "./middlewares/errorHandler";
 import { sendOrderShippedEmail, sendOrderDeliveredEmail } from "./services/emailService";
 import path from "path";
@@ -111,6 +113,8 @@ app.use("/api/payments", paymentRoutes);
 app.use("/api/addresses", addressRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/password", passwordRoutes);
+app.use("/api/upload", uploadRoutes);
+app.use("/api/fatwahs", fatwahRoutes);
 app.post("/api/email/test", (req, res) => {
     sendOrderShippedEmail({
         orderNumber: "1234567890",
@@ -123,7 +127,7 @@ app.post("/api/email/test", (req, res) => {
 app.use(errorHandler);
 
 // Start the server
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
 	console.log(`Server running on port https://localhost:${PORT}`);
 });

@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 // import { toast } from "react-toastify";
 import { useGuestCart } from "../../contexts/GuestCartContext";
+import { getImageUrl } from "../../utils/imageUtils";
 
 const BookCard = ({ book }: { book: Book }) => {
 	const {
@@ -37,7 +38,7 @@ const BookCard = ({ book }: { book: Book }) => {
 		>
 			<div className="w-full aspect-square p-2 bg-[#24271b]">
 				<img
-					src={`${import.meta.env.VITE_API_URL}/${book.images[0]}`}
+					src={getImageUrl(book.images[0])}
 					alt={book.name}
 					className="w-full h-full object-cover rounded-lg"
 				/>

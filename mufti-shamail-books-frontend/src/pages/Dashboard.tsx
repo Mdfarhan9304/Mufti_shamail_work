@@ -49,6 +49,8 @@ const Dashboard: React.FC = () => {
 						<div className="text-white">
 							<p>Name: {user?.name}</p>
 							<p>Email: {user?.email}</p>
+
+
 						</div>
 						<button
 							onClick={handleLogout}

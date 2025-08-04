@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
-import { 
-    ArrowLeft, 
-    Package, 
-    Truck, 
-    CheckCircle, 
-    Clock, 
+import {
+    ArrowLeft,
+    Package,
+    Truck,
+    CheckCircle,
+    Clock,
     Copy,
     Edit3,
     Save,
@@ -101,13 +101,13 @@ const OrderDetails = () => {
     };
 
     const shippingProviders = [
-        "FedEx", "DHL", "UPS", "Blue Dart", "DTDC", 
+        "FedEx", "DHL", "UPS", "Blue Dart", "DTDC",
         "India Post", "Delhivery", "Ecom Express", "Other"
     ];
 
     useEffect(() => {
         if (!orderId) return;
-        
+
         const fetchOrder = async () => {
             try {
                 const response = await getAdminOrders();
@@ -122,8 +122,8 @@ const OrderDetails = () => {
                     shippingProvider: foundOrder.fulfillment?.shippingProvider || "",
                     trackingUrl: foundOrder.fulfillment?.trackingUrl || "",
                     estimatedDelivery: foundOrder.fulfillment?.estimatedDelivery
-                    ? new Date(foundOrder.fulfillment.estimatedDelivery).toISOString().split('T')[0]
-                    : "",
+                        ? new Date(foundOrder.fulfillment.estimatedDelivery).toISOString().split('T')[0]
+                        : "",
                     notes: foundOrder.fulfillment?.notes || ""
                 });
             } catch (error) {
@@ -212,7 +212,7 @@ const OrderDetails = () => {
     const StatusIcon = statusIcons[(order.status || "pending") as keyof typeof statusIcons];
 
     return (
-        <main className="min-h-screen bg-[#121510] pt-20 md:pt-24">
+        <main className="min-h-screen bg-[#121510] py-20 md:pt-24">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
                 <motion.div
@@ -228,7 +228,7 @@ const OrderDetails = () => {
                         <ArrowLeft className="w-5 h-5" />
                         Back to Orders
                     </button>
-                    <div className="flex items-center justify-between">
+                    <div className="md:flex items-center justify-between">
                         <div>
                             <h1 className="text-4xl font-bold text-[#c3e5a5] mb-2">
                                 Order #{order.orderNumber}
@@ -339,7 +339,7 @@ const OrderDetails = () => {
                                     {editMode ? (
                                         <select
                                             value={fulfillmentData.status}
-                                            onChange={(e) => setFulfillmentData({...fulfillmentData, status: e.target.value})}
+                                            onChange={(e) => setFulfillmentData({ ...fulfillmentData, status: e.target.value })}
                                             className="w-full bg-[#24271b] border border-[#c3e5a5]/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#c3e5a5]"
                                         >
                                             <option value="pending">Pending</option>
@@ -364,7 +364,7 @@ const OrderDetails = () => {
                                     {editMode ? (
                                         <select
                                             value={fulfillmentData.shippingProvider}
-                                            onChange={(e) => setFulfillmentData({...fulfillmentData, shippingProvider: e.target.value})}
+                                            onChange={(e) => setFulfillmentData({ ...fulfillmentData, shippingProvider: e.target.value })}
                                             className="w-full bg-[#24271b] border border-[#c3e5a5]/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#c3e5a5]"
                                         >
                                             <option value="">Select Provider</option>
@@ -386,7 +386,7 @@ const OrderDetails = () => {
                                         <input
                                             type="text"
                                             value={fulfillmentData.trackingNumber}
-                                            onChange={(e) => setFulfillmentData({...fulfillmentData, trackingNumber: e.target.value})}
+                                            onChange={(e) => setFulfillmentData({ ...fulfillmentData, trackingNumber: e.target.value })}
                                             className="w-full bg-[#24271b] border border-[#c3e5a5]/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#c3e5a5]"
                                             placeholder="Enter tracking number"
                                         />
@@ -414,7 +414,7 @@ const OrderDetails = () => {
                                         <input
                                             type="url"
                                             value={fulfillmentData.trackingUrl}
-                                            onChange={(e) => setFulfillmentData({...fulfillmentData, trackingUrl: e.target.value})}
+                                            onChange={(e) => setFulfillmentData({ ...fulfillmentData, trackingUrl: e.target.value })}
                                             className="w-full bg-[#24271b] border border-[#c3e5a5]/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#c3e5a5]"
                                             placeholder="Enter tracking URL"
                                         />
@@ -446,12 +446,12 @@ const OrderDetails = () => {
                                         <input
                                             type="date"
                                             value={fulfillmentData.estimatedDelivery}
-                                            onChange={(e) => setFulfillmentData({...fulfillmentData, estimatedDelivery: e.target.value})}
+                                            onChange={(e) => setFulfillmentData({ ...fulfillmentData, estimatedDelivery: e.target.value })}
                                             className="w-full bg-[#24271b] border border-[#c3e5a5]/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#c3e5a5]"
                                         />
                                     ) : (
                                         <p className="text-white">
-                                            {order.fulfillment?.estimatedDelivery 
+                                            {order.fulfillment?.estimatedDelivery
                                                 ? formatDate(order.fulfillment.estimatedDelivery)
                                                 : "Not set"
                                             }
@@ -467,7 +467,7 @@ const OrderDetails = () => {
                                     {editMode ? (
                                         <textarea
                                             value={fulfillmentData.notes}
-                                            onChange={(e) => setFulfillmentData({...fulfillmentData, notes: e.target.value})}
+                                            onChange={(e) => setFulfillmentData({ ...fulfillmentData, notes: e.target.value })}
                                             rows={3}
                                             className="w-full bg-[#24271b] border border-[#c3e5a5]/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#c3e5a5]"
                                             placeholder="Add any special notes or instructions..."

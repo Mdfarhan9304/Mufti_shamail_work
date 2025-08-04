@@ -24,6 +24,12 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import AdminLogin from "./pages/AdminLogin";
 import OrderDetails from "./pages/OrderDetails";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsAndConditions from "./pages/TermsAndConditions";
+import ReturnPolicy from "./pages/ReturnPolicy";
+import FatwahPage from "./pages/FatwahPage";
+import AskFatwah from "./pages/AskFatwah";
+import ManageFatwahs from "./pages/ManageFatwahs";
 
 const AppContent = () => {
 	// const location = useLocation();
@@ -106,6 +112,26 @@ const AppContent = () => {
 						<Route
 							path="/reset-password/:token"
 							element={<ResetPassword />}
+						/>
+						{/* ----- Policy Pages ----- */}
+						<Route
+							path="/privacy-policy"
+							element={<PrivacyPolicy />}
+						/>
+						<Route
+							path="/terms-and-conditions"
+							element={<TermsAndConditions />}
+						/>
+						<Route
+							path="/return-policy"
+							element={<ReturnPolicy />}
+						/>
+						{/* ----- Fatwah Pages ----- */}
+						<Route path="/fatwah" element={<FatwahPage />} />
+						<Route path="/ask-fatwah" element={<AskFatwah />} />
+						<Route
+							path="/admin/fatwahs"
+							element={<ManageFatwahs />}
 						/>
 					</Routes>
 					<Footer />

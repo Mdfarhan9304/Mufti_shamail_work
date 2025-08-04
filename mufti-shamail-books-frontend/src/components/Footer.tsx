@@ -123,6 +123,19 @@ const Footer = () => {
 						&copy; {new Date().getFullYear()} Mufti Shamail Nadwi.
 						All rights reserved.
 					</p>
+					<Link
+						to="/privacy-policy"
+						className="text-gray-400 hover:text-[#c3e5a5] transition-colors"
+					>
+						Privacy Policy
+					</Link>
+					<span className="mx-2">|</span>
+					<Link
+						to="/terms-and-conditions"
+						className="text-gray-400 hover:text-[#c3e5a5] transition-colors"
+					>
+						Terms of Service
+					</Link>
 				</motion.div>
 			</div>
 		</footer>

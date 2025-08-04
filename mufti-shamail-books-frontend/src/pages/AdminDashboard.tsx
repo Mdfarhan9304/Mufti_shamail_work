@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
-import { 
-    Copy, 
-    IndianRupee, 
-    Eye, 
-    Package, 
-    Truck, 
-    CheckCircle, 
-    Clock, 
+import {
+    Copy,
+    IndianRupee,
+    Eye,
+    Package,
+    Truck,
+    CheckCircle,
+    Clock,
     Search,
     Filter,
     ChevronLeft,
@@ -19,11 +19,11 @@ import { getAdminOrders, updateOrderStatus } from "../apis/orders.api";
 import { toast } from "react-hot-toast";
 
 interface OrderStats {
-	totalOrders: number;
-	totalRevenue: number;
-	ordersByStatus: {
-		[key: string]: number;
-	};
+    totalOrders: number;
+    totalRevenue: number;
+    ordersByStatus: {
+        [key: string]: number;
+    };
 }
 
 interface PaginationInfo {
@@ -35,40 +35,40 @@ interface PaginationInfo {
 }
 
 interface Order {
-	_id: string;
-	user: {
-		_id: string;
-		name: string;
-		email: string;
-	};
-	orderNumber: string;
-	txnId: string;
-	items: {
-		_id: string;
-		name: string;
-		description: string;
-		author: string;
-		price: number;
-		images: string[];
-		quantity: number;
-	}[];
-	contactDetails: {
-		phone: string;
-		email: string;
-		name: string;
-	};
-	shippingAddress: {
-		addressLine1: string;
-		addressLine2: string;
-		landmark: string;
-		city: string;
-		state: string;
-		pincode: string;
-		isDefault: boolean;
-		addressType: string;
-		_id: string;
-	};
-	status: string;
+    _id: string;
+    user: {
+        _id: string;
+        name: string;
+        email: string;
+    };
+    orderNumber: string;
+    txnId: string;
+    items: {
+        _id: string;
+        name: string;
+        description: string;
+        author: string;
+        price: number;
+        images: string[];
+        quantity: number;
+    }[];
+    contactDetails: {
+        phone: string;
+        email: string;
+        name: string;
+    };
+    shippingAddress: {
+        addressLine1: string;
+        addressLine2: string;
+        landmark: string;
+        city: string;
+        state: string;
+        pincode: string;
+        isDefault: boolean;
+        addressType: string;
+        _id: string;
+    };
+    status: string;
     amount: number;
     fulfillment?: {
         trackingNumber?: string;
@@ -79,17 +79,17 @@ interface Order {
         estimatedDelivery?: string;
         notes?: string;
     };
-	createdAt: string;
-	updatedAt: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 const AdminDashboard = () => {
-	const [orders, setOrders] = useState<Order[]>([]);
-	const [stats, setStats] = useState<OrderStats>({
-		totalOrders: 0,
-		totalRevenue: 0,
-		ordersByStatus: {},
-	});
+    const [orders, setOrders] = useState<Order[]>([]);
+    const [stats, setStats] = useState<OrderStats>({
+        totalOrders: 0,
+        totalRevenue: 0,
+        ordersByStatus: {},
+    });
     const [pagination, setPagination] = useState<PaginationInfo>({
         currentPage: 1,
         totalPages: 1,
@@ -100,7 +100,7 @@ const AdminDashboard = () => {
     const [loading, setLoading] = useState(false);
     const [statusFilter, setStatusFilter] = useState("all");
     const [searchTerm, setSearchTerm] = useState("");
-	const { user, isAuthenticated } = useAuth();
+    const { user, isAuthenticated } = useAuth();
     const navigate = useNavigate();
 
     const statusColors = {
@@ -119,23 +119,23 @@ const AdminDashboard = () => {
         cancelled: Copy,
     };
 
-	const copyToClipboard = (text: string) => {
-		navigator.clipboard.writeText(text);
+    const copyToClipboard = (text: string) => {
+        navigator.clipboard.writeText(text);
         toast.success("Copied to clipboard!");
-	};
+    };
 
     const fetchOrders = async (page: number = 1, status?: string) => {
         setLoading(true);
-			try {
+        try {
             const filters = status && status !== "all" ? { status } : undefined;
             const response = await getAdminOrders(page, filters);
-				setOrders(response.data.orders);
+            setOrders(response.data.orders);
             if (response.data.stats) {
-				setStats(response.data.stats);
+                setStats(response.data.stats);
             }
             setPagination(response.data.pagination);
-			} catch (error) {
-				console.error("Failed to fetch orders:", error);
+        } catch (error) {
+            console.error("Failed to fetch orders:", error);
             toast.error("Failed to fetch orders");
         } finally {
             setLoading(false);
@@ -146,21 +146,21 @@ const AdminDashboard = () => {
         fetchOrders(1, statusFilter);
     }, [statusFilter]);
 
-	if (isAuthenticated) {
-		if (user?.role !== "admin") {
-			return <Navigate to="/dashboard" replace />;
-		}
-	} else return <Navigate to="/login" replace />;
+    if (isAuthenticated) {
+        if (user?.role !== "admin") {
+            return <Navigate to="/dashboard" replace />;
+        }
+    } else return <Navigate to="/login" replace />;
 
-	const formatDate = (dateString: string) => {
-		return new Date(dateString).toLocaleDateString("en-IN", {
-			day: "numeric",
-			month: "short",
-			year: "numeric",
-			hour: "2-digit",
-			minute: "2-digit",
-		});
-	};
+    const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleDateString("en-IN", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+    };
 
     const handlePageChange = (page: number) => {
         fetchOrders(page, statusFilter);
@@ -173,19 +173,19 @@ const AdminDashboard = () => {
 
     const viewOrderDetails = (orderId: string) => {
         navigate(`/admin/orders/${orderId}`);
-	};
+    };
 
-	const filteredOrders = orders.filter((order) => {
+    const filteredOrders = orders.filter((order) => {
         if (!searchTerm) return true;
         return (
             order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
             order.contactDetails.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             order.contactDetails.email.toLowerCase().includes(searchTerm.toLowerCase())
         );
-	});
+    });
 
-	return (
-		<main className="min-h-screen bg-[#121510] pt-20 md:pt-24">
+    return (
+        <main className="min-h-screen bg-[#121510] py-20 md:pt-24">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
                 <motion.div
@@ -196,7 +196,7 @@ const AdminDashboard = () => {
                 >
                     <h1 className="text-4xl font-bold text-[#c3e5a5] mb-2">
                         📦 Order Management
-							</h1>
+                    </h1>
                     <p className="text-gray-400 text-lg">
                         Manage orders, track shipments, and fulfill customer requests
                     </p>
@@ -217,7 +217,7 @@ const AdminDashboard = () => {
                             </div>
                             <Package className="w-8 h-8 text-[#c3e5a5]" />
                         </div>
-						</div>
+                    </div>
 
                     <div className="bg-[#191b14] rounded-xl p-6 border border-[#c3e5a5]/20">
                         <div className="flex items-center justify-between">
@@ -230,7 +230,7 @@ const AdminDashboard = () => {
                             </div>
                             <IndianRupee className="w-8 h-8 text-[#c3e5a5]" />
                         </div>
-							</div>
+                    </div>
 
                     <div className="bg-[#191b14] rounded-xl p-6 border border-[#c3e5a5]/20">
                         <div className="flex items-center justify-between">
@@ -238,8 +238,8 @@ const AdminDashboard = () => {
                                 <p className="text-gray-400 text-sm font-medium">Pending Orders</p>
                                 <p className="text-3xl font-bold text-yellow-400">
                                     {stats.ordersByStatus?.pending || 0}
-								</p>
-							</div>
+                                </p>
+                            </div>
                             <Clock className="w-8 h-8 text-yellow-400" />
                         </div>
                     </div>
@@ -251,17 +251,17 @@ const AdminDashboard = () => {
                                 <p className="text-3xl font-bold text-green-400">
                                     {stats.ordersByStatus?.delivered || 0}
                                 </p>
-									</div>
+                            </div>
                             <CheckCircle className="w-8 h-8 text-green-400" />
-							</div>
-						</div>
+                        </div>
+                    </div>
                 </motion.div>
 
                 {/* Filters and Search */}
-					<motion.div
+                <motion.div
                     className="bg-[#191b14] rounded-xl p-6 mb-8 border border-[#c3e5a5]/20"
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.2 }}
                 >
                     <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
@@ -275,25 +275,25 @@ const AdminDashboard = () => {
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
-												</div>
-											</div>
+                            </div>
+                        </div>
 
                         <div className="flex items-center gap-4">
                             <div className="flex items-center gap-2">
                                 <Filter className="w-5 h-5 text-gray-400" />
-												<select
+                                <select
                                     value={statusFilter}
                                     onChange={(e) => handleStatusFilterChange(e.target.value)}
                                     className="bg-[#24271b] border border-[#c3e5a5]/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#c3e5a5] focus:border-transparent"
                                 >
                                     <option value="all">All Orders</option>
-													<option value="pending">Pending</option>
+                                    <option value="pending">Pending</option>
                                     <option value="processing">Processing</option>
-													<option value="shipped">Shipped</option>
-													<option value="delivered">Delivered</option>
+                                    <option value="shipped">Shipped</option>
+                                    <option value="delivered">Delivered</option>
                                     <option value="cancelled">Cancelled</option>
-												</select>
-											</div>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </motion.div>
@@ -313,7 +313,7 @@ const AdminDashboard = () => {
                         <div className="text-center py-12">
                             <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                             <p className="text-gray-400 text-lg">No orders found</p>
-											</div>
+                        </div>
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full">
@@ -345,7 +345,7 @@ const AdminDashboard = () => {
                                                     </div>
                                                 </td>
                                                 <td className="py-4 px-6">
-															<div>
+                                                    <div>
                                                         <p className="text-white font-medium">{order.contactDetails.name}</p>
                                                         <p className="text-gray-400 text-sm">{order.contactDetails.email}</p>
                                                     </div>
@@ -360,12 +360,12 @@ const AdminDashboard = () => {
                                                     <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-sm font-medium ${statusColors[order.status as keyof typeof statusColors]}`}>
                                                         {StatusIcon && <StatusIcon className="w-4 h-4" />}
                                                         <span className="capitalize">{order.status}</span>
-															</div>
+                                                    </div>
                                                 </td>
                                                 <td className="py-4 px-6">
                                                     <div className="text-gray-400">
                                                         {formatDate(order.createdAt)}
-															</div>
+                                                    </div>
                                                 </td>
                                                 <td className="py-4 px-6">
                                                     <div className="flex items-center justify-center gap-2">
@@ -383,14 +383,14 @@ const AdminDashboard = () => {
                                                         >
                                                             <Copy className="w-4 h-4" />
                                                         </button>
-														</div>
+                                                    </div>
                                                 </td>
                                             </motion.tr>
                                         );
                                     })}
                                 </tbody>
                             </table>
-												</div>
+                        </div>
                     )}
 
                     {/* Pagination */}
@@ -399,7 +399,7 @@ const AdminDashboard = () => {
                             <div className="flex items-center justify-between">
                                 <div className="text-gray-400 text-sm">
                                     Showing {((pagination.currentPage - 1) * 10) + 1} to {Math.min(pagination.currentPage * 10, pagination.totalOrders)} of {pagination.totalOrders} orders
-											</div>
+                                </div>
                                 <div className="flex items-center gap-2">
                                     <button
                                         onClick={() => handlePageChange(pagination.currentPage - 1)}
@@ -409,7 +409,7 @@ const AdminDashboard = () => {
                                         <ChevronLeft className="w-4 h-4" />
                                         Previous
                                     </button>
-                                    
+
                                     <div className="flex items-center gap-1">
                                         {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
                                             const page = i + 1;
@@ -417,18 +417,17 @@ const AdminDashboard = () => {
                                                 <button
                                                     key={page}
                                                     onClick={() => handlePageChange(page)}
-                                                    className={`px-3 py-2 text-sm rounded-lg transition-colors ${
-                                                        page === pagination.currentPage
+                                                    className={`px-3 py-2 text-sm rounded-lg transition-colors ${page === pagination.currentPage
                                                             ? 'bg-[#c3e5a5] text-[#191b14] font-semibold'
                                                             : 'bg-[#191b14] text-white border border-[#c3e5a5]/30 hover:bg-[#24271b]'
-                                                    }`}
+                                                        }`}
                                                 >
                                                     {page}
                                                 </button>
                                             );
                                         })}
-										</div>
-                                    
+                                    </div>
+
                                     <button
                                         onClick={() => handlePageChange(pagination.currentPage + 1)}
                                         disabled={!pagination.hasNextPage}
@@ -437,14 +436,14 @@ const AdminDashboard = () => {
                                         Next
                                         <ChevronRight className="w-4 h-4" />
                                     </button>
-								</div>
-							</div>
-						</div>
+                                </div>
+                            </div>
+                        </div>
                     )}
-					</motion.div>
-			</div>
-		</main>
-	);
+                </motion.div>
+            </div>
+        </main>
+    );
 };
 
 export default AdminDashboard;

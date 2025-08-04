@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { getImageUrl } from "../../utils/imageUtils";
 
 interface ImageCarouselProps {
 	images: string[];
@@ -9,7 +10,6 @@ interface ImageCarouselProps {
 
 const ImageCarousel = ({ images, bookName }: ImageCarouselProps) => {
 	const [currentIndex, setCurrentIndex] = useState(0);
-	console.log(images);
 
 	const next = () => setCurrentIndex((i) => (i + 1) % images.length);
 	const prev = () =>
@@ -20,9 +20,7 @@ const ImageCarousel = ({ images, bookName }: ImageCarouselProps) => {
 			<AnimatePresence mode="wait">
 				<motion.img
 					key={currentIndex}
-					src={`${import.meta.env.VITE_API_URL}/${
-						images[currentIndex]
-					}`}
+					src={getImageUrl(images[currentIndex])}
 					alt={`${bookName} - Image ${currentIndex + 1}`}
 					className="w-full h-full object-contain rounded-2xl"
 					initial={{ opacity: 0 }}

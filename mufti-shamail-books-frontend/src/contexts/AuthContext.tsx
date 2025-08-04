@@ -27,7 +27,7 @@ interface AuthContextType {
 	isAuthenticated: boolean;
 	user: User | null;
 	setUser: React.Dispatch<React.SetStateAction<User | null>>;
-	login: (email: string, password: string, role: string) => Promise<void>;
+	login: (email: string, password: string, role: string) => Promise<User>;
 	logout: () => void;
 	refreshTokens: () => Promise<void>;
 	register: (name: string, email: string, phone: string, password: string) => Promise<void>;
@@ -97,7 +97,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		initAuth();
 	}, []);
 
-	const login = async (email: string, password: string, role: string) => {
+	const login = async (email: string, password: string, role: string): Promise<User> => {
 		setIsLoading(true);
 		try {
 			const { data } = await axiosInstance.post(`/auth/login`, {
@@ -106,11 +106,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				role,
 			});
 			const { accessToken, refreshToken, user: loggedInUser } = data.data;
-			localStorage.setItem("accessToken", accessToken);
-			localStorage.setItem("refreshToken", refreshToken);
-			localStorage.setItem("user", JSON.stringify(loggedInUser));
-			setUser(loggedInUser);
-			setIsAuthenticated(true);
+
+			// Only set auth state if the role matches
+			if (loggedInUser.role === role) {
+				localStorage.setItem("accessToken", accessToken);
+				localStorage.setItem("refreshToken", refreshToken);
+				localStorage.setItem("user", JSON.stringify(loggedInUser));
+				setUser(loggedInUser);
+				setIsAuthenticated(true);
+			}
+			return loggedInUser;
 		} catch (error) {
 			console.error("Login failed", error);
 			throw error;

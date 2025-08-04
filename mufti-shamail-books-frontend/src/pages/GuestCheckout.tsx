@@ -6,6 +6,7 @@ import { useGuestCart } from "../contexts/GuestCartContext";
 import { generatePaymentUrl } from "../apis/payment.api";
 import { toast } from "react-toastify";
 import { State } from "../apis/addresses.api";
+import { getImageUrl } from "../utils/imageUtils";
 
 interface GuestInfo {
 	name: string;
@@ -72,6 +73,7 @@ const GuestCheckout = () => {
 			!guestInfo.address.city ||
 			!guestInfo.address.state ||
 			!guestInfo.address.pincode
+
 		) {
 			toast.error("Please fill all address details");
 			return false;
@@ -84,7 +86,7 @@ const GuestCheckout = () => {
 
 		try {
 			setPaymentLoading(true);
-			const { redirectUrl } = await generatePaymentUrl(total, null, guestInfo);
+			const { redirectUrl } = await generatePaymentUrl(total);
 
 			if (redirectUrl) {
 				localStorage.setItem("guestInfo", JSON.stringify(guestInfo));
@@ -237,9 +239,7 @@ const GuestCheckout = () => {
 										>
 											<div className="w-16 h-16">
 												<img
-													src={`${import.meta.env
-														.VITE_API_URL
-														}/${item.images[0]}`}
+													src={getImageUrl(item.images[0])}
 													alt={item.name}
 													className="w-full h-full object-contain rounded-md"
 												/>

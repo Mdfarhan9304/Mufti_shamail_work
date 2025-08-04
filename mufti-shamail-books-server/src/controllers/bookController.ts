@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import Book from "../models/Book";
 import { BadRequestError, UnauthorizedError } from "../utils/errors";
+import { processAndSaveImage } from "../services/uploadService";
 
 // Get all books
 export const getAllBooks = async (
@@ -41,19 +42,46 @@ export const createBook = async (
 ) => {
 	try {
 		const { name, description, author, price } = req.body;
+		
+		// Validate required fields
+		if (!name || !description || !author || !price) {
+			throw new BadRequestError("All fields are required");
+		}
+		
+		// Check if files exist
+		if (!req.files || !Array.isArray(req.files) || req.files.length === 0) {
+			throw new BadRequestError("At least one image is required");
+		}
+		
 		const images = req.files as Express.Multer.File[];
-		const imagePaths = images.map((image) => image.path);
+		console.log("Processing images:", images.length);
+		
+		// Process images with Sharp and get their URLs
+		const imagePaths = await Promise.all(
+			images.map(async (image) => {
+				try {
+					return await processAndSaveImage(image);
+				} catch (error) {
+					console.error("Image processing error:", error);
+					const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+					throw new BadRequestError(`Image processing failed: ${errorMessage}`);
+				}
+			})
+		);
+		
+		console.log("Image paths:", imagePaths);
 
 		const book = await Book.create({
 			name,
 			description,
 			author,
-			price,
+			price: Number(price),
 			images: imagePaths,
 		});
 
 		res.status(201).json({ success: true, data: book });
 	} catch (error) {
+		console.error("Create book error:", error);
 		next(error);
 	}
 };

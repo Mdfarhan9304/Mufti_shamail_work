@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { Edit, Loader2, Save } from "lucide-react";
 import { updateUserProfile } from "../../apis/user.api";
@@ -11,9 +11,21 @@ const Profile = () => {
 	const [isEditing, setIsEditing] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [editedProfile, setEditedProfile] = useState({
-		name: user?.name || "",
-		email: user?.email || "",
+		name: "",
+		email: "",
+		phone: ""
 	});
+
+	// Update editedProfile when user data is loaded
+	useEffect(() => {
+		if (user) {
+			setEditedProfile({
+				name: user.name || "",
+				email: user.email || "",
+				phone: user.phone || ""
+			});
+		}
+	}, [user]);
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
@@ -31,14 +43,13 @@ const Profile = () => {
 				_id: user?._id,
 			});
 			setUser(data.user);
-			console.log("Updated profile:", data.user);
 			setIsEditing(false);
 			toast.success("Profile updated successfully");
 		} catch (err: unknown) {
 			if (err instanceof AxiosError && err.response) {
-				toast.error("Login failed: " + err.response.data.error);
+				toast.error("Update failed: " + err.response.data.error);
 			} else {
-				toast.error("Login failed: " + (err as Error).message);
+				toast.error("Update failed: " + (err as Error).message);
 			}
 		} finally {
 			setIsLoading(false);
@@ -89,7 +100,7 @@ const Profile = () => {
 							type="text"
 							name="name"
 							className="w-full bg-[#191b14] text-white rounded-lg p-3 mt-1"
-							value={isEditing ? editedProfile.name : user?.name}
+							value={isEditing ? editedProfile.name : user?.name || ""}
 							onChange={handleChange}
 							readOnly={!isEditing}
 						/>
@@ -100,28 +111,22 @@ const Profile = () => {
 							type="email"
 							name="email"
 							className="w-full bg-[#191b14] text-white rounded-lg p-3 mt-1"
-							value={
-								isEditing ? editedProfile.email : user?.email
-							}
+							value={isEditing ? editedProfile.email : user?.email || ""}
 							onChange={handleChange}
 							readOnly={!isEditing}
 						/>
 					</div>
-					{/* <div>
-						<label className="text-gray-400">Address</label>
+					<div>
+						<label className="text-gray-400">Phone</label>
 						<input
-							type="text"
-							name="address"
+							type="tel"
+							name="phone"
 							className="w-full bg-[#191b14] text-white rounded-lg p-3 mt-1"
-							value={
-								isEditing
-									? editedProfile.address
-									: user?.address ?? "N/A"
-							}
+							value={isEditing ? editedProfile.phone : user?.phone || ""}
 							onChange={handleChange}
 							readOnly={!isEditing}
 						/>
-					</div> */}
+					</div>
 				</div>
 			</div>
 		</motion.div>
