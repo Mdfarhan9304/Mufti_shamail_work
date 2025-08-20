@@ -1,6 +1,13 @@
 import { motion } from "framer-motion";
 import { ExternalLink, Calendar, Users, BookOpen, Building2, Globe } from "lucide-react";
 
+// Import images
+import markazImage from "../assets/markaz.JPG";
+import wahyainImage from "../assets/wahyain.PNG";
+import schoolImage from "../assets/school.JPG";
+import shehjaarImage from "../assets/shehjaar.JPG";
+import riahtiImage from "../assets/riahti.PNG";
+
 const Initiatives = () => {
     const initiatives = [
         {
@@ -8,7 +15,7 @@ const Initiatives = () => {
             title: "Markaz Al-Wahyain",
             subtitle: "Islamic Learning Platform",
             year: "2021",
-            image: "/src/assets/markaz.JPG",
+            image: markazImage,
             website: "www.markazalwahyain.com",
             description: "Founded by Mufti Shamail Ahmad Abdullah in 2021, Markaz Al-Wahyain is an independent, non-political Islamic learning platform dedicated to spreading authentic Islamic knowledge based on the Qur'an and Sunnah, as understood by the Sahabah and the Salaf-e-Saliheen.",
             highlights: [
@@ -26,7 +33,7 @@ const Initiatives = () => {
             title: "Wahyain Foundation",
             subtitle: "Islamic Charitable Trust",
             year: "2024",
-            image: "/src/assets/wahyain.PNG",
+            image: wahyainImage,
             website: "www.wahyainfoundation.com",
             description: "Established in 2024 in Kolkata, India, Wahyain Foundation is a non-profit Islamic charitable trust working to serve the Deeni and educational needs of the community. Under the leadership of Mufti Shamail Ahmad Abdullah, the foundation offers a wide range of services.",
             highlights: [
@@ -44,7 +51,7 @@ const Initiatives = () => {
             title: "Wahyain International School (WIS)",
             subtitle: "Islamic Education Revolution",
             year: "2025",
-            image: "/src/assets/school.JPG",
+            image: schoolImage,
             website: "Coming Soon",
             description: "Wahyain International School, launched in 2025 under Wahyain Foundation by Mufti Shamail Ahmad Abdullah Nadwi, currently runs classes from Nursery to Class 2, with plans to gradually expand up to Class 12. This is not just another school that adds Islamic subjects—WIS is built on a deeper, more purposeful vision.",
             highlights: [
@@ -62,7 +69,7 @@ const Initiatives = () => {
             title: "Shehjaar Foods",
             subtitle: "Halal Food Business",
             year: "2021",
-            image: "/src/assets/shehjaar.JPG",
+            image: shehjaarImage,
             website: "www.shehjaarfoods.com",
             description: "Launched in 2021 by Mufti Shamail Ahmad Abdullah, Shehjaar Foods is a growing food business offering healthy and high-quality food products rooted in natural ingredients and ethical practices. With a focus on purity, taste, and well-being, Shehjaar Foods serves customers across India.",
             highlights: [
@@ -80,7 +87,7 @@ const Initiatives = () => {
             title: "Rihlati Travels",
             subtitle: "Premium Umrah & Islamic Tours",
             year: "2023",
-            image: "/src/assets/riahti.PNG",
+            image: riahtiImage,
             website: "Coming Soon",
             description: "Launched in 2023 by Mufti Shamail Ahmad Abdullah, Rihlati Travels is a premium Umrah and Islamic tour service focused on offering spiritually enriching and well-guided journeys. It combines high-quality travel arrangements with proper religious mentorship.",
             highlights: [
