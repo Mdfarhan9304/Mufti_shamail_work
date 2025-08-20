@@ -85,7 +85,7 @@ const FatwahPage = () => {
 		<main className="min-h-screen bg-[#121510] pt-20 md:pt-24">
 			<section className="relative py-16 md:py-24">
 				<div className="absolute inset-0 bg-gradient-to-b from-[#1a1f17] to-[#191a13]" />
-				
+
 				<div className="max-w-7xl mx-auto px-6 lg:px-8 relative">
 					{/* Header */}
 					<motion.div
@@ -206,31 +206,30 @@ const FatwahPage = () => {
 							{fatwahs.map((fatwah, index) => (
 								<motion.div
 									key={fatwah._id}
-									className="bg-[#191b14] rounded-xl p-6 shadow-xl"
+									className="bg-[#191b14] rounded-xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer group"
 									initial={{ opacity: 0, y: 20 }}
 									animate={{ opacity: 1, y: 0 }}
 									transition={{ duration: 0.8, delay: index * 0.1 }}
+									onClick={() => window.open(`/fatwah/${fatwah._id}`, '_blank')}
 								>
 									<div className="space-y-4">
 										{/* Question */}
 										<div>
-											<h3 className="text-xl font-bold text-[#c3e5a5] mb-2">
-												Question
-											</h3>
-											<p className="text-white leading-relaxed">
+											<h3 className="text-xl font-bold text-[#c3e5a5] mb-2 group-hover:text-white transition-colors">
 												{fatwah.question}
-											</p>
+											</h3>
 										</div>
 
-										{/* Answer */}
+										{/* Short Answer Preview */}
 										{fatwah.answer && (
 											<div>
-												<h4 className="text-lg font-semibold text-[#c3e5a5] mb-2">
-													Answer
-												</h4>
-												<p className="text-gray-300 leading-relaxed">
+												<p className="text-gray-300 leading-relaxed line-clamp-2">
 													{fatwah.answer}
 												</p>
+												<button className="text-[#c3e5a5] hover:text-white text-sm font-medium mt-2 flex items-center gap-1 group-hover:gap-2 transition-all">
+													Read More
+													<ArrowRight className="w-3 h-3" />
+												</button>
 											</div>
 										)}
 
@@ -251,7 +250,7 @@ const FatwahPage = () => {
 										<div className="flex items-center justify-between text-sm text-gray-400 pt-4 border-t border-gray-800">
 											<div className="flex items-center gap-4">
 												{fatwah.answeredBy && (
-													<span>Answered by: {fatwah.answeredBy.name}</span>
+													<span>By: {fatwah.answeredBy.name}</span>
 												)}
 											</div>
 											<div className="flex items-center gap-1">
@@ -281,21 +280,20 @@ const FatwahPage = () => {
 								>
 									Previous
 								</button>
-								
+
 								<div className="flex items-center gap-1">
 									{Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
 										const page = currentPage <= 3 ? i + 1 : currentPage - 2 + i;
 										if (page > totalPages) return null;
-										
+
 										return (
 											<button
 												key={page}
 												onClick={() => setCurrentPage(page)}
-												className={`px-3 py-2 rounded-lg transition-colors ${
-													currentPage === page
-														? "bg-[#c3e5a5] text-gray-800"
-														: "bg-[#24271b] text-white hover:bg-[#2f332a]"
-												}`}
+												className={`px-3 py-2 rounded-lg transition-colors ${currentPage === page
+													? "bg-[#c3e5a5] text-gray-800"
+													: "bg-[#24271b] text-white hover:bg-[#2f332a]"
+													}`}
 											>
 												{page}
 											</button>

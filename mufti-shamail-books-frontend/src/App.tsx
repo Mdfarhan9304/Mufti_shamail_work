@@ -4,6 +4,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Books from "./pages/Books";
+import About from "./pages/About";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Cart from "./pages/Cart";
@@ -30,6 +31,8 @@ import ReturnPolicy from "./pages/ReturnPolicy";
 import FatwahPage from "./pages/FatwahPage";
 import AskFatwah from "./pages/AskFatwah";
 import ManageFatwahs from "./pages/ManageFatwahs";
+import FatwahDetail from "./pages/FatwahDetail";
+import Initiatives from "./pages/Initiatives";
 
 const AppContent = () => {
 	// const location = useLocation();
@@ -68,6 +71,10 @@ const AppContent = () => {
 					{<Navbar />}
 					<Routes>
 						<Route path="/" element={<Books />} />
+						{/* ----- About ----- */}
+						<Route path="/about" element={<About />} />
+						{/* ----- Initiatives ----- */}
+						<Route path="/initiatives" element={<Initiatives />} />
 						{/* ----- Login ----- */}
 						<Route path="/login" element={<Login />} />
 						<Route path="/admin/login" element={<AdminLogin />} />
@@ -128,9 +135,10 @@ const AppContent = () => {
 						/>
 						{/* ----- Fatwah Pages ----- */}
 						<Route path="/fatwah" element={<FatwahPage />} />
+						<Route path="/fatwah/:id" element={<FatwahDetail />} />
 						<Route path="/ask-fatwah" element={<AskFatwah />} />
 						<Route
-							path="/admin/fatwahs"
+							path="/admin/fatwah"
 							element={<ManageFatwahs />}
 						/>
 					</Routes>

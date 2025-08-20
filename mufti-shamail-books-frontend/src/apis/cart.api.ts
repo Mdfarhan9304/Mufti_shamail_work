@@ -4,6 +4,7 @@ import { Book } from "./books.api";
 
 export interface CartItem extends Book {
 	quantity: number;
+	selectedLanguage?: string;
 }
 
 // export const getCart = async () => {

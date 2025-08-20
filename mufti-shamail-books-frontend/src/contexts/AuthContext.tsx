@@ -3,7 +3,6 @@ import axiosInstance from "../config/axios.config";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { CartItem } from "../apis/cart.api";
-import { redirect } from "react-router-dom";
 import { Address } from "../apis/addresses.api";
 import {
 	addToCart as addToCartApi,

@@ -24,6 +24,16 @@ const Cart = () => {
 		useGuestCart();
 
 	const cartItems = user ? user.cart : guestCart;
+	
+	// Calculate total quantity of books
+	const totalQuantity = cartItems?.reduce(
+		(total, item) => total + (item.quantity ?? 1),
+		0
+	) || 0;
+	
+	// Calculate delivery charges: every 2 books add ₹50
+	const deliveryCharges = Math.ceil(totalQuantity / 2) * 50;
+	
 	const totalAmount = cartItems?.reduce(
 		(total, item) => total + item.price * (item.quantity ?? 1),
 		0
@@ -113,6 +123,28 @@ const Cart = () => {
 										<h3 className="text-xl font-medium text-white mb-2">
 											{item.name}
 										</h3>
+										<div className="flex items-center gap-2 mb-2">
+											<p className="text-gray-400 text-sm">By {item.author}</p>
+											{item.selectedLanguage && (
+												<span className="text-xs bg-[#c3e5a5]/20 text-[#c3e5a5] px-2 py-1 rounded-full">
+													{item.selectedLanguage.charAt(0).toUpperCase() + item.selectedLanguage.slice(1)}
+												</span>
+											)}
+											{!item.selectedLanguage && item.availableLanguages && (
+												<div className="flex gap-1">
+													{item.availableLanguages.english && (
+														<span className="text-xs bg-[#c3e5a5]/20 text-[#c3e5a5] px-2 py-1 rounded-full">
+															English
+														</span>
+													)}
+													{item.availableLanguages.urdu && (
+														<span className="text-xs bg-[#c3e5a5]/20 text-[#c3e5a5] px-2 py-1 rounded-full">
+															Urdu
+														</span>
+													)}
+												</div>
+											)}
+										</div>
 										<p className="text-[#c3e5a5] text-lg">
 											₹{item.price}
 										</p>
@@ -178,16 +210,16 @@ const Cart = () => {
 								</div>
 								<div className="flex justify-between items-center mb-6">
 									<span className="text-gray-400">
-										Shipping
+										Shipping ({totalQuantity} books)
 									</span>
-									<span className="text-white">₹50</span>
+									<span className="text-white">₹{deliveryCharges}</span>
 								</div>
 								<div className="border-t border-[#24271b] pt-4 flex justify-between items-center">
 									<span className="text-lg text-white">
 										Total
 									</span>
 									<span className="text-xl text-[#c3e5a5] font-medium">
-										₹{totalAmount ? totalAmount + 50 : 0}
+										₹{totalAmount ? totalAmount + deliveryCharges : 0}
 									</span>
 								</div>
 							</div>

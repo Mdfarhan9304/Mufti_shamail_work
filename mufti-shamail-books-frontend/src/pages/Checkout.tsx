@@ -310,7 +310,7 @@ const Checkout = () => {
 											className="flex gap-4 py-4 border-b border-gray-800"
 										>
 											<img
-												src={item.images && item.images.length > 0 
+												src={item.images && item.images.length > 0
 													? getImageUrl(item.images[0])
 													: '/vite.svg' // fallback image
 												}

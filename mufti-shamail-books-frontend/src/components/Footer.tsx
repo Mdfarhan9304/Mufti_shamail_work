@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Twitter, Youtube, Mail } from "lucide-react";
+import { Facebook, Instagram, Twitter, Youtube, Mail, AtSign } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
@@ -90,11 +90,32 @@ const Footer = () => {
 						</h3>
 						<div className="flex gap-4">
 							{[
-								{ icon: Facebook, link: "#" },
-								{ icon: Instagram, link: "#" },
-								{ icon: Twitter, link: "#" },
-								{ icon: Youtube, link: "#" },
-							].map(({ icon: Icon, link }, index) => (
+								{ 
+									icon: Instagram, 
+									link: "https://www.instagram.com/muftishamail",
+									label: "Instagram" 
+								},
+								{ 
+									icon: Youtube, 
+									link: "https://www.youtube.com/@muftishamail",
+									label: "YouTube" 
+								},
+								{ 
+									icon: Facebook, 
+									link: "https://www.facebook.com/muftishamail",
+									label: "Facebook" 
+								},
+								{ 
+									icon: Twitter, 
+									link: "https://x.com/muftishamail",
+									label: "X (Twitter)" 
+								},
+								{ 
+									icon: AtSign, 
+									link: "https://www.threads.net/@muftishamail",
+									label: "Threads" 
+								},
+							].map(({ icon: Icon, link, label }, index) => (
 								<motion.a
 									key={index}
 									href={link}
@@ -103,6 +124,7 @@ const Footer = () => {
 									className="p-2 bg-[#191b14] rounded-lg hover:bg-[#c3e5a5] text-gray-400 hover:text-[#121510] transition-all"
 									whileHover={{ scale: 1.1 }}
 									whileTap={{ scale: 0.9 }}
+									title={label}
 								>
 									<Icon size={20} />
 								</motion.a>

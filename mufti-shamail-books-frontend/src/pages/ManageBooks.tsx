@@ -8,8 +8,8 @@ import { getImageUrl } from "../utils/imageUtils";
 
 const ManageBooks = () => {
 	const [books, setBooks] = useState<Book[]>([]);
-	const [editingBookId, setEditingBookId] = useState<string | null>(null);
 	const [editedBook, setEditedBook] = useState<Partial<Book>>({});
+	const [editingBookId, setEditingBookId] = useState<string | null>(null);
 	const { user, isAuthenticated } = useAuth();
 
 	useEffect(() => {
@@ -33,10 +33,16 @@ const ManageBooks = () => {
 
 	const handleSaveClick = async (bookId: string) => {
 		try {
-			await updateBook(bookId, editedBook as Book, []);
+			// Fix price precision before saving
+			const updatedBook = {
+				...editedBook,
+				price: parseFloat(parseFloat(editedBook.price?.toString() || "0").toFixed(2))
+			};
+
+			await updateBook(bookId, updatedBook as Book, []);
 			setBooks((prevBooks) =>
 				prevBooks.map((book) =>
-					book._id === bookId ? { ...book, ...editedBook } : book
+					book._id === bookId ? { ...book, ...updatedBook } : book
 				)
 			);
 			setEditingBookId(null);
@@ -65,6 +71,17 @@ const ManageBooks = () => {
 	) => {
 		const { name, value } = e.target;
 		setEditedBook((prevBook) => ({ ...prevBook, [name]: value }));
+	};
+
+	const handleLanguageChange = (language: "english" | "urdu") => {
+		setEditedBook((prev) => ({
+			...prev,
+			availableLanguages: {
+				english: prev.availableLanguages?.english || false,
+				urdu: prev.availableLanguages?.urdu || false,
+				[language]: !prev.availableLanguages?.[language],
+			},
+		}));
 	};
 
 	if (isAuthenticated) {
@@ -139,9 +156,36 @@ const ManageBooks = () => {
 											name="price"
 											value={editedBook.price || ""}
 											onChange={handleChange}
+											min="0"
+											step="0.01"
 											className="w-full bg-[#24271b] text-white rounded-lg p-3"
 											placeholder="Price"
 										/>
+
+										{/* Available Languages */}
+										<div className="space-y-3">
+											<label className="text-[#c3e5a5] font-medium">Available Languages:</label>
+											<div className="flex gap-6">
+												<label className="flex items-center gap-2 text-white cursor-pointer">
+													<input
+														type="checkbox"
+														checked={editedBook.availableLanguages?.english || false}
+														onChange={() => handleLanguageChange("english")}
+														className="w-4 h-4 accent-[#c3e5a5]"
+													/>
+													English
+												</label>
+												<label className="flex items-center gap-2 text-white cursor-pointer">
+													<input
+														type="checkbox"
+														checked={editedBook.availableLanguages?.urdu || false}
+														onChange={() => handleLanguageChange("urdu")}
+														className="w-4 h-4 accent-[#c3e5a5]"
+													/>
+													Urdu
+												</label>
+											</div>
+										</div>
 										<div className="flex justify-end gap-4 pt-4">
 											<button
 												onClick={() =>
@@ -167,6 +211,23 @@ const ManageBooks = () => {
 											<h3 className="text-xl font-bold text-[#c3e5a5] line-clamp-1">
 												{book.name}
 											</h3>
+											<div className="flex items-center justify-between">
+												<p className="text-gray-300 text-sm">
+													By {book.author}
+												</p>
+												<div className="flex gap-2">
+													{book.availableLanguages?.english && (
+														<span className="text-xs bg-[#c3e5a5]/20 text-[#c3e5a5] px-2 py-1 rounded-full">
+															English
+														</span>
+													)}
+													{book.availableLanguages?.urdu && (
+														<span className="text-xs bg-[#c3e5a5]/20 text-[#c3e5a5] px-2 py-1 rounded-full">
+															Urdu
+														</span>
+													)}
+												</div>
+											</div>
 											<p className="text-gray-400 text-sm line-clamp-2">
 												{book.description}
 											</p>

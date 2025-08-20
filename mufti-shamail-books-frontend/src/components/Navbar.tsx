@@ -8,22 +8,24 @@ import {
 	User,
 	BookOpen,
 	LogOut,
+	ChevronDown,
+	Home,
+	Info,
+	MessageCircle,
+	Lightbulb,
+	Package,
+	MapPin,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, useScroll } from "framer-motion";
 import { useAuth } from "../contexts/AuthContext";
 import { useGuestCart } from "../contexts/GuestCartContext";
 
-interface NavItem {
-	label: string;
-	href?: string; // href might be undefined if it's a logout action
-	icon?: JSX.Element;
-	className?: string;
-}
-
 const Navbar = () => {
 	const location = useLocation();
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+	const [isAuthDropdownOpen, setIsAuthDropdownOpen] = useState(false);
+	const [isCartDropdownOpen, setIsCartDropdownOpen] = useState(false);
 	const [hasScrolled, setHasScrolled] = useState(false);
 	const { scrollY, scrollYProgress } = useScroll();
 
@@ -36,8 +38,48 @@ const Navbar = () => {
 		});
 	}, [scrollY]);
 
+	// Close dropdowns when clicking outside
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			const target = event.target as Element;
+			if (!target.closest('.auth-dropdown') && !target.closest('.cart-dropdown')) {
+				setIsAuthDropdownOpen(false);
+				setIsCartDropdownOpen(false);
+			}
+		};
+
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => document.removeEventListener('mousedown', handleClickOutside);
+	}, []);
+
 	const toggleMobileMenu = () => {
 		setIsMobileMenuOpen(!isMobileMenuOpen);
+	};
+
+	const toggleAuthDropdown = () => {
+		setIsAuthDropdownOpen(!isAuthDropdownOpen);
+		setIsCartDropdownOpen(false); // Close cart dropdown when opening auth
+	};
+
+	const toggleCartDropdown = () => {
+		setIsCartDropdownOpen(!isCartDropdownOpen);
+		setIsAuthDropdownOpen(false); // Close auth dropdown when opening cart
+	};
+
+	const handleAuthMouseEnter = () => {
+		setIsAuthDropdownOpen(true);
+	};
+
+	const handleAuthMouseLeave = () => {
+		// Don't close immediately, let click outside handle it
+	};
+
+	const handleCartMouseEnter = () => {
+		setIsCartDropdownOpen(true);
+	};
+
+	const handleCartMouseLeave = () => {
+		// Don't close immediately, let click outside handle it
 	};
 
 	const isActiveRoute = (href: string) => {
@@ -52,52 +94,27 @@ const Navbar = () => {
 	const { guestTotalItems } = useGuestCart();
 
 	const total = user ? totalItems : guestTotalItems;
-	const userRole = user?.role; // e.g. 'admin' or 'user'
+	const userRole = user?.role;
 
-	// Common items that appear for everyone
-	const commonItems: NavItem[] = [
-		{ label: "Fatwah", href: "/fatwah" },
-	];
+	// Navigation items based on user role
+	const getUserNavItems = () => {
+		if (userRole === "admin") {
+			return [
+				{ label: "Orders", href: "/admin/dashboard", icon: <User className="w-4 h-4" /> },
+				{ label: "Manage Books", href: "/manage-books", icon: <BookOpen className="w-4 h-4" /> },
+				{ label: "Manage Fatwahs", href: "/admin/fatwah", icon: <MessageCircle className="w-4 h-4" /> },
+			];
+		} else {
+			return [
+				{ label: "Home", href: "/", icon: <Home className="w-4 h-4" /> },
+				{ label: "About", href: "/about", icon: <Info className="w-4 h-4" /> },
+				{ label: "Initiatives", href: "/initiatives", icon: <Lightbulb className="w-4 h-4" /> },
+				{ label: "Fatwahs", href: "/fatwah", icon: <MessageCircle className="w-4 h-4" /> },
+			];
+		}
+	};
 
-	// Decide the menu items based on auth state & role
-	let authItems: NavItem[] = [];
-
-	if (!isAuthenticated) {
-		// Normal (not authenticated)
-		authItems = [
-			{ label: "Cart", href: "/cart", icon: <ShoppingCart /> },
-			{ label: "Login", href: "/login", icon: <LogIn /> },
-			{ label: "Register", href: "/register", icon: <UserPlus /> },
-		];
-	} else if (userRole === "admin") {
-		// Admin
-		authItems = [
-			{ label: "Dashboard", href: "/admin/dashboard", icon: <User /> },
-			{
-				label: "Manage Books",
-				href: "/manage-books",
-				icon: <BookOpen />,
-			},
-			{ label: "Manage Fatwahs", href: "/admin/fatwahs" },
-			{ label: "Logout", icon: <LogOut /> }, // We'll handle this with a function
-		];
-	} else {
-		// Regular User
-		authItems = [
-			{ label: "Dashboard", href: "/dashboard", icon: <User /> },
-			{ label: "Cart", href: "/cart", icon: <ShoppingCart /> },
-			{ label: "Logout", icon: <LogOut /> }, // We'll handle this with a function
-		];
-	}
-
-	// Combine common and auth items
-	const menuItems = [...commonItems, ...authItems];
-
-	// const menuItems = [
-	// 	{ label: "Home", href: "/" },
-	// 	{ label: "Books", href: "http://books.localhost:5173" },
-	// 	{ label: "Certifications", href: "/certifications" },
-	// ];
+	const mainNavItems = getUserNavItems();
 
 	const letterAnimation = {
 		initial: { y: 20, opacity: 0 },
@@ -128,8 +145,8 @@ const Navbar = () => {
 			transition={{ duration: 0.4 }}
 		>
 			<div className="mx-auto md:px-4 flex justify-between items-center h-20 md:h-24 max-w-[92.5%] md:max-w-[100%] lg:max-w-[90%] xl:max-w-[75%]">
-				{/* Animated Text Logo */}
-				<Link to="/" className="flex items-center">
+				{/* Left: Animated Text Logo */}
+				<Link to="/" className="flex items-center flex-shrink-0">
 					<motion.div
 						initial="initial"
 						animate="animate"
@@ -140,15 +157,13 @@ const Navbar = () => {
 								key={i}
 								custom={i}
 								variants={letterAnimation}
-								className={`text-2xl md:text-3xl font-semibold ${
-									letter === " " ? "mr-2" : ""
-								} ${
-									hasScrolled
+								className={`text-xl md:text-2xl lg:text-3xl font-semibold ${letter === " " ? "mr-2" : ""
+									} ${hasScrolled
 										? i < 5
 											? "text-white/70"
 											: "text-white"
 										: "text-white"
-								}`}
+									}`}
 							>
 								{letter}
 							</motion.span>
@@ -156,50 +171,203 @@ const Navbar = () => {
 					</motion.div>
 				</Link>
 
-				{/* Desktop Navigation */}
-				<div className="hidden md:flex md:space-x-8 items-center">
-					{menuItems.map((item, index) => (
+				{/* Center: Main Navigation (Desktop) */}
+				<div className="hidden lg:flex items-center space-x-8">
+					{mainNavItems.map((item) => (
 						<Link
-							key={index}
-							to={item.href || ""}
-							onClick={() => item.label === "Logout" && logout()}
+							key={item.label}
+							to={item.href}
 							className={`
-                text-base
-                px-2 py-1
-                transition-all
-                duration-300
-                font-medium
-                border-b-2
-                flex items-center gap-2 relative
-                ${
-					hasScrolled
-						? isActiveRoute(item.href!)
-							? "text-white border-white"
-							: "text-gray-300 border-transparent hover:text-gray-400 hover:border-gray-400"
-						: isActiveRoute(item.href!)
-						? "text-white border-white"
-						: "text-gray-300 border-transparent hover:text-white hover:border-white/70"
-				} 
-              `}
+								flex items-center gap-2 px-3 py-2 rounded-lg
+								text-base font-medium transition-all duration-300
+								border-b-2 border-transparent
+								${isActiveRoute(item.href)
+									? "text-[#c3e5a5] border-[#c3e5a5]"
+									: hasScrolled
+										? "text-gray-300 hover:text-white hover:border-white/50"
+										: "text-gray-300 hover:text-white hover:border-white/70"
+								}
+							`}
 						>
-							{item.label}
 							{item.icon}
-							{item.label === "Cart" && total > 0 && (
-								<span className="absolute -top-2 -right-2 bg-[#c3e5a5] text-black text-sm font-semibold w-5 h-5 flex items-center justify-center rounded-full">
-									{total > 0 && total}
-								</span>
-							)}
+							{item.label}
 						</Link>
 					))}
+				</div>
+
+				{/* Right: Auth & Cart Section */}
+				<div className="hidden md:flex items-center space-x-4">
+					{/* Cart Dropdown - Only show for regular users, not admins */}
+					{userRole !== "admin" && (
+						<div className="relative cart-dropdown">
+							<button
+								onClick={toggleCartDropdown}
+								onMouseEnter={handleCartMouseEnter}
+								className={`
+									flex items-center gap-2 px-4 py-2 rounded-lg
+									text-base font-medium transition-all duration-300
+									${hasScrolled
+										? "text-gray-300 hover:text-white hover:bg-white/10"
+										: "text-gray-300 hover:text-white hover:bg-white/10"
+									}
+								`}
+							>
+								<ShoppingCart className="w-5 h-5" />
+								<span className="hidden lg:block">Cart</span>
+								{total > 0 && (
+									<span className="absolute -top-1 -right-1 bg-[#c3e5a5] text-black text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">
+										{total}
+									</span>
+								)}
+							</button>
+
+							{/* Cart Dropdown Menu */}
+							{isCartDropdownOpen && (
+								<motion.div
+									initial={{ opacity: 0, y: -10 }}
+									animate={{ opacity: 1, y: 0 }}
+									exit={{ opacity: 0, y: -10 }}
+									className="absolute top-full right-0 mt-2 w-48 bg-[#191b14] rounded-xl shadow-xl border border-[#24271b] py-2 z-50"
+								>
+									<Link
+										to="/cart"
+										onClick={() => setIsCartDropdownOpen(false)}
+										className="block px-4 py-2 text-gray-300 hover:bg-[#24271b] hover:text-white transition-colors"
+									>
+										View Cart ({total})
+									</Link>
+									<Link
+										to="/checkout"
+										onClick={() => setIsCartDropdownOpen(false)}
+										className="block px-4 py-2 text-gray-300 hover:bg-[#24271b] hover:text-white transition-colors"
+									>
+										Checkout
+									</Link>
+								</motion.div>
+							)}
+						</div>
+					)}
+
+					{/* Auth Dropdown */}
+					<div className="relative auth-dropdown">
+						<button
+							onClick={toggleAuthDropdown}
+							onMouseEnter={handleAuthMouseEnter}
+							className={`
+								flex items-center gap-2 px-4 py-2 rounded-lg
+								text-base font-medium transition-all duration-300
+								${hasScrolled
+									? "text-gray-300 hover:text-white hover:bg-white/10"
+									: "text-gray-300 hover:text-white hover:bg-white/10"
+								}
+							`}
+						>
+							{isAuthenticated ? (
+								<>
+									<User className="w-5 h-5" />
+									<span className="hidden lg:block">{user?.name || 'User'}</span>
+								</>
+							) : (
+								<>
+									<LogIn className="w-5 h-5" />
+									<span className="hidden lg:block">Account</span>
+								</>
+							)}
+							<ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isAuthDropdownOpen ? 'rotate-180' : ''}`} />
+						</button>
+
+						{/* Auth Dropdown Menu */}
+						{isAuthDropdownOpen && (
+							<motion.div
+								initial={{ opacity: 0, y: -10 }}
+								animate={{ opacity: 1, y: 0 }}
+								exit={{ opacity: 0, y: -10 }}
+								className="absolute top-full right-0 mt-2 w-48 bg-[#191b14] rounded-xl shadow-xl border border-[#24271b] py-2 z-50"
+							>
+								{!isAuthenticated ? (
+									<>
+										<Link
+											to="/login"
+											onClick={() => setIsAuthDropdownOpen(false)}
+											className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:bg-[#24271b] hover:text-white transition-colors"
+										>
+											<LogIn className="w-4 h-4" />
+											Login
+										</Link>
+										<Link
+											to="/register"
+											onClick={() => setIsAuthDropdownOpen(false)}
+											className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:bg-[#24271b] hover:text-white transition-colors"
+										>
+											<UserPlus className="w-4 h-4" />
+											Register
+										</Link>
+									</>
+								) : (
+									<>
+										{userRole === "admin" ? (
+											<>
+												<Link
+													to="/admin/dashboard"
+													onClick={() => setIsAuthDropdownOpen(false)}
+													className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:bg-[#24271b] hover:text-white transition-colors"
+												>
+													<User className="w-4 h-4" />
+													Admin Dashboard
+												</Link>
+											</>
+										) : (
+											<>
+												<Link
+													to="/dashboard"
+													onClick={() => setIsAuthDropdownOpen(false)}
+													className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:bg-[#24271b] hover:text-white transition-colors"
+												>
+													<User className="w-4 h-4" />
+													Profile
+												</Link>
+												<Link
+													to="/orders"
+													onClick={() => setIsAuthDropdownOpen(false)}
+													className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:bg-[#24271b] hover:text-white transition-colors"
+												>
+													<Package className="w-4 h-4" />
+													My Orders
+												</Link>
+												<Link
+													to="/addresses"
+													onClick={() => setIsAuthDropdownOpen(false)}
+													className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:bg-[#24271b] hover:text-white transition-colors"
+												>
+													<MapPin className="w-4 h-4" />
+													Addresses
+												</Link>
+											</>
+										)}
+										<hr className="border-[#24271b] my-2" />
+										<button
+											onClick={() => {
+												logout();
+												setIsAuthDropdownOpen(false);
+											}}
+											className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:bg-[#24271b] hover:text-red-400 transition-colors w-full text-left"
+										>
+											<LogOut className="w-4 h-4" />
+											Logout
+										</button>
+									</>
+								)}
+							</motion.div>
+						)}
+					</div>
 				</div>
 
 				{/* Mobile Hamburger Icon */}
 				<div className="md:hidden">
 					<button
 						onClick={toggleMobileMenu}
-						className={`focus:outline-none transition-colors duration-300 ${
-							hasScrolled ? "text-gray-300" : "text-white"
-						}`}
+						className={`focus:outline-none transition-colors duration-300 ${hasScrolled ? "text-gray-300" : "text-white"
+							}`}
 					>
 						<Menu size={24} />
 					</button>
@@ -216,43 +384,134 @@ const Navbar = () => {
 				{/* Mobile Menu */}
 				<motion.div
 					className={`
-            fixed top-0 right-0 min-h-screen w-3/5 shadow-lg z-50
-            transform transition-transform duration-300 ease-in-out
-            ${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"}
-          `}
+						fixed top-0 right-0 min-h-screen w-4/5 shadow-lg z-50
+						transform transition-transform duration-300 ease-in-out
+						${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"}
+					`}
 					animate={{
-						backgroundColor: "rgba(255, 255, 255, 0.95)",
+						backgroundColor: "rgba(25, 27, 20, 0.95)",
 						backdropFilter: "blur(10px)",
 					}}
 				>
 					<div className="p-6">
 						<button
 							onClick={toggleMobileMenu}
-							className="absolute top-4 right-4 text-gray-700 focus:outline-none"
+							className="absolute top-4 right-4 text-white focus:outline-none"
 						>
 							<X size={24} />
 						</button>
 
 						<div className="flex flex-col space-y-6 mt-12">
-							{menuItems.map((item, index) => (
+							{/* Main Navigation */}
+							{getUserNavItems().map((item) => (
 								<Link
-									key={index}
-									onClick={() => {
-										setIsMobileMenuOpen(false);
-										if (item.label === "Logout") logout();
-									}}
-									to={item.href || ""}
-									className={`text-lg font-medium transition-colors duration-200
-                    ${
-						isActiveRoute(item.href!)
-							? "text-gray-800"
-							: "text-gray-600 hover:text-gray-800"
-					}
-                  `}
+									key={item.label}
+									to={item.href}
+									onClick={() => setIsMobileMenuOpen(false)}
+									className={`flex items-center gap-3 text-lg font-medium transition-colors duration-200
+										${isActiveRoute(item.href)
+											? "text-[#c3e5a5]"
+											: "text-gray-300 hover:text-white"
+										}
+									`}
 								>
+									{item.icon}
 									{item.label}
 								</Link>
 							))}
+
+							<hr className="border-[#24271b] my-4" />
+
+							{/* Cart - Only show for regular users */}
+							{userRole !== "admin" && (
+								<Link
+									to="/cart"
+									onClick={() => setIsMobileMenuOpen(false)}
+									className="flex items-center gap-3 text-lg font-medium text-gray-300 hover:text-white transition-colors relative"
+								>
+									<ShoppingCart className="w-5 h-5" />
+									Cart
+									{total > 0 && (
+										<span className="bg-[#c3e5a5] text-black text-xs font-bold px-2 py-1 rounded-full">
+											{total}
+										</span>
+									)}
+								</Link>
+							)}
+
+							{/* Auth Section */}
+							{!isAuthenticated ? (
+								<>
+									<Link
+										to="/login"
+										onClick={() => setIsMobileMenuOpen(false)}
+										className="flex items-center gap-3 text-lg font-medium text-gray-300 hover:text-white transition-colors"
+									>
+										<LogIn className="w-5 h-5" />
+										Login
+									</Link>
+									<Link
+										to="/register"
+										onClick={() => setIsMobileMenuOpen(false)}
+										className="flex items-center gap-3 text-lg font-medium text-gray-300 hover:text-white transition-colors"
+									>
+										<UserPlus className="w-5 h-5" />
+										Register
+									</Link>
+								</>
+							) : (
+								<>
+									{userRole === "admin" ? (
+										<>
+											<Link
+												to="/admin/dashboard"
+												onClick={() => setIsMobileMenuOpen(false)}
+												className="flex items-center gap-3 text-lg font-medium text-gray-300 hover:text-white transition-colors"
+											>
+												<User className="w-5 h-5" />
+												Admin Dashboard
+											</Link>
+										</>
+									) : (
+										<>
+											<Link
+												to="/dashboard"
+												onClick={() => setIsMobileMenuOpen(false)}
+												className="flex items-center gap-3 text-lg font-medium text-gray-300 hover:text-white transition-colors"
+											>
+												<User className="w-5 h-5" />
+												Profile
+											</Link>
+											<Link
+												to="/orders"
+												onClick={() => setIsMobileMenuOpen(false)}
+												className="flex items-center gap-3 text-lg font-medium text-gray-300 hover:text-white transition-colors"
+											>
+												<Package className="w-5 h-5" />
+												My Orders
+											</Link>
+											<Link
+												to="/addresses"
+												onClick={() => setIsMobileMenuOpen(false)}
+												className="flex items-center gap-3 text-lg font-medium text-gray-300 hover:text-white transition-colors"
+											>
+												<MapPin className="w-5 h-5" />
+												Addresses
+											</Link>
+										</>
+									)}
+									<button
+										onClick={() => {
+											logout();
+											setIsMobileMenuOpen(false);
+										}}
+										className="flex items-center gap-3 text-lg font-medium text-gray-300 hover:text-red-400 transition-colors"
+									>
+										<LogOut className="w-5 h-5" />
+										Logout
+									</button>
+								</>
+							)}
 						</div>
 					</div>
 				</motion.div>

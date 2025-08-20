@@ -1,6 +1,8 @@
 // Utility function to get the correct image URL
 export const getImageUrl = (imagePath: string): string => {
-  const baseUrl = 'http://localhost:5000';
+  // Get base URL from environment variable, fallback to localhost for development
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  const baseUrl = apiUrl.replace('/api', ''); // Remove /api suffix to get base URL
   
   // If the path already starts with http, it's a full URL
   if (imagePath.startsWith('http')) {

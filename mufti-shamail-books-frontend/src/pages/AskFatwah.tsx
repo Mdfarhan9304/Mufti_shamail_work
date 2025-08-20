@@ -45,7 +45,7 @@ const AskFatwah = () => {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		
+
 		if (!formData.question.trim()) {
 			toast.error("Please enter your question");
 			return;
@@ -64,7 +64,7 @@ const AskFatwah = () => {
 				askerEmail: formData.askerEmail.trim() || undefined,
 				categories: formData.categories
 			});
-			
+
 			setIsSubmitted(true);
 			toast.success("Your question has been submitted successfully!");
 		} catch (error) {
@@ -97,7 +97,7 @@ const AskFatwah = () => {
 			<main className="min-h-screen bg-[#121510] pt-20 md:pt-24">
 				<section className="relative py-16 md:py-24">
 					<div className="absolute inset-0 bg-gradient-to-b from-[#1a1f17] to-[#191a13]" />
-					
+
 					<div className="max-w-2xl mx-auto px-6 lg:px-8 relative">
 						<motion.div
 							className="bg-[#191b14] rounded-2xl p-8 shadow-xl text-center"
@@ -108,16 +108,16 @@ const AskFatwah = () => {
 							<div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
 								<CheckCircle className="w-8 h-8 text-green-400" />
 							</div>
-							
+
 							<h1 className="text-3xl font-bold text-[#c3e5a5] mb-4">
 								Question Submitted Successfully!
 							</h1>
-							
+
 							<p className="text-gray-300 mb-8 leading-relaxed">
-								Thank you for your question. Our scholars will review it and provide an answer soon. 
+								Thank you for your question. Our scholars will review it and provide an answer soon.
 								The response will be published on our Fatwah page for everyone to benefit from.
 							</p>
-							
+
 							<div className="flex flex-col sm:flex-row gap-4 justify-center">
 								<Link
 									to="/fatwah"
@@ -151,7 +151,7 @@ const AskFatwah = () => {
 		<main className="min-h-screen bg-[#121510] pt-20 md:pt-24">
 			<section className="relative py-16 md:py-24">
 				<div className="absolute inset-0 bg-gradient-to-b from-[#1a1f17] to-[#191a13]" />
-				
+
 				<div className="max-w-2xl mx-auto px-6 lg:px-8 relative">
 					{/* Header */}
 					<motion.div
@@ -171,7 +171,7 @@ const AskFatwah = () => {
 								<MessageCircle className="w-8 h-8 text-[#c3e5a5]" />
 							</div>
 						</div>
-						
+
 						<h1 className="text-4xl md:text-5xl font-bold text-[#c3e5a5] mb-4">
 							Ask a Fatwah
 						</h1>
@@ -218,11 +218,10 @@ const AskFatwah = () => {
 											key={category}
 											type="button"
 											onClick={() => handleCategoryChange(category)}
-											className={`p-3 rounded-lg border-2 transition-all text-sm font-medium ${
-												formData.categories.includes(category)
+											className={`p-3 rounded-lg border-2 transition-all text-sm font-medium ${formData.categories.includes(category)
 													? getCategoryColor(category)
 													: "border-gray-600 bg-[#24271b] text-gray-400 hover:border-gray-500"
-											}`}
+												}`}
 										>
 											{category}
 										</button>
@@ -241,7 +240,7 @@ const AskFatwah = () => {
 								<p className="text-sm text-gray-400">
 									Providing your contact details is optional. They will only be used for clarification if needed and will not be published.
 								</p>
-								
+
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 									<input
 										type="text"

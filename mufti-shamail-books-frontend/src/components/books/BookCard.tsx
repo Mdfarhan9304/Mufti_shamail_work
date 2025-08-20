@@ -31,7 +31,7 @@ const BookCard = ({ book }: { book: Book }) => {
 
 	return (
 		<motion.div
-			className="group bg-[#191b14] rounded-xl overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 w-96"
+			className="group bg-[#191b14] rounded-xl overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 w-full max-w-sm mx-auto"
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			transition={{ duration: 0.8 }}
@@ -44,23 +44,37 @@ const BookCard = ({ book }: { book: Book }) => {
 				/>
 			</div>
 
-			<div className="p-6 space-y-6">
-				<div className="space-y-3">
-					<h3 className="text-xl font-bold text-white">
+			<div className="p-4 md:p-6 space-y-4 md:space-y-6">
+				<div className="space-y-2 md:space-y-3">
+					<h3 className="text-lg md:text-xl font-bold text-white line-clamp-2">
 						{book.name}
 					</h3>
-					<p className="text-sm text-[#c3e5a5]">By {book.author}</p>
+					<div className="flex items-center justify-between">
+						<p className="text-sm text-[#c3e5a5]">By {book.author}</p>
+						<div className="flex gap-1">
+							{book.availableLanguages?.english && (
+								<span className="text-xs bg-[#c3e5a5]/20 text-[#c3e5a5] px-2 py-1 rounded-full">
+									English
+								</span>
+							)}
+							{book.availableLanguages?.urdu && (
+								<span className="text-xs bg-[#c3e5a5]/20 text-[#c3e5a5] px-2 py-1 rounded-full">
+									Urdu
+								</span>
+							)}
+						</div>
+					</div>
 					<p className="text-gray-400 line-clamp-2 text-sm">
 						{book.description}
 					</p>
-					<p className="text-2xl font-bold text-[#c3e5a5]">
+					<p className="text-xl md:text-2xl font-bold text-[#c3e5a5]">
 						₹{book.price}
 					</p>
 				</div>
 
-				<div className="flex items-center gap-4">
+				<div className="flex flex-col sm:flex-row items-center gap-3 md:gap-4">
 					{cartItem && cartItem.quantity! > 0 ? (
-						<div className="flex items-center gap-2 bg-[#24271b] rounded-lg p-1.5">
+						<div className="flex items-center gap-2 bg-[#24271b] rounded-lg p-1.5 w-full sm:w-auto justify-center">
 							<button
 								disabled={cartLoading}
 								onClick={() =>
@@ -73,7 +87,7 @@ const BookCard = ({ book }: { book: Book }) => {
 							>
 								<Minus className="w-4 h-4" />
 							</button>
-							<span className="text-white text-sm px-2">
+							<span className="text-white text-sm px-2 min-w-[24px] text-center">
 								{cartLoading ? (
 									<Loader2 className="animate-spin w-2 h-2" />
 								) : (
@@ -106,7 +120,7 @@ const BookCard = ({ book }: { book: Book }) => {
 									});
 								}
 							}}
-							className={`flex-1 px-4 py-2 bg-[#c3e5a5] text-gray-600 rounded-lg font-medium hover:bg-[#a1c780] transition-all text-sm ${
+							className={`w-full sm:flex-1 px-3 md:px-4 py-2 bg-[#c3e5a5] text-gray-600 rounded-lg font-medium hover:bg-[#a1c780] transition-all text-sm ${
 								user?.role === "admin"
 									? "cursor-not-allowed bg-[#687a58] hover:bg-[#687a58]"
 									: ""
@@ -118,7 +132,7 @@ const BookCard = ({ book }: { book: Book }) => {
 					)}
 					<Link
 						to={`/book/${book._id}`}
-						className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-[#24271b] text-[#c3e5a5] rounded-lg font-medium hover:bg-[#2f332a] transition-all text-sm"
+						className="w-full sm:flex-1 flex items-center justify-center gap-2 px-3 md:px-4 py-2 bg-[#24271b] text-[#c3e5a5] rounded-lg font-medium hover:bg-[#2f332a] transition-all text-sm"
 					>
 						Details
 						<ArrowRight className="w-4 h-4" />

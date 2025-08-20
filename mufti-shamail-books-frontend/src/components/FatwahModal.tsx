@@ -63,7 +63,7 @@ const FatwahModal = ({ isOpen, onClose, onSave, type, fatwah, categories }: Fatw
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		
+
 		if (!validateForm()) {
 			return;
 		}
@@ -202,11 +202,10 @@ const FatwahModal = ({ isOpen, onClose, onSave, type, fatwah, categories }: Fatw
 										type="button"
 										onClick={() => type !== "view" && handleCategoryToggle(category)}
 										disabled={type === "view"}
-										className={`p-3 rounded-lg border text-sm font-medium transition-all disabled:cursor-not-allowed ${
-											formData.categories.includes(category)
+										className={`p-3 rounded-lg border text-sm font-medium transition-all disabled:cursor-not-allowed ${formData.categories.includes(category)
 												? getCategoryColor(category)
 												: "bg-[#24271b] text-gray-400 border-[#2f332a] hover:border-[#c3e5a5]/20"
-										}`}
+											}`}
 									>
 										<Tag className="w-4 h-4 inline mr-2" />
 										{category}

@@ -1,15 +1,15 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { 
-	Search, 
-	Filter, 
-	Plus, 
-	Edit, 
-	Trash2, 
-	Eye, 
-	Calendar, 
-	Tag, 
-	ChevronDown, 
+import {
+	Search,
+	Filter,
+	Plus,
+	Edit,
+	Trash2,
+	Eye,
+	Calendar,
+	Tag,
+	ChevronDown,
 	Loader2,
 	MessageCircle,
 	CheckCircle,
@@ -170,113 +170,118 @@ const ManageFatwahs = () => {
 		<main className="min-h-screen bg-[#121510] pt-20 md:pt-24">
 			<section className="relative py-16 md:py-24">
 				<div className="absolute inset-0 bg-gradient-to-b from-[#1a1f17] to-[#191a13]" />
-				
+
 				<div className="max-w-7xl mx-auto px-6 lg:px-8 relative">
 					{/* Header */}
 					<motion.div
-						className="flex flex-col md:flex-row md:items-center justify-between mb-8"
+						className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:items-center justify-between mb-8"
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.8 }}
 					>
 						<div>
-							<h1 className="text-4xl md:text-5xl font-bold text-[#c3e5a5] mb-2">
+							<h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#c3e5a5] mb-2">
 								Manage Fatwahs
 							</h1>
-							<p className="text-gray-300">
+							<p className="text-gray-300 text-sm md:text-base">
 								Review questions, create fatwahs, and manage published content
 							</p>
 						</div>
 						<button
 							onClick={() => openModal("create")}
-							className="mt-4 md:mt-0 inline-flex items-center gap-2 px-6 py-3 bg-[#c3e5a5] text-gray-800 rounded-full font-medium hover:bg-[#a1c780] transition-all"
+							className="inline-flex items-center justify-center gap-2 px-4 md:px-6 py-3 bg-[#c3e5a5] text-gray-800 rounded-full font-medium text-sm md:text-base hover:bg-[#a1c780] transition-all w-full md:w-auto"
 						>
-							<Plus className="w-5 h-5" />
+							<Plus className="w-4 h-4 md:w-5 md:h-5" />
 							Create Fatwah
 						</button>
 					</motion.div>
 
 					{/* Search and Filters */}
 					<motion.div
-						className="bg-[#191b14] rounded-xl p-6 mb-8"
+						className="bg-[#191b14] rounded-xl p-4 md:p-6 mb-8"
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.8, delay: 0.2 }}
 					>
-						<div className="flex flex-col lg:flex-row gap-4">
+						<div className="flex flex-col gap-4">
 							{/* Search */}
-							<form onSubmit={handleSearch} className="flex-1">
+							<form onSubmit={handleSearch} className="w-full">
 								<div className="relative">
-									<Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+									<Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 md:w-5 md:h-5" />
 									<input
 										type="text"
 										placeholder="Search fatwahs..."
 										value={searchTerm}
 										onChange={(e) => setSearchTerm(e.target.value)}
-										className="w-full bg-[#24271b] text-white rounded-lg pl-12 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#c3e5a5] transition-all"
+										className="w-full bg-[#24271b] text-white rounded-lg pl-10 md:pl-12 pr-4 py-3 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-[#c3e5a5] transition-all"
 									/>
 								</div>
 							</form>
 
-							{/* Status Filter */}
-							<select
-								value={selectedStatus}
-								onChange={(e) => {
-									setSelectedStatus(e.target.value);
-									setCurrentPage(1);
-								}}
-								className="px-4 py-3 bg-[#24271b] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c3e5a5] transition-all"
-							>
-								<option value="all">All Status</option>
-								<option value={FatwahStatus.PENDING}>Pending</option>
-								<option value={FatwahStatus.DRAFT}>Draft</option>
-								<option value={FatwahStatus.PUBLISHED}>Published</option>
-							</select>
-
-							{/* Category Filter */}
-							<div className="relative">
-								<button
-									onClick={() => setIsFilterOpen(!isFilterOpen)}
-									className="flex items-center gap-2 px-6 py-3 bg-[#24271b] text-white rounded-lg hover:bg-[#2f332a] transition-colors min-w-[200px] justify-between"
+							{/* Filters */}
+							<div className="flex flex-col sm:flex-row gap-3">
+								{/* Status Filter */}
+								<select
+									value={selectedStatus}
+									onChange={(e) => {
+										setSelectedStatus(e.target.value);
+										setCurrentPage(1);
+									}}
+									className="flex-1 px-4 py-3 bg-[#24271b] text-white rounded-lg text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-[#c3e5a5] transition-all"
 								>
-									<div className="flex items-center gap-2">
-										<Filter className="w-5 h-5" />
-										{selectedCategory === "all" ? "All Categories" : selectedCategory}
-									</div>
-									<ChevronDown className={`w-5 h-5 transition-transform ${isFilterOpen ? "rotate-180" : ""}`} />
-								</button>
+									<option value="all">All Status</option>
+									<option value={FatwahStatus.PENDING}>Pending</option>
+									<option value={FatwahStatus.DRAFT}>Draft</option>
+									<option value={FatwahStatus.PUBLISHED}>Published</option>
+								</select>
 
-								{isFilterOpen && (
-									<motion.div
-										initial={{ opacity: 0, y: -10 }}
-										animate={{ opacity: 1, y: 0 }}
-										className="absolute top-full mt-2 left-0 right-0 bg-[#191b14] rounded-xl shadow-xl border border-[#24271b] z-50 max-h-[300px] overflow-y-auto"
+								{/* Category Filter */}
+								<div className="relative flex-1">
+									<button
+										onClick={() => setIsFilterOpen(!isFilterOpen)}
+										className="flex items-center gap-2 px-4 py-3 bg-[#24271b] text-white rounded-lg hover:bg-[#2f332a] transition-colors w-full justify-between text-sm md:text-base"
 									>
-										<button
-											onClick={() => {
-												setSelectedCategory("all");
-												setCurrentPage(1);
-												setIsFilterOpen(false);
-											}}
-											className={`w-full text-left px-4 py-3 hover:bg-[#24271b] transition-colors ${selectedCategory === "all" ? "bg-[#24271b] text-[#c3e5a5]" : "text-white"}`}
+										<div className="flex items-center gap-2">
+											<Filter className="w-4 h-4 md:w-5 md:h-5" />
+											<span className="truncate">
+												{selectedCategory === "all" ? "All Categories" : selectedCategory}
+											</span>
+										</div>
+										<ChevronDown className={`w-4 h-4 md:w-5 md:h-5 transition-transform flex-shrink-0 ${isFilterOpen ? "rotate-180" : ""}`} />
+									</button>
+
+									{isFilterOpen && (
+										<motion.div
+											initial={{ opacity: 0, y: -10 }}
+											animate={{ opacity: 1, y: 0 }}
+											className="absolute top-full mt-2 left-0 right-0 bg-[#191b14] rounded-xl shadow-xl border border-[#24271b] z-50 max-h-[300px] overflow-y-auto"
 										>
-											All Categories
-										</button>
-										{categories.map((category) => (
 											<button
-												key={category}
 												onClick={() => {
-													setSelectedCategory(category);
+													setSelectedCategory("all");
 													setCurrentPage(1);
 													setIsFilterOpen(false);
 												}}
-												className={`w-full text-left px-4 py-3 hover:bg-[#24271b] transition-colors ${selectedCategory === category ? "bg-[#24271b] text-[#c3e5a5]" : "text-white"}`}
+												className={`w-full text-left px-4 py-3 hover:bg-[#24271b] transition-colors text-sm md:text-base ${selectedCategory === "all" ? "bg-[#24271b] text-[#c3e5a5]" : "text-white"}`}
 											>
-												{category}
+												All Categories
 											</button>
-										))}
-									</motion.div>
-								)}
+											{categories.map((category) => (
+												<button
+													key={category}
+													onClick={() => {
+														setSelectedCategory(category);
+														setCurrentPage(1);
+														setIsFilterOpen(false);
+													}}
+													className={`w-full text-left px-4 py-3 hover:bg-[#24271b] transition-colors text-sm md:text-base ${selectedCategory === category ? "bg-[#24271b] text-[#c3e5a5]" : "text-white"}`}
+												>
+													{category}
+												</button>
+											))}
+										</motion.div>
+									)}
+								</div>
 							</div>
 						</div>
 					</motion.div>
@@ -284,20 +289,20 @@ const ManageFatwahs = () => {
 					{/* Fatwahs List */}
 					{isLoading ? (
 						<div className="grid place-items-center py-16">
-							<Loader2 className="w-8 h-8 text-[#c3e5a5] animate-spin" />
+							<Loader2 className="w-6 h-6 md:w-8 md:h-8 text-[#c3e5a5] animate-spin" />
 						</div>
 					) : fatwahs.length === 0 ? (
 						<motion.div
-							className="text-center py-16"
+							className="text-center py-12 md:py-16"
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 						>
-							<MessageCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-							<h3 className="text-2xl font-bold text-gray-300 mb-2">No fatwahs found</h3>
-							<p className="text-gray-400 mb-6">Try adjusting your search terms or filters.</p>
+							<MessageCircle className="w-12 h-12 md:w-16 md:h-16 text-gray-400 mx-auto mb-4" />
+							<h3 className="text-xl md:text-2xl font-bold text-gray-300 mb-2">No fatwahs found</h3>
+							<p className="text-gray-400 mb-6 text-sm md:text-base px-4">Try adjusting your search terms or filters.</p>
 							<button
 								onClick={() => openModal("create")}
-								className="inline-flex items-center gap-2 px-6 py-3 bg-[#c3e5a5] text-gray-800 rounded-full font-medium hover:bg-[#a1c780] transition-all"
+								className="inline-flex items-center gap-2 px-4 md:px-6 py-3 bg-[#c3e5a5] text-gray-800 rounded-full font-medium hover:bg-[#a1c780] transition-all text-sm md:text-base"
 							>
 								Create First Fatwah
 							</button>
@@ -307,27 +312,27 @@ const ManageFatwahs = () => {
 							{fatwahs.map((fatwah, index) => (
 								<motion.div
 									key={fatwah._id}
-									className="bg-[#191b14] rounded-xl p-6 shadow-xl"
+									className="bg-[#191b14] rounded-xl p-4 md:p-6 shadow-xl"
 									initial={{ opacity: 0, y: 20 }}
 									animate={{ opacity: 1, y: 0 }}
 									transition={{ duration: 0.8, delay: index * 0.05 }}
 								>
-									<div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+									<div className="flex flex-col gap-4">
 										<div className="flex-1">
 											{/* Question */}
-											<h3 className="text-xl font-bold text-white mb-2 line-clamp-2">
+											<h3 className="text-lg md:text-xl font-bold text-white mb-2 line-clamp-2">
 												{fatwah.question}
 											</h3>
 
 											{/* Answer Preview */}
 											{fatwah.answer && (
-												<p className="text-gray-300 mb-3 line-clamp-2">
+												<p className="text-gray-300 mb-3 line-clamp-2 text-sm md:text-base">
 													{fatwah.answer}
 												</p>
 											)}
 
 											{/* Categories */}
-											<div className="flex flex-wrap gap-2 mb-3">
+											<div className="flex flex-wrap gap-1 md:gap-2 mb-3">
 												{fatwah.categories.map((category) => (
 													<span
 														key={category}
@@ -340,12 +345,12 @@ const ManageFatwahs = () => {
 											</div>
 
 											{/* Meta Info */}
-											<div className="flex items-center gap-4 text-sm text-gray-400">
+											<div className="flex flex-col space-y-1 md:flex-row md:space-y-0 md:items-center md:gap-4 text-xs md:text-sm text-gray-400">
 												{fatwah.askerName && (
 													<span>By: {fatwah.askerName}</span>
 												)}
 												<div className="flex items-center gap-1">
-													<Calendar className="w-4 h-4" />
+													<Calendar className="w-3 h-3 md:w-4 md:h-4" />
 													{formatDate(fatwah.createdAt)}
 												</div>
 												{fatwah.answeredBy && (
@@ -354,11 +359,11 @@ const ManageFatwahs = () => {
 											</div>
 										</div>
 
-										<div className="flex flex-col items-end gap-3">
+										<div className="flex items-center justify-between gap-3 pt-3 border-t border-gray-700">
 											{/* Status */}
 											<div className={`flex items-center gap-2 px-3 py-1 rounded-full border ${getStatusColor(fatwah.status)}`}>
 												{getStatusIcon(fatwah.status)}
-												<span className="text-sm font-medium capitalize">{fatwah.status}</span>
+												<span className="text-xs md:text-sm font-medium capitalize">{fatwah.status}</span>
 											</div>
 
 											{/* Actions */}
@@ -366,18 +371,21 @@ const ManageFatwahs = () => {
 												<button
 													onClick={() => openModal("view", fatwah)}
 													className="p-2 bg-[#24271b] text-gray-300 rounded-lg hover:bg-[#2f332a] hover:text-[#c3e5a5] transition-colors"
+													title="View"
 												>
 													<Eye className="w-4 h-4" />
 												</button>
 												<button
 													onClick={() => openModal("edit", fatwah)}
 													className="p-2 bg-[#24271b] text-gray-300 rounded-lg hover:bg-[#2f332a] hover:text-blue-400 transition-colors"
+													title="Edit"
 												>
 													<Edit className="w-4 h-4" />
 												</button>
 												<button
 													onClick={() => handleDelete(fatwah._id)}
 													className="p-2 bg-[#24271b] text-gray-300 rounded-lg hover:bg-[#2f332a] hover:text-red-400 transition-colors"
+													title="Delete"
 												>
 													<Trash2 className="w-4 h-4" />
 												</button>
@@ -402,34 +410,34 @@ const ManageFatwahs = () => {
 					{/* Pagination */}
 					{totalPages > 1 && (
 						<motion.div
-							className="flex justify-center mt-12"
+							className="flex justify-center mt-8 md:mt-12"
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							transition={{ delay: 0.3 }}
 						>
-							<div className="flex items-center gap-2">
+							<div className="flex items-center gap-1 md:gap-2">
 								<button
 									onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
 									disabled={currentPage === 1}
-									className="px-4 py-2 bg-[#24271b] text-white rounded-lg hover:bg-[#2f332a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+									className="px-3 md:px-4 py-2 bg-[#24271b] text-white rounded-lg hover:bg-[#2f332a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
 								>
-									Previous
+									<span className="hidden sm:inline">Previous</span>
+									<span className="sm:hidden">Prev</span>
 								</button>
-								
+
 								<div className="flex items-center gap-1">
 									{Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-										const page = currentPage <= 3 ? i + 1 : currentPage - 2 + i;
+										const page = currentPage <= 2 ? i + 1 : currentPage - 1 + i;
 										if (page > totalPages) return null;
-										
+
 										return (
 											<button
 												key={page}
 												onClick={() => setCurrentPage(page)}
-												className={`px-3 py-2 rounded-lg transition-colors ${
-													currentPage === page
-														? "bg-[#c3e5a5] text-gray-800"
-														: "bg-[#24271b] text-white hover:bg-[#2f332a]"
-												}`}
+												className={`px-2 md:px-3 py-2 rounded-lg transition-colors text-sm md:text-base ${currentPage === page
+													? "bg-[#c3e5a5] text-gray-800"
+													: "bg-[#24271b] text-white hover:bg-[#2f332a]"
+													}`}
 											>
 												{page}
 											</button>
@@ -440,9 +448,10 @@ const ManageFatwahs = () => {
 								<button
 									onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
 									disabled={currentPage === totalPages}
-									className="px-4 py-2 bg-[#24271b] text-white rounded-lg hover:bg-[#2f332a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+									className="px-3 md:px-4 py-2 bg-[#24271b] text-white rounded-lg hover:bg-[#2f332a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
 								>
-									Next
+									<span className="hidden sm:inline">Next</span>
+									<span className="sm:hidden">Next</span>
 								</button>
 							</div>
 						</motion.div>

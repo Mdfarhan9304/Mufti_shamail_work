@@ -14,6 +14,11 @@ interface CartItem {
 	description: string;
 	author: string;
 	images: string[];
+	selectedLanguage?: string;
+	availableLanguages?: {
+		english: boolean;
+		urdu: boolean;
+	};
 }
 
 interface GuestCartContextType {
