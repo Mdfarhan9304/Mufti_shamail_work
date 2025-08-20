@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
-import { createOrderShippedTemplate, createOrderDeliveredTemplate } from "./emailTemplates/orderConfirmation";
+import { createOrderShippedTemplate, createOrderDeliveredTemplate, createOrderConfirmationTemplate } from "./emailTemplates/orderConfirmation";
+import { createOrderRTOTemplate } from "./emailTemplates/orderRTO";
 
 const transporter = nodemailer.createTransport({
 	host: process.env.SMTP_HOST,
@@ -120,6 +121,27 @@ export const sendPasswordResetEmail = async (
 	});
 };
 
+export const sendOrderConfirmationEmail = async (orderData: any) => {
+	// Prepare items for email template
+	const items = orderData.items.map((item: any) => ({
+		title: item.book?.name || item.book?.title || "Book",
+		quantity: item.quantity,
+		price: (item.book?.price || 0) * item.quantity
+	}));
+
+	await transporter.sendMail({
+		from: process.env.SMTP_FROM,
+		to: orderData.contactDetails.email,
+		subject: `🎉 Order Confirmation - ${orderData.orderNumber}`,
+		html: createOrderConfirmationTemplate(
+			orderData.contactDetails.name,
+			orderData.orderNumber,
+			items,
+			orderData.amount
+		),
+	});
+};
+
 export const sendOrderShippedEmail = async (orderData: any) => {
 	await transporter.sendMail({
 		from: process.env.SMTP_FROM,
@@ -137,6 +159,16 @@ export const sendOrderDeliveredEmail = async (orderData: any) => {
         to: "mdfarhan9304@gmail.com",
 		subject: `✅ Your Order ${orderData.orderNumber} Has Been Delivered!`,
 		html: createOrderDeliveredTemplate(orderData),
+	});
+};
+
+export const sendOrderRTOEmail = async (orderData: any) => {
+	await transporter.sendMail({
+		from: process.env.SMTP_FROM,
+		// to: orderData.contactDetails.email,
+        to: "mdfarhan9304@gmail.com",
+		subject: `🔄 Order ${orderData.orderNumber} - Return to Origin Notice`,
+		html: createOrderRTOTemplate(orderData),
 	});
 };
 

@@ -1,10 +1,11 @@
 // Import necessary modules
 import axios from "axios";
 import { Buffer } from "node:buffer"; // Buffer for encoding/decoding data
-import { generateChecksum, generateTransactionId } from "../utils/helper";
+import { generateChecksum, generateTransactionId, calculateDeliveryCharges } from "../utils/helper";
 import { NextFunction, Request, Response } from "express";
 import { AuthRequest } from "../types";
 import { Order } from "../models/Order";
+import { sendOrderConfirmationEmail } from "../services/emailService";
 
 const PAYMENT_SALT_KEY = process.env.PAYMENT_SALT_KEY; // Salt key used for checksum generation
 const MERCHANT_ID = process.env.MERCHANT_ID; // Merchant ID provided by PhonePe
@@ -131,6 +132,20 @@ export const checkOrderPaymentStatus = async (
 			
 			if (existingOrder) {
 				console.log("Found existing order:", existingOrder._id);
+				
+				// Send order confirmation email if it's a recent order (within last 5 minutes)
+				const orderAge = Date.now() - existingOrder.createdAt.getTime();
+				const fiveMinutes = 5 * 60 * 1000;
+				
+				if (orderAge < fiveMinutes) {
+					try {
+						await sendOrderConfirmationEmail(existingOrder);
+						console.log("Order confirmation email sent for existing order");
+					} catch (emailError) {
+						console.error("Failed to send order confirmation email for existing order:", emailError);
+					}
+				}
+				
 				const orderResponse = {
 					success: true,
 					order: {
@@ -192,6 +207,15 @@ export const checkOrderPaymentStatus = async (
 			const populatedOrder = await order.populate('items.book');
 
 			console.log("Order created successfully:", populatedOrder._id);
+
+			// Send order confirmation email
+			try {
+				await sendOrderConfirmationEmail(populatedOrder);
+				console.log("Order confirmation email sent successfully");
+			} catch (emailError) {
+				console.error("Failed to send order confirmation email:", emailError);
+				// Don't fail the order creation if email fails
+			}
 
 			const orderResponse = {
 				success: true,

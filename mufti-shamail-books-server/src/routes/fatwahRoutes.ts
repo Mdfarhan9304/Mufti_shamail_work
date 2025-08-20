@@ -1,13 +1,13 @@
 import express, { Router } from "express";
 import {
-	getPublishedFatwahs,
-	getAllFatwahs,
-	getFatwahById,
-	submitQuestion,
-	createFatwah,
-	updateFatwah,
-	deleteFatwah,
-	getFatwahCategories
+  getPublishedFatwahs,
+  getAllFatwahs,
+  getFatwahById,
+  submitQuestion,
+  createFatwah,
+  updateFatwah,
+  deleteFatwah,
+  getFatwahCategories,
 } from "../controllers/fatwahController";
 import { protect, authorize } from "../middlewares/auth";
 

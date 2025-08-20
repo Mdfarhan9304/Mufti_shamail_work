@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { Order, OrderDocument } from "../models/Order";
 import { fixCart } from "../utils/helper";
 import { ApiError } from "../utils/errors";
-import { sendOrderShippedEmail, sendOrderDeliveredEmail } from "../services/emailService";
+import { sendOrderShippedEmail, sendOrderDeliveredEmail, sendOrderRTOEmail } from "../services/emailService";
 
 // Extend Express Request to include user property
 interface AuthRequest extends Request {
@@ -166,7 +166,7 @@ export const updateOrderStatus = async (req: AuthRequest, res: Response) => {
         }
 
         // Validate status
-        const validStatuses = ["pending", "processing", "shipped", "delivered", "cancelled"];
+        const validStatuses = ["pending", "shipped", "delivered", "RTO"];
         if (!validStatuses.includes(status)) {
             throw new ApiError(400, "Invalid status value");
         }
@@ -225,13 +225,17 @@ export const updateOrderStatus = async (req: AuthRequest, res: Response) => {
             items: fixCart(order.items),
         };
 
-        // Send email notifications for status changes
+        // Send email notifications for status changes (except pending)
         try {
             if (status === "shipped" && currentOrder.status !== "shipped") {
                 await sendOrderShippedEmail(updatedOrder);
                 console.log("Shipped email sent successfully");
             } else if (status === "delivered" && currentOrder.status !== "delivered") {
                 await sendOrderDeliveredEmail(updatedOrder);
+                console.log("Delivered email sent successfully");
+            } else if (status === "RTO" && currentOrder.status !== "RTO") {
+                await sendOrderRTOEmail(updatedOrder);
+                console.log("RTO email sent successfully");
             }
         } catch (emailError) {
             console.error("Error sending status update email:", emailError);
@@ -241,7 +245,7 @@ export const updateOrderStatus = async (req: AuthRequest, res: Response) => {
         res.status(200).json({
             success: true,
             data: { order: updatedOrder },
-            message: `Order status updated to ${status}${status === 'shipped' || status === 'delivered' ? '. Email notification sent.' : ''}`
+            message: `Order status updated to ${status}${status === 'shipped' || status === 'delivered' || status === 'RTO' ? '. Email notification sent.' : ''}`
         });
     } catch (error) {
         console.error("Error updating order status:", error);

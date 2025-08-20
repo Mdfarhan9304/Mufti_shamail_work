@@ -1,8 +1,8 @@
 import express, {
-	NextFunction,
-	Request,
-	Response,
-	RequestHandler,
+  NextFunction,
+  Request,
+  Response,
+  RequestHandler,
 } from "express";
 import dotenv from "dotenv";
 import connectDB from "./configs/db";
@@ -18,7 +18,10 @@ import passwordRoutes from "./routes/passwordRoutes";
 import uploadRoutes from "./routes/uploadRoutes";
 import fatwahRoutes from "./routes/fatwahRoutes";
 import { errorHandler } from "./middlewares/errorHandler";
-import { sendOrderShippedEmail, sendOrderDeliveredEmail } from "./services/emailService";
+import {
+  sendOrderShippedEmail,
+  sendOrderDeliveredEmail,
+} from "./services/emailService";
 import path from "path";
 
 // const envFile =
@@ -32,28 +35,28 @@ connectDB();
 
 // Root endpoint
 app.get("/", (req, res) => {
-	res.json({
-		name: "Mufti Shamail Books API",
-		version: "1.0.0",
-		status: "running",
-	});
+  res.json({
+    name: "Mufti Shamail Books API",
+    version: "1.0.0",
+    status: "running",
+  });
 });
 
 // Health check endpoint
 app.get("/health", (req, res) => {
-	res.json({
-		status: "healthy",
-		uptime: process.uptime(),
-		timestamp: new Date().toISOString(),
-	});
+  res.json({
+    status: "healthy",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+  });
 });
 
 const allowedOrigins = [
-	"http://localhost:5173",
-	"http://srv705671.hstgr.cloud",
-	"https://srv705671.hstgr.cloud",
-	"https://mufti-shamail-books.onrender.com",
-	// Add frontend domain here once froneend is deployed
+  "http://localhost:5173",
+  "http://srv705671.hstgr.cloud",
+  "https://srv705671.hstgr.cloud",
+  "https://mufti-shamail-books.onrender.com",
+  // Add frontend domain here once froneend is deployed
 ];
 
 // app.use((req: Request, res: Response, next: NextFunction) => {
@@ -92,10 +95,10 @@ const allowedOrigins = [
 // );
 
 app.use(
-	cors({
-		origin: allowedOrigins,
-		credentials: true,
-	})
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  })
 );
 
 // Middleware
@@ -116,18 +119,18 @@ app.use("/api/password", passwordRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/fatwahs", fatwahRoutes);
 app.post("/api/email/test", (req, res) => {
-    sendOrderShippedEmail({
-        orderNumber: "1234567890",
-        contactDetails: {
-            email: "mdfarhan9304@gmail.com",
-        },
-    });
-    res.json({ message: "Email sent successfully" });
+  sendOrderShippedEmail({
+    orderNumber: "1234567890",
+    contactDetails: {
+      email: "mdfarhan9304@gmail.com",
+    },
+  });
+  res.json({ message: "Email sent successfully" });
 });
 app.use(errorHandler);
 
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-	console.log(`Server running on port https://localhost:${PORT}`);
+  console.log(`Server running on port https://localhost:${PORT}`);
 });

@@ -7,6 +7,16 @@ export const fixCart = (cart: Array<{ book: any; quantity: number }>) => {
 	}));
 };
 
+// Calculate delivery charges based on total book quantity
+export const calculateDeliveryCharges = (totalQuantity: number): number => {
+	// Every 2 books add 50 Rs delivery charge
+	// 1-2 books: 50 Rs
+	// 3-4 books: 100 Rs
+	// 5-6 books: 150 Rs, etc.
+	const deliveryGroups = Math.ceil(totalQuantity / 2);
+	return deliveryGroups * 50;
+};
+
 export const generateTransactionId = () => {
 	const timestamp = Date.now();
 	const randomNumber = Math.floor(Math.random() * 10000)
