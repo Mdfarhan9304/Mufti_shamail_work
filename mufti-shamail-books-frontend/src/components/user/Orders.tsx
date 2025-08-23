@@ -6,6 +6,8 @@ import { getOrders } from "../../apis/orders.api";
 import { toast } from "react-toastify";
 import { Address } from "../../apis/addresses.api";
 import { Link } from "react-router-dom";
+import { getImageUrl } from "../../utils/imageUtils";
+import { formatCurrency, formatPrice } from "../../utils/priceUtils";
 
 interface OrderItem {
 	_id: string;
@@ -106,12 +108,14 @@ const Orders = () => {
 								</div>
 								<div className="flex justify-between md:justify-end items-center w-full md:w-auto">
 									<span className="text-sm md:text-base text-[#c3e5a5]">
-										Total: ₹
-										{order.items.reduce(
-											(sum, item) =>
-												sum +
-												item.price * item.quantity,
-											0
+										Total: {formatCurrency(
+											order.items.reduce(
+												(sum, item) => {
+													const itemPrice = formatPrice(item.price);
+													return sum + (itemPrice * item.quantity);
+												},
+												0
+											)
 										)}
 									</span>
 								</div>
@@ -126,11 +130,13 @@ const Orders = () => {
 									>
 										<div className="w-16 h-16 md:w-20 md:h-20 flex-shrink-0">
 											<img
-												src={`${
-													import.meta.env.VITE_API_URL
-												}/${item.images[0]}`}
+												src={getImageUrl(item.images[0])}
 												alt={item.name}
 												className="w-full h-full object-contain rounded-md"
+												onError={(e) => {
+													// Fallback if image fails to load
+													e.currentTarget.src = '/placeholder-book.jpg';
+												}}
 											/>
 										</div>
 										<div className="flex-1 min-w-0">
@@ -141,7 +147,7 @@ const Orders = () => {
 												Quantity: {item.quantity}
 											</p>
 											<p className="text-[#c3e5a5] text-sm md:text-base mt-1">
-												₹{item.price * item.quantity}
+												{formatCurrency(formatPrice(item.price) * item.quantity)}
 											</p>
 										</div>
 									</Link>

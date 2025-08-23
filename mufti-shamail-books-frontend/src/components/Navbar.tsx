@@ -70,17 +70,11 @@ const Navbar = () => {
 		setIsAuthDropdownOpen(true);
 	};
 
-	const handleAuthMouseLeave = () => {
-		// Don't close immediately, let click outside handle it
-	};
 
 	const handleCartMouseEnter = () => {
 		setIsCartDropdownOpen(true);
 	};
 
-	const handleCartMouseLeave = () => {
-		// Don't close immediately, let click outside handle it
-	};
 
 	const isActiveRoute = (href: string) => {
 		if (href === "/") {
@@ -144,7 +138,7 @@ const Navbar = () => {
 			}}
 			transition={{ duration: 0.4 }}
 		>
-			<div className="mx-auto md:px-4 flex justify-between items-center h-20 md:h-24 max-w-[92.5%] md:max-w-[100%] lg:max-w-[90%] xl:max-w-[75%]">
+			<div className="mx-auto px-4 flex justify-between items-center h-20 md:h-24 max-w-[95%] md:max-w-[100%] lg:max-w-[90%] xl:max-w-[75%]">
 				{/* Left: Animated Text Logo */}
 				<Link to="/" className="flex items-center flex-shrink-0">
 					<motion.div
@@ -157,7 +151,7 @@ const Navbar = () => {
 								key={i}
 								custom={i}
 								variants={letterAnimation}
-								className={`text-xl md:text-2xl lg:text-3xl font-semibold ${letter === " " ? "mr-2" : ""
+								className={`text-lg md:text-2xl lg:text-3xl font-semibold ${letter === " " ? "mr-1 md:mr-2" : ""
 									} ${hasScrolled
 										? i < 5
 											? "text-white/70"
@@ -327,7 +321,7 @@ const Navbar = () => {
 													Profile
 												</Link>
 												<Link
-													to="/orders"
+													to="/dashboard?tab=orders"
 													onClick={() => setIsAuthDropdownOpen(false)}
 													className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:bg-[#24271b] hover:text-white transition-colors"
 												>
@@ -335,7 +329,7 @@ const Navbar = () => {
 													My Orders
 												</Link>
 												<Link
-													to="/addresses"
+													to="/dashboard?tab=addresses"
 													onClick={() => setIsAuthDropdownOpen(false)}
 													className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:bg-[#24271b] hover:text-white transition-colors"
 												>
@@ -363,10 +357,10 @@ const Navbar = () => {
 				</div>
 
 				{/* Mobile Hamburger Icon */}
-				<div className="md:hidden">
+				<div className="md:hidden flex-shrink-0">
 					<button
 						onClick={toggleMobileMenu}
-						className={`focus:outline-none transition-colors duration-300 ${hasScrolled ? "text-gray-300" : "text-white"
+						className={`p-2 focus:outline-none transition-colors duration-300 ${hasScrolled ? "text-gray-300" : "text-white"
 							}`}
 					>
 						<Menu size={24} />
@@ -483,7 +477,7 @@ const Navbar = () => {
 												Profile
 											</Link>
 											<Link
-												to="/orders"
+												to="/dashboard?tab=orders"
 												onClick={() => setIsMobileMenuOpen(false)}
 												className="flex items-center gap-3 text-lg font-medium text-gray-300 hover:text-white transition-colors"
 											>
@@ -491,7 +485,7 @@ const Navbar = () => {
 												My Orders
 											</Link>
 											<Link
-												to="/addresses"
+												to="/dashboard?tab=addresses"
 												onClick={() => setIsMobileMenuOpen(false)}
 												className="flex items-center gap-3 text-lg font-medium text-gray-300 hover:text-white transition-colors"
 											>

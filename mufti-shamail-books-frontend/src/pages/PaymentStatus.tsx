@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { checkPaymentStatus, OrderResponse } from "../apis/payment.api";
+import { formatPrice, PriceType } from "../utils/priceUtils";
 import {
 	Loader2,
 	CheckCircle2,
@@ -60,17 +61,45 @@ const PaymentStatus = () => {
 				// 	return;
 				// }
 
-				interface CartItem {
+				interface GuestCartItem {
 					_id: string;
 					quantity: number;
 					price: number;
+					selectedLanguage?: string;
 				}
 
-				const orderItems = localCart.map((item: CartItem) => ({
-					book: item._id,
-					quantity: item.quantity,
-					price: item.price,
-				}));
+				interface PopulatedBook {
+					_id: string;
+					price: PriceType;
+					name?: string;
+					author?: string;
+					description?: string;
+				}
+
+				interface UserCartItem {
+					book: string | PopulatedBook;
+					quantity: number;
+					selectedLanguage?: string;
+				}
+
+				const orderItems = localCart.map((item: GuestCartItem | UserCartItem) => {
+					// Handle both guest cart items (with _id) and user cart items (with book)
+					const bookId = '_id' in item ? item._id : 
+						(typeof item.book === 'string' ? item.book : item.book._id);
+					
+					// For user cart items, we need to get the price from the populated book data
+					// Use formatPrice to handle MongoDB Decimal128 format
+					const rawPrice = '_id' in item ? item.price : 
+						(typeof item.book === 'object' && 'price' in item.book ? item.book.price : 0);
+					const price = formatPrice(rawPrice);
+
+					return {
+						book: bookId,
+						quantity: item.quantity,
+						price: price,
+						selectedLanguage: item.selectedLanguage || 'english'
+					};
+				});
 
 				console.log("Calling checkPaymentStatus with:", {
 					txnId,

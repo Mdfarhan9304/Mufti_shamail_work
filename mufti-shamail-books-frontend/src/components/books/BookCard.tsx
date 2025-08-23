@@ -6,6 +6,7 @@ import { useAuth } from "../../contexts/AuthContext";
 // import { toast } from "react-toastify";
 import { useGuestCart } from "../../contexts/GuestCartContext";
 import { getImageUrl } from "../../utils/imageUtils";
+import { formatCurrency } from "../../utils/priceUtils";
 
 const BookCard = ({ book }: { book: Book }) => {
 	const {
@@ -68,7 +69,7 @@ const BookCard = ({ book }: { book: Book }) => {
 						{book.description}
 					</p>
 					<p className="text-xl md:text-2xl font-bold text-[#c3e5a5]">
-						₹{book.price}
+						{formatCurrency(book.price)}
 					</p>
 				</div>
 
@@ -111,11 +112,12 @@ const BookCard = ({ book }: { book: Book }) => {
 						<button
 							onClick={async () => {
 								if (user) {
-									await addToCart({ ...book, quantity: 1 });
+									await addToCart({ ...book, quantity: 1, selectedLanguage: 'english' });
 								} else {
 									addToGuestCart({
 										...book,
 										quantity: 1,
+										selectedLanguage: 'english',
 										_id: book._id!,
 									});
 								}

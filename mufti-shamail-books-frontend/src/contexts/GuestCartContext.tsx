@@ -84,7 +84,7 @@ export const GuestCartProvider = ({ children }: { children: ReactNode }) => {
 	};
 
 	const guestTotal = guestCart.reduce(
-		(sum, item) => sum + item.price * item.quantity,
+		(sum, item) => sum + (item.price || 0) * item.quantity,
 		0
 	);
 

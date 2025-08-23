@@ -192,7 +192,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 			const response = await addToCartApi(
 				book._id!,
 				book.quantity,
-				user!._id
+				user!._id,
+				book.selectedLanguage || "english"
 			);
 			setUser((prev) => ({ ...prev!, cart: response.data.cart }));
 			toast.success("Added to cart");

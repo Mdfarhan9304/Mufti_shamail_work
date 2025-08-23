@@ -124,30 +124,35 @@ const FatwahModal = ({ isOpen, onClose, onSave, type, fatwah, categories }: Fatw
 	if (!isOpen) return null;
 
 	return (
-		<div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+		<div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-2 sm:p-4 ">
 			<motion.div
-				className="bg-[#191b14] rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
+				className="bg-[#191b14] rounded-xl shadow-2xl w-full max-w-2xl h-[80vh] sm:max-h-[90vh] overflow-hidden flex flex-col"
 				initial={{ opacity: 0, scale: 0.95 }}
 				animate={{ opacity: 1, scale: 1 }}
 				exit={{ opacity: 0, scale: 0.95 }}
 			>
 				{/* Header */}
-				<div className="flex items-center justify-between p-6 border-b border-[#24271b]">
-					<h2 className="text-2xl font-bold text-[#c3e5a5] flex items-center gap-2">
-						<FileText className="w-6 h-6" />
-						{type === "create" ? "Create New Fatwah" : type === "edit" ? "Edit Fatwah" : "View Fatwah"}
+				<div className="flex items-center justify-between p-4 sm:p-6 border-b border-[#24271b] flex-shrink-0">
+					<h2 className="text-xl sm:text-2xl font-bold text-[#c3e5a5] flex items-center gap-2">
+						<FileText className="w-5 h-5 sm:w-6 sm:h-6" />
+						<span className="hidden sm:inline">
+							{type === "create" ? "Create New Fatwah" : type === "edit" ? "Edit Fatwah" : "View Fatwah"}
+						</span>
+						<span className="sm:hidden">
+							{type === "create" ? "Create" : type === "edit" ? "Edit" : "View"}
+						</span>
 					</h2>
 					<button
 						onClick={onClose}
 						className="p-2 text-gray-400 hover:text-white hover:bg-[#24271b] rounded-lg transition-colors"
 					>
-						<X className="w-6 h-6" />
+						<X className="w-5 h-5 sm:w-6 sm:h-6" />
 					</button>
 				</div>
 
-				{/* Content */}
-				<div className="overflow-y-auto max-h-[calc(90vh-120px)]">
-					<form onSubmit={handleSubmit} className="p-6 space-y-6">
+				{/* Content - Scrollable */}
+				<div className="flex-1 overflow-y-auto">
+					<form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
 						{/* Question */}
 						<div>
 							<label className="block text-sm font-medium text-gray-300 mb-2">
@@ -157,8 +162,8 @@ const FatwahModal = ({ isOpen, onClose, onSave, type, fatwah, categories }: Fatw
 								value={formData.question}
 								onChange={(e) => setFormData(prev => ({ ...prev, question: e.target.value }))}
 								disabled={type === "view"}
-								className="w-full bg-[#24271b] text-white rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-[#c3e5a5] transition-all disabled:opacity-50 disabled:cursor-not-allowed resize-none"
-								rows={4}
+								className="w-full bg-[#24271b] text-white rounded-lg p-3 sm:p-4 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#c3e5a5] transition-all disabled:opacity-50 disabled:cursor-not-allowed resize-none"
+								rows={3}
 								placeholder="Enter the question..."
 							/>
 							{errors.question && (
@@ -178,8 +183,8 @@ const FatwahModal = ({ isOpen, onClose, onSave, type, fatwah, categories }: Fatw
 								value={formData.answer}
 								onChange={(e) => setFormData(prev => ({ ...prev, answer: e.target.value }))}
 								disabled={type === "view"}
-								className="w-full bg-[#24271b] text-white rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-[#c3e5a5] transition-all disabled:opacity-50 disabled:cursor-not-allowed resize-none"
-								rows={8}
+								className="w-full bg-[#24271b] text-white rounded-lg p-3 sm:p-4 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#c3e5a5] transition-all disabled:opacity-50 disabled:cursor-not-allowed resize-none"
+								rows={6}
 								placeholder="Enter the answer..."
 							/>
 							{errors.answer && (
@@ -195,20 +200,20 @@ const FatwahModal = ({ isOpen, onClose, onSave, type, fatwah, categories }: Fatw
 							<label className="block text-sm font-medium text-gray-300 mb-2">
 								Categories *
 							</label>
-							<div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
 								{categories.map((category) => (
 									<button
 										key={category}
 										type="button"
 										onClick={() => type !== "view" && handleCategoryToggle(category)}
 										disabled={type === "view"}
-										className={`p-3 rounded-lg border text-sm font-medium transition-all disabled:cursor-not-allowed ${formData.categories.includes(category)
-												? getCategoryColor(category)
-												: "bg-[#24271b] text-gray-400 border-[#2f332a] hover:border-[#c3e5a5]/20"
+										className={`p-2 sm:p-3 rounded-lg border text-xs sm:text-sm font-medium transition-all disabled:cursor-not-allowed ${formData.categories.includes(category)
+											? getCategoryColor(category)
+											: "bg-[#24271b] text-gray-400 border-[#2f332a] hover:border-[#c3e5a5]/20"
 											}`}
 									>
-										<Tag className="w-4 h-4 inline mr-2" />
-										{category}
+										<Tag className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1 sm:mr-2" />
+										<span className="truncate">{category}</span>
 									</button>
 								))}
 							</div>
@@ -229,7 +234,7 @@ const FatwahModal = ({ isOpen, onClose, onSave, type, fatwah, categories }: Fatw
 								<select
 									value={formData.status}
 									onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as FatwahStatus }))}
-									className="w-full bg-[#24271b] text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#c3e5a5] transition-all"
+									className="w-full bg-[#24271b] text-white rounded-lg p-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#c3e5a5] transition-all"
 								>
 									<option value={FatwahStatus.DRAFT}>Draft</option>
 									<option value={FatwahStatus.PENDING}>Pending Review</option>
@@ -240,16 +245,16 @@ const FatwahModal = ({ isOpen, onClose, onSave, type, fatwah, categories }: Fatw
 
 						{/* Display asker info if viewing */}
 						{type === "view" && fatwah && (fatwah.askerName || fatwah.askerEmail) && (
-							<div className="bg-[#24271b] rounded-lg p-4">
-								<h3 className="text-lg font-semibold text-[#c3e5a5] mb-3">Asker Information</h3>
+							<div className="bg-[#24271b] rounded-lg p-3 sm:p-4">
+								<h3 className="text-base sm:text-lg font-semibold text-[#c3e5a5] mb-3">Asker Information</h3>
 								<div className="space-y-2">
 									{fatwah.askerName && (
-										<p className="text-gray-300">
+										<p className="text-gray-300 text-sm sm:text-base">
 											<span className="font-medium">Name:</span> {fatwah.askerName}
 										</p>
 									)}
 									{fatwah.askerEmail && (
-										<p className="text-gray-300">
+										<p className="text-gray-300 text-sm sm:text-base">
 											<span className="font-medium">Email:</span> {fatwah.askerEmail}
 										</p>
 									)}
@@ -260,11 +265,11 @@ const FatwahModal = ({ isOpen, onClose, onSave, type, fatwah, categories }: Fatw
 				</div>
 
 				{/* Footer */}
-				<div className="flex items-center justify-end gap-4 p-6 border-t border-[#24271b]">
+				<div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 sm:gap-4 p-4 sm:p-6 border-t border-[#24271b] flex-shrink-0">
 					<button
 						type="button"
 						onClick={onClose}
-						className="px-6 py-2 bg-[#24271b] text-white rounded-lg hover:bg-[#2f332a] transition-colors"
+						className="px-4 sm:px-6 py-2 bg-[#24271b] text-white rounded-lg hover:bg-[#2f332a] transition-colors text-sm sm:text-base"
 					>
 						{type === "view" ? "Close" : "Cancel"}
 					</button>
@@ -273,14 +278,19 @@ const FatwahModal = ({ isOpen, onClose, onSave, type, fatwah, categories }: Fatw
 							type="submit"
 							disabled={isLoading}
 							onClick={handleSubmit}
-							className="inline-flex items-center gap-2 px-6 py-2 bg-[#c3e5a5] text-gray-800 rounded-lg hover:bg-[#a1c780] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+							className="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2 bg-[#c3e5a5] text-gray-800 rounded-lg hover:bg-[#a1c780] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
 						>
 							{isLoading ? (
 								<Loader2 className="w-4 h-4 animate-spin" />
 							) : (
 								<Save className="w-4 h-4" />
 							)}
-							{isLoading ? "Saving..." : type === "create" ? "Create Fatwah" : "Update Fatwah"}
+							<span className="hidden sm:inline">
+								{isLoading ? "Saving..." : type === "create" ? "Create Fatwah" : "Update Fatwah"}
+							</span>
+							<span className="sm:hidden">
+								{isLoading ? "Saving..." : type === "create" ? "Create" : "Update"}
+							</span>
 						</button>
 					)}
 				</div>

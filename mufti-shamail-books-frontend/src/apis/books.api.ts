@@ -1,5 +1,6 @@
 import axios from "axios";
 import axiosInstance from "../config/axios.config";
+import { PriceType, formatPrice } from "../utils/priceUtils";
 
 export enum BookLanguage {
 	ENGLISH = "english",
@@ -11,7 +12,7 @@ export interface Book {
 	name: string;
 	description: string;
 	author: string;
-	price: number;
+	price: PriceType;
 	images: string[];
 	availableLanguages?: {
 		english: boolean;
@@ -71,7 +72,7 @@ export const createBook = async (book: Book, images: File[]) => {
 		formData.append("name", book.name);
 		formData.append("description", book.description);
 		formData.append("author", book.author);
-		formData.append("price", book.price.toString());
+		formData.append("price", formatPrice(book.price).toString());
 		formData.append("availableLanguages", JSON.stringify(book.availableLanguages));
 		images.forEach((image) => formData.append("images", image));
 
@@ -99,7 +100,7 @@ export const updateBook = async (id: string, book: Book, _images: File[]) => {
 	try {
 		const response = await axiosInstance.put(
 			`/books/${id}`,
-			{ name, description, author, price, availableLanguages: JSON.stringify(availableLanguages) }
+			{ name, description, author, price: formatPrice(price), availableLanguages: JSON.stringify(availableLanguages) }
 		);
 		return response.data;
 	} catch (error) {

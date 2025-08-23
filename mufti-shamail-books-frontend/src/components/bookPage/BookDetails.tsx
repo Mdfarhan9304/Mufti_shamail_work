@@ -4,6 +4,7 @@ import { Plus, Minus } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useGuestCart } from "../../contexts/GuestCartContext";
 import { toast } from "react-toastify";
+import { formatCurrency } from "../../utils/priceUtils";
 
 interface BookDetailsProps {
 	book: Book;
@@ -36,7 +37,7 @@ const BookDetails = ({ book }: BookDetailsProps) => {
 		try {
 			if (user) {
 				console.log("quantity", quantity, "language", selectedLanguage);
-				await addToCart({ ...book, quantity });
+				await addToCart({ ...book, quantity, selectedLanguage });
 				toast.success(`Added ${selectedLanguage} version to cart successfully!`);
 			} else {
 				addToGuestCart({
@@ -75,7 +76,7 @@ const BookDetails = ({ book }: BookDetailsProps) => {
 				</div>
 			</div>
 
-			<p className="text-3xl font-bold text-[#c3e5a5]">₹{book.price}</p>
+						<p className="text-3xl font-bold text-[#c3e5a5]">{formatCurrency(book.price)}</p>
 
 			<p className="text-gray-400 text-lg leading-relaxed">
 				{book.description}

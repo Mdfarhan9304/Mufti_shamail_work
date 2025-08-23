@@ -22,13 +22,14 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "react-hot-toast";
 import { getAdminOrders, updateOrderStatus } from "../apis/orders.api";
+import { formatCurrency, formatPrice, PriceType } from "../utils/priceUtils";
 
 interface Order {
     _id: string;
     orderNumber: string;
     txnId: string;
     status: string;
-    amount: number;
+    amount: PriceType;
     createdAt: string;
     user: {
         _id: string;
@@ -53,9 +54,10 @@ interface Order {
         _id: string;
         name: string;
         author: string;
-        price: number;
+        price: PriceType;
         quantity: number;
         images: string[];
+        selectedLanguage?: string;
     }[];
     fulfillment?: {
         trackingNumber?: string;
@@ -265,16 +267,23 @@ const OrderDetails = () => {
                                         <div className="flex-1">
                                             <h3 className="text-white font-semibold">{item.name}</h3>
                                             <p className="text-gray-400">by {item.author}</p>
-                                            <p className="text-gray-400">Quantity: {item.quantity}</p>
+                                            <div className="flex items-center gap-2">
+                                                <p className="text-gray-400">Quantity: {item.quantity}</p>
+                                                {item.selectedLanguage && (
+                                                    <span className="text-xs bg-[#c3e5a5]/20 text-[#c3e5a5] px-2 py-1 rounded-full">
+                                                        {item.selectedLanguage.charAt(0).toUpperCase() + item.selectedLanguage.slice(1)}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
                                         <div className="text-right">
                                             <p className="text-white font-semibold flex items-center">
                                                 <IndianRupee className="w-4 h-4 mr-1" />
-                                                {(item.price * item.quantity).toLocaleString()}
+                                                {formatCurrency(formatPrice(item.price) * item.quantity)}
                                             </p>
                                             <p className="text-gray-400 text-sm">
                                                 <IndianRupee className="w-3 h-3 inline mr-1" />
-                                                {item.price} each
+                                                {formatCurrency(item.price)} each
                                             </p>
                                         </div>
                                     </div>
@@ -285,7 +294,7 @@ const OrderDetails = () => {
                                     <span className="text-xl font-bold text-[#c3e5a5]">Total Amount</span>
                                     <span className="text-2xl font-bold text-white flex items-center">
                                         <IndianRupee className="w-6 h-6 mr-1" />
-                                        {(order.amount || 0).toLocaleString("en-IN")}
+                                        {formatCurrency(order.amount)}
                                     </span>
                                 </div>
                             </div>
@@ -598,7 +607,7 @@ const OrderDetails = () => {
                                         <span className="text-lg font-semibold text-[#c3e5a5]">Total Amount</span>
                                         <span className="text-lg font-bold text-white flex items-center">
                                             <IndianRupee className="w-5 h-5 mr-1" />
-                                            {(order.amount || 0).toLocaleString()}
+                                            {formatCurrency(order.amount)}
                                         </span>
                                     </div>
                                 </div>

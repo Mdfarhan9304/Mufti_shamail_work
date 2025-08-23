@@ -25,13 +25,15 @@ export interface CartItem extends Book {
 export const addToCart = async (
 	bookId: string,
 	quantity: number,
-	userId: string
+	userId: string,
+	selectedLanguage: string = "english"
 ) => {
 	try {
 		const response = await axiosInstance.post("/cart/add", {
 			bookId,
 			quantity,
 			userId,
+			selectedLanguage,
 		});
 		return response.data;
 	} catch (error) {

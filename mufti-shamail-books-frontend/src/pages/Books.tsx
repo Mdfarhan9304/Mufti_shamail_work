@@ -240,7 +240,7 @@ const Books = () => {
 								>
 									<Link
 										to="/fatwah"
-										className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-[#c3e5a5] text-[#c3e5a5] rounded-full font-semibold hover:bg-[#c3e5a5] hover:text-gray-800 transition-all shadow-lg"
+										className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-[#c3e5a5] text-[#c3e5a5] rounded-full font-semibold hover:bg-[#c3e5a5] hover:text-gray-800 transition-all shadow-lg w-full"
 									>
 										Ask Question
 									</Link>
@@ -405,7 +405,7 @@ const Books = () => {
 							Explore our carefully curated collection of Islamic literature, designed to
 							deepen your understanding of faith and provide practical guidance for daily life.
 						</p>
-						
+
 						{/* Language Filter */}
 						<div className="flex justify-center items-center gap-4 mb-8">
 							<Filter className="w-5 h-5 text-[#c3e5a5]" />

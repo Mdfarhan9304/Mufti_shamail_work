@@ -28,6 +28,7 @@ import OrderDetails from "./pages/OrderDetails";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import ReturnPolicy from "./pages/ReturnPolicy";
+import Certifications from "./pages/Certifications";
 import FatwahPage from "./pages/FatwahPage";
 import AskFatwah from "./pages/AskFatwah";
 import ManageFatwahs from "./pages/ManageFatwahs";
@@ -73,6 +74,8 @@ const AppContent = () => {
 						<Route path="/" element={<Books />} />
 						{/* ----- About ----- */}
 						<Route path="/about" element={<About />} />
+						{/* ----- Certifications ----- */}
+						<Route path="/certifications" element={<Certifications />} />
 						{/* ----- Initiatives ----- */}
 						<Route path="/initiatives" element={<Initiatives />} />
 						{/* ----- Login ----- */}

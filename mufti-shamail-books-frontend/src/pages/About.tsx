@@ -97,12 +97,12 @@ const About = () => {
 								<div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
 								{/* Quote Overlay */}
-								<div className="absolute bottom-8 left-8 right-8">
+								{/* <div className="absolute bottom-8 left-8 right-8">
 									<blockquote className="text-white text-lg font-medium">
 										"Knowledge is light, and it illuminates the path to righteousness and peace."
 									</blockquote>
 									<cite className="text-[#c3e5a5] text-sm mt-2 block">- Mufti Shamail Nadwi</cite>
-								</div>
+								</div> */}
 							</div>
 
 							{/* Decorative Elements */}
@@ -311,6 +311,24 @@ const About = () => {
 							</p>
 						</motion.div>
 					</div>
+
+					{/* View All Certifications Button */}
+					<motion.div
+						className="text-center mt-12"
+						initial={{ opacity: 0, y: 20 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.8, delay: 0.3 }}
+						viewport={{ once: true }}
+					>
+						<Link
+							to="/certifications"
+							className="inline-flex items-center gap-2 px-8 py-4 bg-[#c3e5a5] text-gray-800 rounded-full hover:bg-[#a1c780] transition-all font-medium text-lg group"
+						>
+							<BookOpen className="w-5 h-5" />
+							View All Certifications & Ijazahs
+							<ArrowLeft className="w-5 h-5 rotate-180 group-hover:translate-x-1 transition-transform" />
+						</Link>
+					</motion.div>
 				</div>
 			</section>
 

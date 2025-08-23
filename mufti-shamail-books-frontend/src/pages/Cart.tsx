@@ -12,6 +12,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useGuestCart } from "../contexts/GuestCartContext";
 import { CartItem } from "../apis/cart.api";
 import { getImageUrl } from "../utils/imageUtils";
+import { formatCurrency, formatPrice } from "../utils/priceUtils";
 
 const Cart = () => {
 	const {
@@ -24,48 +25,72 @@ const Cart = () => {
 		useGuestCart();
 
 	const cartItems = user ? user.cart : guestCart;
-	
+
+	// Filter out invalid cart items and add safety checks
+	const validCartItems = cartItems?.filter(item => item && item._id) || [];
+
 	// Calculate total quantity of books
-	const totalQuantity = cartItems?.reduce(
+	const totalQuantity = validCartItems.reduce(
 		(total, item) => total + (item.quantity ?? 1),
-		0
-	) || 0;
-	
-	// Calculate delivery charges: every 2 books add ₹50
-	const deliveryCharges = Math.ceil(totalQuantity / 2) * 50;
-	
-	const totalAmount = cartItems?.reduce(
-		(total, item) => total + item.price * (item.quantity ?? 1),
 		0
 	);
 
-	// if (loading) {
-	// 	return (
-	// 		<main className="min-h-screen bg-[#121510] pt-24 grid place-items-center">
-	// 			<Loader2 className="w-8 h-8 text-[#c3e5a5] animate-spin" />
-	// 		</main>
-	// 	);
-	// }
+	// Calculate delivery charges: every 2 books add ₹50
+	const deliveryCharges = Math.ceil(totalQuantity / 2) * 50;
+
+	const totalAmount = validCartItems.reduce(
+		(total, item) => {
+			const price = formatPrice(item.price);
+			const quantity = item.quantity ?? 1;
+			return total + (price * quantity);
+		},
+		0
+	);
+
+	// Debug logging to understand the data structure differences
+	console.log('User cart items:', user?.cart);
+	console.log('Guest cart items:', guestCart);
+	console.log('Valid cart items:', validCartItems);
 
 	if (user?.role === "admin") {
 		return <Navigate to="/admin/dashboard" replace />;
 	}
 
 	const handleRemove = async (itemId: string) => {
-		if (user) {
-			await removeFromCart(itemId);
-		} else {
-			removeFromGuestCart(itemId);
+		try {
+			if (user) {
+				await removeFromCart(itemId);
+			} else {
+				removeFromGuestCart(itemId);
+			}
+		} catch (error) {
+			console.error('Error removing item from cart:', error);
 		}
 	};
 
 	const handleQuantityChange = async (itemId: string, quantity: number) => {
-		console.log(guestCart);
 		if (quantity < 0) return;
-		if (user) {
-			await updateQuantity(itemId, quantity);
-		} else {
-			updateGuestQuantity(itemId, quantity);
+		try {
+			if (user) {
+				await updateQuantity(itemId, quantity);
+			} else {
+				updateGuestQuantity(itemId, quantity);
+			}
+		} catch (error) {
+			console.error('Error updating quantity:', error);
+		}
+	};
+
+	// Helper function to safely get image URL
+	const getSafeImageUrl = (item: CartItem) => {
+		if (!item.images || !Array.isArray(item.images) || item.images.length === 0) {
+			return '/placeholder-book.jpg'; // Make sure this exists in your public folder
+		}
+		try {
+			return getImageUrl(item.images[0]);
+		} catch (error) {
+			console.error('Error getting image URL:', error);
+			return '/placeholder-book.jpg';
 		}
 	};
 
@@ -89,7 +114,7 @@ const Cart = () => {
 						)}
 					</div>
 
-					{!cartItems || cartItems.length === 0 ? (
+					{validCartItems.length === 0 ? (
 						<div className="text-center py-16">
 							<ShoppingBag className="w-16 h-16 text-[#c3e5a5]/50 mx-auto mb-4" />
 							<p className="text-gray-400 text-lg mb-8">
@@ -104,100 +129,117 @@ const Cart = () => {
 						</div>
 					) : (
 						<div className="space-y-8">
-							{cartItems.map((item: CartItem) => (
-								<motion.div
-									key={item._id}
-									className="bg-[#191b14] rounded-xl p-6 shadow-xl flex flex-col md:flex-row md:items-center gap-6"
-									initial={{ opacity: 0, y: 20 }}
-									animate={{ opacity: 1, y: 0 }}
-									transition={{ duration: 0.8 }}
-								>
-									<div className="w-full md:w-32 h-32">
-										<img
-											src={`${getImageUrl(item.images[0])}`}
-											alt={item.name}
-											className="w-full h-full object-contain rounded-lg"
-										/>
-									</div>
-									<div className="flex-1">
-										<h3 className="text-xl font-medium text-white mb-2">
-											{item.name}
-										</h3>
-										<div className="flex items-center gap-2 mb-2">
-											<p className="text-gray-400 text-sm">By {item.author}</p>
-											{item.selectedLanguage && (
-												<span className="text-xs bg-[#c3e5a5]/20 text-[#c3e5a5] px-2 py-1 rounded-full">
-													{item.selectedLanguage.charAt(0).toUpperCase() + item.selectedLanguage.slice(1)}
-												</span>
-											)}
-											{!item.selectedLanguage && item.availableLanguages && (
-												<div className="flex gap-1">
-													{item.availableLanguages.english && (
-														<span className="text-xs bg-[#c3e5a5]/20 text-[#c3e5a5] px-2 py-1 rounded-full">
-															English
-														</span>
-													)}
-													{item.availableLanguages.urdu && (
-														<span className="text-xs bg-[#c3e5a5]/20 text-[#c3e5a5] px-2 py-1 rounded-full">
-															Urdu
-														</span>
-													)}
-												</div>
-											)}
+							{validCartItems.map((item: CartItem) => {
+								// Add extra safety checks for each item
+								if (!item || !item._id) {
+									return null;
+								}
+
+								const itemPrice = formatPrice(item.price);
+								const itemQuantity = item.quantity ?? 1;
+								const itemTotal = itemPrice * itemQuantity;
+
+								return (
+									<motion.div
+										key={item._id}
+										className="bg-[#191b14] rounded-xl p-6 shadow-xl flex flex-col md:flex-row md:items-center gap-6"
+										initial={{ opacity: 0, y: 20 }}
+										animate={{ opacity: 1, y: 0 }}
+										transition={{ duration: 0.8 }}
+									>
+										<div className="w-full md:w-32 h-32">
+											<img
+												src={getSafeImageUrl(item)}
+												alt={item.name || 'Book'}
+												className="w-full h-full object-contain rounded-lg"
+												onError={(e) => {
+													// Fallback if image fails to load
+													e.currentTarget.src = '/placeholder-book.jpg';
+												}}
+											/>
 										</div>
-										<p className="text-[#c3e5a5] text-lg">
-											₹{item.price}
-										</p>
-									</div>
-									<div className="flex items-center gap-4 bg-[#24271b] rounded-lg p-2 w-max">
-										<button
-											disabled={loading}
-											onClick={() =>
-												handleQuantityChange(
-													item._id!,
-													(item.quantity || 1) - 1
-												)
-											}
-											className="p-2 hover:bg-[#50573a] rounded-lg transition-colors bg-[#3b402c]"
-										>
-											<Minus className="w-4 h-4 text-gray-400" />
-										</button>
-										<span className="text-white min-w-[2ch] text-center">
-											{loading ? (
-												<Loader2 className="w-4 h-4 text-[#c3e5a5] animate-spin" />
-											) : (
-												item.quantity || 1
-											)}
-										</span>
-										<button
-											disabled={loading}
-											onClick={() =>
-												handleQuantityChange(
-													item._id!,
-													(item.quantity || 1) + 1
-												)
-											}
-											className="p-2 hover:bg-[#50573a] rounded-lg transition-colors bg-[#3b402c]"
-										>
-											<Plus className="w-4 h-4 text-gray-400" />
-										</button>
-									</div>
-									<div className="flex items-center gap-6">
-										<p className="text-[#c3e5a5] text-lg">
-											₹{item.price * (item.quantity || 1)}
-										</p>
-										<button
-											disabled={loading}
-											onClick={() =>
-												handleRemove(item._id!)
-											}
-											className="p-2 hover:bg-red-500/10 rounded-lg transition-colors group"
-										>
-											<Trash2 className="w-4 h-4 text-red-500" />
-										</button>
-									</div>
-								</motion.div>
-							))}
+										<div className="flex-1">
+											<h3 className="text-xl font-medium text-white mb-2">
+												{item.name || 'Untitled Book'}
+											</h3>
+											<div className="flex items-center gap-2 mb-2">
+												<p className="text-gray-400 text-sm">
+													By {item.author || 'Unknown Author'}
+												</p>
+												{item.selectedLanguage && (
+													<span className="text-xs bg-[#c3e5a5]/20 text-[#c3e5a5] px-2 py-1 rounded-full">
+														{item.selectedLanguage.charAt(0).toUpperCase() + item.selectedLanguage.slice(1)}
+													</span>
+												)}
+												{!item.selectedLanguage && item.availableLanguages && (
+													<div className="flex gap-1">
+														{item.availableLanguages.english && (
+															<span className="text-xs bg-[#c3e5a5]/20 text-[#c3e5a5] px-2 py-1 rounded-full">
+																English
+															</span>
+														)}
+														{item.availableLanguages.urdu && (
+															<span className="text-xs bg-[#c3e5a5]/20 text-[#c3e5a5] px-2 py-1 rounded-full">
+																Urdu
+															</span>
+														)}
+													</div>
+												)}
+											</div>
+											<p className="text-[#c3e5a5] text-lg">
+												{formatCurrency(itemPrice)}
+											</p>
+										</div>
+										<div className="flex items-center gap-4 bg-[#24271b] rounded-lg p-2 w-max">
+											<button
+												disabled={loading}
+												onClick={() =>
+													handleQuantityChange(
+														item._id!,
+														itemQuantity - 1
+													)
+												}
+												className="p-2 hover:bg-[#50573a] rounded-lg transition-colors bg-[#3b402c]"
+											>
+												<Minus className="w-4 h-4 text-gray-400" />
+											</button>
+											<span className="text-white min-w-[2ch] text-center">
+												{loading ? (
+													<Loader2 className="w-4 h-4 text-[#c3e5a5] animate-spin" />
+												) : (
+													itemQuantity
+												)}
+											</span>
+											<button
+												disabled={loading}
+												onClick={() =>
+													handleQuantityChange(
+														item._id!,
+														itemQuantity + 1
+													)
+												}
+												className="p-2 hover:bg-[#50573a] rounded-lg transition-colors bg-[#3b402c]"
+											>
+												<Plus className="w-4 h-4 text-gray-400" />
+											</button>
+										</div>
+										<div className="flex items-center gap-6">
+											<p className="text-[#c3e5a5] text-lg">
+												{formatCurrency(itemTotal)}
+											</p>
+											<button
+												disabled={loading}
+												onClick={() =>
+													handleRemove(item._id!)
+												}
+												className="p-2 hover:bg-red-500/10 rounded-lg transition-colors group"
+											>
+												<Trash2 className="w-4 h-4 text-red-500" />
+											</button>
+										</div>
+									</motion.div>
+								);
+							})}
 
 							<div className="bg-[#191b14] rounded-xl p-6 shadow-xl">
 								<div className="flex justify-between items-center mb-4">
@@ -205,21 +247,23 @@ const Cart = () => {
 										Subtotal
 									</span>
 									<span className="text-white">
-										₹{totalAmount}
+										{formatCurrency(totalAmount)}
 									</span>
 								</div>
 								<div className="flex justify-between items-center mb-6">
 									<span className="text-gray-400">
 										Shipping ({totalQuantity} books)
 									</span>
-									<span className="text-white">₹{deliveryCharges}</span>
+									<span className="text-white">
+										{formatCurrency(deliveryCharges)}
+									</span>
 								</div>
 								<div className="border-t border-[#24271b] pt-4 flex justify-between items-center">
 									<span className="text-lg text-white">
 										Total
 									</span>
 									<span className="text-xl text-[#c3e5a5] font-medium">
-										₹{totalAmount ? totalAmount + deliveryCharges : 0}
+										{formatCurrency(totalAmount + deliveryCharges)}
 									</span>
 								</div>
 							</div>

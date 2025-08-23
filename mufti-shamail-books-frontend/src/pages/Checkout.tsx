@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { formatCurrency, formatPrice } from "../utils/priceUtils";
 import {
 	Loader2,
 	Home,
@@ -117,7 +118,7 @@ const Checkout = () => {
 	const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
 
 	const subtotal = user?.cart?.reduce(
-		(total, item) => total + item.price * item.quantity,
+		(total, item) => total + formatPrice(item.price) * item.quantity,
 		0
 	);
 	const shipping = 50;
@@ -310,10 +311,7 @@ const Checkout = () => {
 											className="flex gap-4 py-4 border-b border-gray-800"
 										>
 											<img
-												src={item.images && item.images.length > 0
-													? getImageUrl(item.images[0])
-													: '/vite.svg' // fallback image
-												}
+												src={getImageUrl(item.images[0])}
 												alt={item.name}
 												className="w-20 h-20 object-contain rounded-lg"
 											/>
@@ -325,7 +323,7 @@ const Checkout = () => {
 													Quantity: {item.quantity}
 												</p>
 												<p className="text-[#c3e5a5]">
-													₹{(item.price * item.quantity).toFixed(2)}
+													{formatCurrency(formatPrice(item.price) * item.quantity)}
 												</p>
 											</div>
 										</div>
@@ -334,15 +332,15 @@ const Checkout = () => {
 									<div className="space-y-2 pt-4">
 										<div className="flex justify-between text-gray-400">
 											<span>Subtotal</span>
-											<span>₹{subtotal?.toFixed(2)}</span>
+											<span>{formatCurrency(subtotal || 0)}</span>
 										</div>
 										<div className="flex justify-between text-gray-400">
 											<span>Shipping</span>
-											<span>₹{shipping.toFixed(2)}</span>
+											<span>{formatCurrency(shipping)}</span>
 										</div>
 										<div className="flex justify-between text-xl font-bold text-[#c3e5a5] pt-2 border-t border-gray-800">
 											<span>Total</span>
-											<span>₹{total.toFixed(2)}</span>
+											<span>{formatCurrency(total)}</span>
 										</div>
 									</div>
 								</div>
