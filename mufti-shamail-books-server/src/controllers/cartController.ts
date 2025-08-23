@@ -25,19 +25,19 @@ export const addToCart = async (
 	next: NextFunction
 ) => {
 	try {
-		const { bookId, quantity, userId } = req.body;
+		const { bookId, quantity, userId, selectedLanguage = "english" } = req.body;
 
 		const user = await User.findById(userId);
 		if (!user) throw new BadRequestError("User not found");
 
 		const existingItemIndex = user.cart.findIndex(
-			(item) => item.book.toString() === bookId
+			(item) => item.book.toString() === bookId && item.selectedLanguage === selectedLanguage
 		);
 
 		if (existingItemIndex > -1) {
 			user.cart[existingItemIndex].quantity += quantity;
 		} else {
-			user.cart.push({ book: bookId, quantity });
+			user.cart.push({ book: bookId, quantity, selectedLanguage });
 		}
 
 		await user.save();

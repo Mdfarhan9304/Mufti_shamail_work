@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 export interface CartItem {
 	book: mongoose.Types.ObjectId;
 	quantity: number;
+	selectedLanguage?: string;
 }
 
 export interface Address {

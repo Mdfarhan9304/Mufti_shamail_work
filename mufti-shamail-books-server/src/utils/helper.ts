@@ -1,10 +1,13 @@
 import { createHash } from "crypto";
 
-export const fixCart = (cart: Array<{ book: any; quantity: number }>) => {
-	return cart.map((item) => ({
-		...item.book,
-		quantity: item.quantity,
-	}));
+export const fixCart = (cart: Array<{ book: any; quantity: number; selectedLanguage?: string }>) => {
+	return cart
+		.filter((item) => item.book !== null && item.book !== undefined) // Filter out null/undefined books
+		.map((item) => ({
+			...item.book,
+			quantity: item.quantity,
+			selectedLanguage: item.selectedLanguage || "english",
+		}));
 };
 
 // Calculate delivery charges based on total book quantity

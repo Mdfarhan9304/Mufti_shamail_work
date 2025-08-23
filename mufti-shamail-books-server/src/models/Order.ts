@@ -4,6 +4,7 @@ export interface OrderItem {
   book: mongoose.Types.ObjectId;
   quantity: number;
   price: number; // Price at time of purchase
+  selectedLanguage?: string;
 }
 
 export interface OrderDocument extends Document {
@@ -66,6 +67,11 @@ const orderSchema = new Schema(
           type: Number,
           required: true,
           min: 0,
+        },
+        selectedLanguage: {
+          type: String,
+          enum: ["english", "urdu"],
+          default: "english",
         },
       },
     ],

@@ -119,15 +119,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/password", passwordRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/fatwahs", fatwahRoutes);
-app.post("/api/email/test", (req, res) => {
-  sendOrderShippedEmail({
-    orderNumber: "1234567890",
-    contactDetails: {
-      email: "mdfarhan9304@gmail.com",
-    },
-  });
-  res.json({ message: "Email sent successfully" });
-});
+
 app.use(errorHandler);
 
 // Start the server

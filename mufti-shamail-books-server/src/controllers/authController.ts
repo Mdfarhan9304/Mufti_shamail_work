@@ -130,7 +130,15 @@ export const login = async (
 		const updatedUser = await User.findById(user._id)
 			.populate("cart.book")
 			.lean();
-		const fixedCart = fixCart(updatedUser?.cart || []);
+		
+		// Clean up cart - remove items with null books (deleted books)
+		const cleanCart = updatedUser?.cart?.filter(item => item.book !== null) || [];
+		if (cleanCart.length !== updatedUser?.cart?.length) {
+			// If we filtered out items, update the user's cart in the database
+			await User.findByIdAndUpdate(user._id, { cart: cleanCart.map(item => ({ book: item.book._id, quantity: item.quantity })) });
+		}
+		
+		const fixedCart = fixCart(cleanCart);
 
 		res.status(200).json({
 			success: true,

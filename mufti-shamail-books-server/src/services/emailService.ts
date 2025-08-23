@@ -1,6 +1,5 @@
 import nodemailer from "nodemailer";
-import { createOrderShippedTemplate, createOrderDeliveredTemplate, createOrderConfirmationTemplate } from "./emailTemplates/orderConfirmation";
-import { createOrderRTOTemplate } from "./emailTemplates/orderRTO";
+import { createOrderShippedTemplate, createOrderDeliveredTemplate, createOrderConfirmationTemplate, createRTOTemplate } from "./emailTemplates/orderConfirmation";
 
 const transporter = nodemailer.createTransport({
 	host: process.env.SMTP_HOST,
@@ -122,22 +121,30 @@ export const sendPasswordResetEmail = async (
 };
 
 export const sendOrderConfirmationEmail = async (orderData: any) => {
+	// Calculate shipping charges (₹50 per 2 books)
+	const totalQuantity = orderData.items.reduce((sum: number, item: any) => sum + item.quantity, 0);
+	const shippingCharge = Math.ceil(totalQuantity / 2) * 50;
+	const subtotal = orderData.amount - shippingCharge;
+
 	// Prepare items for email template
 	const items = orderData.items.map((item: any) => ({
-		title: item.book?.name || item.book?.title || "Book",
+		title: item.book?.name || "Book",
 		quantity: item.quantity,
-		price: (item.book?.price || 0) * item.quantity
+		price: (item.book?.price || 0) * item.quantity,
+		selectedLanguage: item.selectedLanguage
 	}));
 
 	await transporter.sendMail({
 		from: process.env.SMTP_FROM,
 		to: orderData.contactDetails.email,
-		subject: `🎉 Order Confirmation - ${orderData.orderNumber}`,
+		subject: `🎉 Order Confirmation - ${orderData.orderNumber} | Mufti Shamail Books`,
 		html: createOrderConfirmationTemplate(
 			orderData.contactDetails.name,
 			orderData.orderNumber,
 			items,
-			orderData.amount
+			orderData.amount,
+			subtotal,
+			shippingCharge
 		),
 	});
 };
@@ -168,7 +175,7 @@ export const sendOrderRTOEmail = async (orderData: any) => {
 		// to: orderData.contactDetails.email,
         to: "mdfarhan9304@gmail.com",
 		subject: `🔄 Order ${orderData.orderNumber} - Return to Origin Notice`,
-		html: createOrderRTOTemplate(orderData),
+		html: createRTOTemplate(orderData),
 	});
 };
 

@@ -130,6 +130,11 @@ const userSchema = new Schema(
 					required: true,
 					min: 1,
 				},
+				selectedLanguage: {
+					type: String,
+					enum: ["english", "urdu"],
+					default: "english",
+				},
 			},
 		],
 		refreshToken: String,
