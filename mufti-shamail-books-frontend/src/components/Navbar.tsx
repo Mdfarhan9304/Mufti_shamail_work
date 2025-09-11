@@ -146,7 +146,7 @@ const Navbar = () => {
 						animate="animate"
 						className="flex items-center"
 					>
-						{Array.from("Mufti Shamail Books").map((letter, i) => (
+						{Array.from("Mufti Shamail").map((letter, i) => (
 							<motion.span
 								key={i}
 								custom={i}
