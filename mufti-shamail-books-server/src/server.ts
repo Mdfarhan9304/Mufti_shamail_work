@@ -56,7 +56,7 @@ const allowedOrigins = [
   "http://srv705671.hstgr.cloud",
   "https://srv705671.hstgr.cloud",
   "https://mufti-shamail-books.onrender.com",
-  "https://mufti-shamail-work-1.onrender.com"
+  "https://mufti-shamail-work-1.onrender.com",
   "https://muftishamail.com"
   // Add frontend domain here once froneend is deployed
 ];
