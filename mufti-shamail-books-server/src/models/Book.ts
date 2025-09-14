@@ -1,9 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-export enum BookLanguage {
-	ENGLISH = "english",
-	URDU = "urdu",
-}
 
 interface BookDocument extends Document {
 	name: string;
@@ -11,10 +7,6 @@ interface BookDocument extends Document {
 	author: string;
 	price: number;
 	images: string[];
-	availableLanguages: {
-		english: boolean;
-		urdu: boolean;
-	};
 }
 
 const bookSchema = new Schema(
@@ -39,16 +31,6 @@ const bookSchema = new Schema(
 		images: {
 			type: [String],
 			required: true,
-		},
-		availableLanguages: {
-			english: {
-				type: Boolean,
-				default: true,
-			},
-			urdu: {
-				type: Boolean,
-				default: false,
-			},
 		},
 	},
 	{ 

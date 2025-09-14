@@ -1,17 +1,13 @@
 import express, { Router } from "express";
 import {
-	generatePaymentUrl,
-	checkOrderPaymentStatus,
+	createRazorpayOrder,
+	verifyRazorpayPayment,
 } from "../controllers/paymentController";
 import { optionalAuth } from "../middlewares/auth";
 
 const router: Router = express.Router();
 
-router.post("/generate-payment-url", optionalAuth, generatePaymentUrl);
-router.post(
-	"/check-order-payment-status",
-	optionalAuth,
-	checkOrderPaymentStatus
-);
+router.post("/create-razorpay-order", optionalAuth, createRazorpayOrder);
+router.post("/verify-razorpay-payment", optionalAuth, verifyRazorpayPayment);
 
 export default router;

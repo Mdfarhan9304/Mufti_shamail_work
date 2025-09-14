@@ -10,38 +10,13 @@ export const getAllBooks = async (
   next: NextFunction
 ) => {
   try {
-    const { language } = req.query;
-    
-    // Build filter query
-    const filter: any = {};
-    if (language && (language === 'english' || language === 'urdu')) {
-      filter[`availableLanguages.${language}`] = true;
-    }
-
-    const books = await Book.find(filter);
+    const books = await Book.find();
     res.status(200).json({ success: true, data: books });
   } catch (error) {
     next(error);
   }
 };
 
-// Get available languages
-export const getBookLanguages = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const languages = [
-      { value: 'english', label: 'English' },
-      { value: 'urdu', label: 'Urdu' }
-    ];
-    
-    res.status(200).json({ success: true, data: languages });
-  } catch (error) {
-    next(error);
-  }
-};
 
 // Get a single book by ID
 export const getBookById = async (
@@ -67,23 +42,11 @@ export const createBook = async (
   next: NextFunction
 ) => {
   try {
-    const { name, description, author, price, availableLanguages } = req.body;
+    const { name, description, author, price } = req.body;
 
     // Validate required fields
     if (!name || !description || !author || !price) {
       throw new BadRequestError("All fields are required");
-    }
-
-    // Parse availableLanguages if it's a string (from FormData)
-    let parsedLanguages = { english: true, urdu: false };
-    if (availableLanguages) {
-      try {
-        parsedLanguages = typeof availableLanguages === 'string' 
-          ? JSON.parse(availableLanguages) 
-          : availableLanguages;
-      } catch (error) {
-        console.error("Error parsing availableLanguages:", error);
-      }
     }
 
     // Check if files exist
@@ -119,7 +82,6 @@ export const createBook = async (
       author,
       price: priceValue,
       images: imagePaths,
-      availableLanguages: parsedLanguages,
     });
 
     res.status(201).json({ success: true, data: book });
@@ -136,19 +98,7 @@ export const updateBook = async (
   next: NextFunction
 ) => {
   try {
-    const { name, description, author, price, availableLanguages } = req.body;
-
-    // Parse availableLanguages if it's a string (from FormData)
-    let parsedLanguages;
-    if (availableLanguages) {
-      try {
-        parsedLanguages = typeof availableLanguages === 'string' 
-          ? JSON.parse(availableLanguages) 
-          : availableLanguages;
-      } catch (error) {
-        console.error("Error parsing availableLanguages:", error);
-      }
-    }
+    const { name, description, author, price } = req.body;
 
     const updateData: any = {
       name,
@@ -156,11 +106,6 @@ export const updateBook = async (
       author,
       price: price ? parseFloat(parseFloat(price).toFixed(2)) : undefined,
     };
-
-    // Only update availableLanguages if provided
-    if (parsedLanguages) {
-      updateData.availableLanguages = parsedLanguages;
-    }
 
     // Remove undefined values
     Object.keys(updateData).forEach(key => 

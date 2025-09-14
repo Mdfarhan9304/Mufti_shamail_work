@@ -292,3 +292,110 @@ export const getOrderById = async (req: AuthRequest, res: Response) => {
         throw new ApiError(500, "Failed to fetch order");
     }
 };
+
+// Export orders as CSV for delivery partners
+export const exportOrdersCSV = async (req: AuthRequest, res: Response) => {
+    try {
+        // Only allow admin users
+        if (!req.user || req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                error: "Access denied. Admin role required."
+            });
+        }
+
+        const { status, startDate, endDate } = req.query;
+        
+        // Build filter query
+        const filter: any = {};
+        
+        if (status && status !== 'all') {
+            filter.status = status;
+        }
+        
+        if (startDate || endDate) {
+            filter.createdAt = {};
+            if (startDate) {
+                filter.createdAt.$gte = new Date(startDate as string);
+            }
+            if (endDate) {
+                filter.createdAt.$lte = new Date(endDate as string);
+            }
+        }
+
+        const orders = await Order.find(filter)
+            .populate("items.book", "name author")
+            .populate("user", "name email phone")
+            .sort({ createdAt: -1 });
+
+        // Prepare CSV data
+        const csvData = orders.map((order: any) => {
+            const itemsDetails = order.items.map((item: any) => 
+                `${item.book?.name || 'Unknown'}`
+            ).join('; ');
+
+            // Calculate total quantity
+            const totalQuantity = order.items.reduce((total: number, item: any) => total + item.quantity, 0);
+
+            return {
+                'Order Number': order.orderNumber,
+                'Customer Name': order.contactDetails?.name || '',
+                'Customer Email': order.contactDetails?.email || '',
+                'Customer Phone': order.contactDetails?.phone || '',
+                'Items': itemsDetails,
+                'Quantity': totalQuantity,
+                'Total Amount': order.amount,
+                'Status': order.status,
+                'Address Line 1': order.shippingAddress?.addressLine1 || '',
+                'Address Line 2': order.shippingAddress?.addressLine2 || '',
+                'Landmark': order.shippingAddress?.landmark || '',
+                'City': order.shippingAddress?.city || '',
+                'State': order.shippingAddress?.state || '',
+                'Pincode': order.shippingAddress?.pincode || '',
+                'Order Date': new Date(order.createdAt).toLocaleDateString('en-IN'),
+                'Tracking Number': order.fulfillment?.trackingNumber || '',
+                'Shipping Provider': order.fulfillment?.shippingProvider || '',
+            };
+        });
+
+        // Convert to CSV format
+        if (csvData.length === 0) {
+            return res.status(404).json({
+                success: false,
+                error: "No orders found for the specified criteria"
+            });
+        }
+
+        const headers = Object.keys(csvData[0]);
+        const csvContent = [
+            headers.join(','),
+            ...csvData.map(row => 
+                headers.map(header => {
+                    const value = row[header as keyof typeof row];
+                    // Escape commas and quotes in CSV values
+                    return `"${String(value).replace(/"/g, '""')}"`;
+                }).join(',')
+            )
+        ].join('\n');
+
+        // Set headers for file download
+        const filename = `orders_export_${new Date().toISOString().split('T')[0]}.csv`;
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+        
+        res.status(200).send(csvContent);
+        
+    } catch (error) {
+        console.error("Export orders CSV error:", error);
+        if (error instanceof ApiError) {
+            return res.status(error.statusCode).json({
+                success: false,
+                error: error.message
+            });
+        }
+        res.status(500).json({
+            success: false,
+            error: "Failed to export orders"
+        });
+    }
+};

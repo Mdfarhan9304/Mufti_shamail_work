@@ -4,7 +4,6 @@ export interface OrderItem {
   book: mongoose.Types.ObjectId;
   quantity: number;
   price: number; // Price at time of purchase
-  selectedLanguage?: string;
 }
 
 export interface OrderDocument extends Document {
@@ -18,6 +17,8 @@ export interface OrderDocument extends Document {
   };
   shippingAddress: string;
   txnId: string;
+  razorpayOrderId?: string;
+  razorpayPaymentId?: string;
   isGuestOrder: boolean;
   status: string;
   paymentStatus: string;
@@ -51,6 +52,14 @@ const orderSchema = new Schema(
       unique: true,
       required: true,
     },
+    razorpayOrderId: {
+      type: String,
+      required: false,
+    },
+    razorpayPaymentId: {
+      type: String,
+      required: false,
+    },
     items: [
       {
         book: {
@@ -67,11 +76,6 @@ const orderSchema = new Schema(
           type: Number,
           required: true,
           min: 0,
-        },
-        selectedLanguage: {
-          type: String,
-          enum: ["english", "urdu"],
-          default: "english",
         },
       },
     ],

@@ -5,7 +5,6 @@ import {
 	createBook,
 	updateBook,
 	deleteBook,
-	getBookLanguages,
 } from "../controllers/bookController";
 import { protect, authorize } from "../middlewares/auth";
 import upload from "../services/uploadService";
@@ -14,7 +13,6 @@ const router: Router = express.Router();
 
 // Public routes
 router.get("/", getAllBooks);
-router.get("/languages", getBookLanguages);
 router.get("/:id", getBookById);
 
 // Protected routes

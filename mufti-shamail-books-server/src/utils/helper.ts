@@ -6,7 +6,7 @@ export const fixCart = (cart: Array<{ book: any; quantity: number; selectedLangu
 		.map((item) => ({
 			...item.book,
 			quantity: item.quantity,
-			selectedLanguage: item.selectedLanguage || "english",
+			selectedLanguage: item.selectedLanguage, // Don't default to english, preserve the actual selection
 		}));
 };
 
@@ -28,6 +28,7 @@ export const generateTransactionId = () => {
 	return `TXN-${timestamp}${randomNumber}`; // Order ID format
 };
 
+// PhonePe checksum generation (deprecated - kept for backwards compatibility)
 export const generateChecksum = async (
 	payload: string,
 	endpoint: string,

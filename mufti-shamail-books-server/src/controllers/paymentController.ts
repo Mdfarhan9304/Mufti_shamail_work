@@ -1,16 +1,19 @@
 // Import necessary modules
-import axios from "axios";
-import { Buffer } from "node:buffer"; // Buffer for encoding/decoding data
-import { generateChecksum, generateTransactionId, calculateDeliveryCharges } from "../utils/helper";
+import Razorpay from "razorpay";
+import crypto from "crypto";
+import { generateTransactionId, calculateDeliveryCharges } from "../utils/helper";
 import { NextFunction, Request, Response } from "express";
 import { AuthRequest } from "../types";
 import { Order } from "../models/Order";
+import  Book  from "../models/Book";
+
 import { sendOrderConfirmationEmail } from "../services/emailService";
 
-const PAYMENT_SALT_KEY = process.env.PAYMENT_SALT_KEY; // Salt key used for checksum generation
-const MERCHANT_ID = process.env.MERCHANT_ID; // Merchant ID provided by PhonePe
-const MERCHANT_BASE_URL = process.env.MERCHANT_BASE_URL; // Base URL for payment initiation
-const MERCHANT_STATUS_URL = process.env.MERCHANT_STATUS_URL; // URL to check payment status
+// Razorpay configuration
+const razorpay = new Razorpay({
+	key_id: process.env.RAZORPAY_KEY_ID || "rzp_test_RGzlyeeN462lzV",
+	key_secret: process.env.RAZORPAY_KEY_SECRET || "KZ49E5ESf21loQOAtJvmTqYX",
+});
 
 interface GuestInfo {
 	name: string;
@@ -26,108 +29,151 @@ interface GuestInfo {
 	};
 }
 
-export const generatePaymentUrl = async (
+export const createRazorpayOrder = async (
 	req: AuthRequest,
 	res: Response,
 	next: NextFunction
 ) => {
-	const { totalAmount } = req.body;
-	const txnId = generateTransactionId();
-	const userId = req.user?._id;
-	// Convert the total amount to paise (as PhonePe API expects the amount in paise)
-	const amountInPaise = parseFloat(totalAmount) * 100;
-
-	const paymentPayload = {
-		merchantId: MERCHANT_ID, // Merchant ID for identification
-		merchantTransactionId: txnId, // Unique transaction ID for the order
-		merchantUserId: userId || "GUEST_USER", // User ID to identify the customer
-		amount: amountInPaise, // Total amount in paise (multiplied by 100)
-		redirectUrl: `${process.env.FRONTEND_URL}/payment/${txnId}`, // URL to redirect the user after payment
-		callbackUrl: `${process.env.API}`, // Callback URL for the status of the payment
-		paymentInstrument: { type: "PAY_PAGE" }, // Payment method type (pay page for PhonePe)
-	};
-
-	const payloadBase64 = Buffer.from(
-		JSON.stringify(paymentPayload),
-		"utf8"
-	).toString("base64");
-
-	const checksum = await generateChecksum(
-		payloadBase64,
-		"/pg/v1/pay",
-		PAYMENT_SALT_KEY || ""
-	);
-
-	const options = {
-		method: "POST",
-		url: MERCHANT_BASE_URL,
-		headers: {
-			accept: "application/json",
-			"Content-Type": "application/json",
-			"X-VERIFY": checksum,
-		},
-		data: { request: payloadBase64 },
-	};
-
 	try {
-		const response = await axios.request(options);
-		if (
-			response.data &&
-			response.data.data &&
-			response.data.data.instrumentResponse
-		) {
-			res.status(200).json({
-				success: true,
-				redirectUrl:
-					response.data.data.instrumentResponse.redirectInfo.url, // Redirect URL for the user to complete payment
+		const { cartItems } = req.body;
+	const userId = req.user?._id;
+		
+		// Security: Calculate amount on server side from cart items
+		if (!cartItems || !Array.isArray(cartItems) || cartItems.length === 0) {
+			return res.status(400).json({
+				success: false,
+				error: "Cart items are required",
 			});
 		}
+
+		// Calculate total amount from cart items on server side for security
+		// Fetch actual prices from database instead of trusting frontend
+		let totalAmount = 0;
+		let totalQuantity = 0;
+		const processedItems = [];
+
+		for (const item of cartItems) {
+			if (!item.book || !item.quantity) {
+				return res.status(400).json({
+					success: false,
+					error: "Invalid cart item format - missing book ID or quantity",
+				});
+			}
+
+			// Fetch actual book price from database
+			const bookData = await Book.findById(item.book);
+			if (!bookData) {
+				return res.status(400).json({
+					success: false,
+					error: `Book with ID ${item.book} not found`,
+				});
+			}
+
+			const actualPrice = parseFloat(bookData.price.toString());
+			const itemTotal = actualPrice * parseInt(item.quantity);
+			totalAmount += itemTotal;
+			totalQuantity += parseInt(item.quantity);
+			
+			processedItems.push({
+				book: item.book,
+				quantity: parseInt(item.quantity),
+				price: actualPrice, // Use actual price from database
+			});
+		}
+
+		// Add delivery charges based on total quantity, not amount
+		const deliveryCharges = calculateDeliveryCharges(totalQuantity);
+		totalAmount += deliveryCharges;
+
+		console.log("Order calculation:", {
+			cartItems: cartItems.length,
+			totalQuantity,
+			subtotal: totalAmount - deliveryCharges,
+			deliveryCharges,
+			totalAmount
+		});
+
+		// Convert to paise (Razorpay expects amount in smallest currency unit)
+		const amountInPaise = Math.round(totalAmount * 100);
+
+		const txnId = generateTransactionId();
+
+		// Create Razorpay order
+		const razorpayOrder = await razorpay.orders.create({
+			amount: amountInPaise,
+			currency: "INR",
+			receipt: txnId,
+			// payment_capture: 1, // Auto capture payment (removed for correct typing)
+		});
+
+		res.status(200).json({
+			success: true,
+			orderId: razorpayOrder.id,
+			amount: amountInPaise,
+			currency: "INR",
+			txnId: txnId,
+			key: process.env.RAZORPAY_KEY_ID || "rzp_test_RGzlyeeN462lzV",
+		});
 	} catch (error) {
+		console.error("Error creating Razorpay order:", error);
 		next(error);
 	}
 };
 
-export const checkOrderPaymentStatus = async (
+export const verifyRazorpayPayment = async (
 	req: AuthRequest,
 	res: Response,
 	next: NextFunction
 ) => {
-	const { merchantTransactionId, cartItems, selectedAddress, guestInfo } =
-		req.body;
-	const checksum = await generateChecksum(
-		`/pg/v1/status/${MERCHANT_ID}/`,
-		merchantTransactionId,
-		PAYMENT_SALT_KEY!
-	);
+	try {
+		const { 
+			razorpay_order_id, 
+			razorpay_payment_id, 
+			razorpay_signature,
+			cartItems, 
+			selectedAddress, 
+			guestInfo 
+		} = req.body;
 
-	console.log("=== PAYMENT VERIFICATION ===");
-	console.log("Transaction ID:", merchantTransactionId);
+		console.log("=== RAZORPAY PAYMENT VERIFICATION ===");
+		console.log("Order ID:", razorpay_order_id);
+		console.log("Payment ID:", razorpay_payment_id);
 	console.log("Cart Items:", JSON.stringify(cartItems, null, 2));
 	console.log("Guest Info:", JSON.stringify(guestInfo, null, 2));
 	console.log("Selected Address:", JSON.stringify(selectedAddress, null, 2));
 	console.log("User:", req.user ? req.user._id : "GUEST");
 
-	const options = {
-		method: "GET",
-		url: `${MERCHANT_STATUS_URL}/${MERCHANT_ID}/${merchantTransactionId}`,
-		headers: {
-			accept: "application/json",
-			"Content-Type": "application/json",
-			"X-VERIFY": checksum,
-		},
-	};
+		// Validate required fields
+		if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !cartItems || !selectedAddress) {
+			console.log("Missing required fields for payment verification");
+			return res.status(400).json({
+				success: false,
+				error: "Missing required fields for payment verification",
+			});
+		}
 
-	try {
-		const response = await axios.request(options);
-		const payRes = response.data.data;
-		const amountInRs = payRes.amount / 100; // Convert paise to rupees
-		
-		console.log("Payment gateway response:", JSON.stringify(response.data, null, 2));
-		
-		if (response.data.success) {
+		// Verify payment signature
+		const body = razorpay_order_id + "|" + razorpay_payment_id;
+		const expectedSignature = crypto
+			.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET || "KZ49E5ESf21loQOAtJvmTqYX")
+			.update(body.toString())
+			.digest("hex");
+
+		const isAuthentic = expectedSignature === razorpay_signature;
+
+		if (!isAuthentic) {
+			console.log("Payment signature verification failed");
+			return res.status(400).json({
+				success: false,
+				error: "Payment verification failed",
+			});
+		}
+
+		console.log("Payment signature verified successfully");
+
 			// Check if the order already exists
 			const existingOrder = await Order.findOne({
-				txnId: merchantTransactionId,
+			razorpayPaymentId: razorpay_payment_id,
 			}).populate('items.book');
 			
 			if (existingOrder) {
@@ -154,6 +200,7 @@ export const checkOrderPaymentStatus = async (
 						items: existingOrder.items,
 						contactDetails: existingOrder.contactDetails,
 						shippingAddress: existingOrder.shippingAddress,
+					amount: existingOrder.amount,
 						status: existingOrder.status,
 						paymentStatus: "paid",
 						createdAt: existingOrder.createdAt.toISOString(),
@@ -163,6 +210,43 @@ export const checkOrderPaymentStatus = async (
 				console.log("Sending existing order response:", JSON.stringify(orderResponse, null, 2));
 				res.status(200).json(orderResponse);
 				return;
+			}
+
+		// Fetch payment details from Razorpay
+		const payment = await razorpay.payments.fetch(razorpay_payment_id);
+		
+		if (payment.status !== 'captured') {
+			console.log("Payment not captured:", payment.status);
+			return res.status(400).json({
+				success: false,
+				error: "Payment not completed",
+			});
+		}
+
+		console.log("Payment completed successfully");
+
+		// Payment is successful, create order
+		const amountInPaise = Number(payment.amount);
+		const amountInRs = amountInPaise / 100;
+
+		console.log("Amount:", { amountInPaise, amountInRs });
+
+		// Recalculate items with actual prices from database for order creation
+		let processedItems = [];
+		for (const item of cartItems) {
+			const bookData = await Book.findById(item.book);
+			if (!bookData) {
+				return res.status(400).json({
+					success: false,
+					error: `Book with ID ${item.book} not found`,
+				});
+			}
+
+			processedItems.push({
+				book: item.book,
+				quantity: parseInt(item.quantity),
+				price: parseFloat(bookData.price.toString()), // Use actual price from database
+			});
 			}
 
 			// Prepare shipping address based on whether it's a guest order or not
@@ -177,13 +261,11 @@ export const checkOrderPaymentStatus = async (
 			// Create a new order
 			const orderData = {
 				user: req.user?._id || null, // Null for guest users
-				orderNumber: `ORD${Date.now()}${Math.floor(
-					Math.random() * 1000
-				)}`,
-				items: cartItems,
+			orderNumber: `ORD${Date.now()}${Math.floor(Math.random() * 1000)}`,
+				items: processedItems, // Use processed items with actual prices
 				contactDetails: req.user
 					? {
-							phone: req.user?.phone || "", // Use actual user phone if available
+						phone: req.user?.phone || "",
 							email: req.user?.email || "",
 							name: req.user?.name || "",
 					  }
@@ -193,7 +275,9 @@ export const checkOrderPaymentStatus = async (
 							name: guestInfo?.name || "",
 					  },
 				shippingAddress,
-				txnId: merchantTransactionId,
+			txnId: generateTransactionId(), // Use unique transaction ID to avoid duplicates
+			razorpayOrderId: razorpay_order_id,
+			razorpayPaymentId: razorpay_payment_id,
 				isGuestOrder: !req.user,
 				amount: amountInRs,
 				status: "pending",
@@ -225,6 +309,7 @@ export const checkOrderPaymentStatus = async (
 					items: populatedOrder.items,
 					contactDetails: populatedOrder.contactDetails,
 					shippingAddress: populatedOrder.shippingAddress,
+				amount: populatedOrder.amount,
 					status: populatedOrder.status,
 					paymentStatus: "paid",
 					createdAt: populatedOrder.createdAt.toISOString(),
@@ -232,20 +317,10 @@ export const checkOrderPaymentStatus = async (
 				},
 			};
 
-			console.log("Sending new order response:", JSON.stringify(orderResponse, null, 2));
+		console.log("Sending order response:", JSON.stringify(orderResponse, null, 2));
 			res.status(200).json(orderResponse);
-		} else {
-			console.log("Payment failed from gateway");
-			res.status(400).json({
-				success: false,
-				error: "Payment failed. Please try again.",
-			});
-		}
 	} catch (error) {
-		console.log("Error in payment verification:", error);
-		res.status(500).json({
-			success: false,
-			error: "Payment verification failed. Please try again.",
-		});
+		console.error("Error in verifyRazorpayPayment:", error);
+		next(error);
 	}
 };
