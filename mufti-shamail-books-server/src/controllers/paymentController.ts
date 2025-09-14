@@ -50,7 +50,7 @@ export const createRazorpayOrder = async (
 		// Fetch actual prices from database instead of trusting frontend
 		let totalAmount = 0;
 		let totalQuantity = 0;
-		const processedItems = [];
+		const processedItems: Array<{book: string; quantity: number; price: number}> = [];
 
 		// Validate cart items first
 		for (const item of cartItems) {
@@ -63,7 +63,7 @@ export const createRazorpayOrder = async (
 		}
 
 		// Fetch all books in one query for better performance and memory usage
-		const bookIds = cartItems.map(item => item.book);
+		const bookIds = cartItems.map((item: {book: string; quantity: number}) => item.book);
 		const books = await Book.find({ _id: { $in: bookIds } }).lean();
 		
 		for (const item of cartItems) {
@@ -241,8 +241,8 @@ export const verifyRazorpayPayment = async (
 		console.log("Amount:", { amountInPaise, amountInRs });
 
 		// Recalculate items with actual prices from database for order creation
-		let processedItems = [];
-		const bookIds = cartItems.map(item => item.book);
+		let processedItems: Array<{book: string; quantity: number; price: number}> = [];
+		const bookIds = cartItems.map((item: {book: string; quantity: number}) => item.book);
 		const books = await Book.find({ _id: { $in: bookIds } }).lean(); // Use lean() for better memory efficiency
 		
 		for (const item of cartItems) {
