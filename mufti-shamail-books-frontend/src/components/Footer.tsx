@@ -66,7 +66,7 @@ const Footer = () => {
 							Contact
 						</h3>
 						<p className="text-gray-400">
-							Kobi Bagan Masjid, Kolkata
+						289E Dargah Road, Park Circus, Kolkata-700017
 						</p>
 						<Link
 							to="mailto:contact@muftishamail.com"

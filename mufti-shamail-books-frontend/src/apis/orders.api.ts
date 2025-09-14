@@ -103,3 +103,45 @@ export const getOrderById = async (orderId: string) => {
 		throw new Error("Failed to get order by id");
 	}
 };
+
+export const exportOrdersCSV = async (filters?: {
+    status?: string;
+    startDate?: string;
+    endDate?: string;
+}): Promise<Blob> => {
+    try {
+        let url = `/orders/admin/export-csv`;
+        const params = new URLSearchParams();
+        
+        if (filters?.status && filters.status !== 'all') {
+            params.append('status', filters.status);
+        }
+        if (filters?.startDate) {
+            params.append('startDate', filters.startDate);
+        }
+        if (filters?.endDate) {
+            params.append('endDate', filters.endDate);
+        }
+        
+        if (params.toString()) {
+            url += `?${params.toString()}`;
+        }
+
+        const response = await axiosInstance.get(url, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+            responseType: 'blob',
+        });
+        
+        return response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            throw new Error(
+                error.response?.data?.error || "Failed to export orders"
+            );
+        } else {
+            throw new Error("An unexpected error occurred");
+        }
+    }
+};

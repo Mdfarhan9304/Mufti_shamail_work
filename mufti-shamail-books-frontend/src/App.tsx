@@ -18,6 +18,7 @@ import Dashboard from "./components/user/Dashboard";
 import BookPage from "./pages/BookPage";
 import Checkout from "./pages/Checkout";
 import PaymentStatus from "./pages/PaymentStatus";
+import PaymentVerification from "./pages/PaymentVerification";
 import AddAddress from "./pages/AddAddress";
 import { GuestCartProvider } from "./contexts/GuestCartContext";
 import GuestCheckout from "./pages/GuestCheckout";
@@ -97,6 +98,11 @@ const AppContent = () => {
 							path="/admin/orders/:orderId"
 							element={<OrderDetails />}
 						/>
+						{/* ----- User Order Details ----- */}
+						<Route
+							path="/order-details/:orderId"
+							element={<OrderDetails />}
+						/>
 						{/* ----- Manage Books ----- */}
 						<Route path="/manage-books" element={<ManageBooks />} />
 						{/* ----- Add book ----- */}
@@ -113,6 +119,14 @@ const AppContent = () => {
 						<Route
 							path="/payment/:txnId"
 							element={<PaymentStatus />}
+						/>
+						<Route
+							path="/payment/success"
+							element={<PaymentStatus />}
+						/>
+						<Route
+							path="/payment-verification"
+							element={<PaymentVerification />}
 						/>
 						<Route path="/addresses/new" element={<AddAddress />} />
 						<Route

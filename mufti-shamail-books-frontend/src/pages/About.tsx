@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowLeft, BookOpen, Heart, Users, Star } from "lucide-react";
+import { ArrowLeft, BookOpen, Heart, Users, Star, ExternalLink, GraduationCap } from "lucide-react";
 import Mufti from '../assets/mufti_shamail.jpg';
 
 const About = () => {
@@ -332,6 +332,111 @@ const About = () => {
 				</div>
 			</section>
 
+			{/* Courses Section */}
+			<section className="relative py-16">
+				<div className="max-w-7xl mx-auto px-6 lg:px-8">
+					<motion.div
+						className="text-center mb-16"
+						initial={{ opacity: 0, y: 30 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.8 }}
+						viewport={{ once: true }}
+					>
+						<h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#c3e5a5] mb-4">
+							Islamic Education Courses
+						</h2>
+						<p className="text-gray-400 text-lg max-w-3xl mx-auto">
+							Join our comprehensive online Islamic education platform and start your journey in authentic Islamic learning
+						</p>
+					</motion.div>
+
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+						{/* Seerah Workshop Card */}
+						<motion.div
+							className="bg-gradient-to-br from-[#121510] to-[#1a1f17] p-8 rounded-2xl border border-[#c3e5a5]/20 hover:border-[#c3e5a5]/40 transition-all group"
+							initial={{ opacity: 0, y: 30 }}
+							whileInView={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.6, delay: 0.1 }}
+							viewport={{ once: true }}
+							whileHover={{ scale: 1.02 }}
+						>
+							<div className="flex items-center gap-3 mb-4">
+								<GraduationCap className="w-8 h-8 text-[#c3e5a5]" />
+							</div>
+							<h3 className="text-2xl font-bold text-white mb-4 group-hover:text-[#c3e5a5] transition-colors">
+								Seerah Workshop
+							</h3>
+							<p className="text-gray-300">
+								Comprehensive study of the life and teachings of Prophet Muhammad (PBUH) with detailed analysis and practical applications.
+							</p>
+						</motion.div>
+
+						{/* Life After Ramadan Workshop Card */}
+						<motion.div
+							className="bg-gradient-to-br from-[#121510] to-[#1a1f17] p-8 rounded-2xl border border-[#c3e5a5]/20 hover:border-[#c3e5a5]/40 transition-all group"
+							initial={{ opacity: 0, y: 30 }}
+							whileInView={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.6, delay: 0.2 }}
+							viewport={{ once: true }}
+							whileHover={{ scale: 1.02 }}
+						>
+							<div className="flex items-center gap-3 mb-4">
+								<GraduationCap className="w-8 h-8 text-[#c3e5a5]" />
+							</div>
+							<h3 className="text-2xl font-bold text-white mb-4 group-hover:text-[#c3e5a5] transition-colors">
+								Life After Ramadan Workshop
+							</h3>
+							<p className="text-gray-300">
+								Learn how to maintain the spiritual momentum gained during Ramadan and integrate Islamic practices into daily life.
+							</p>
+						</motion.div>
+
+						{/* Basic Islamic Course Card */}
+						<motion.div
+							className="bg-gradient-to-br from-[#121510] to-[#1a1f17] p-8 rounded-2xl border border-[#c3e5a5]/20 hover:border-[#c3e5a5]/40 transition-all group"
+							initial={{ opacity: 0, y: 30 }}
+							whileInView={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.6, delay: 0.3 }}
+							viewport={{ once: true }}
+							whileHover={{ scale: 1.02 }}
+						>
+							<div className="flex items-center gap-3 mb-4">
+								<GraduationCap className="w-8 h-8 text-[#c3e5a5]" />
+							</div>
+							<h3 className="text-2xl font-bold text-white mb-4 group-hover:text-[#c3e5a5] transition-colors">
+								Basic Islamic Course
+							</h3>
+							<p className="text-gray-300">
+								Foundation course covering essential Islamic knowledge including Aqeedah, Fiqh, and Islamic history.
+							</p>
+						</motion.div>
+					</div>
+
+					{/* View All Courses Button */}
+					<motion.div
+						className="text-center"
+						initial={{ opacity: 0, y: 20 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.8, delay: 0.4 }}
+						viewport={{ once: true }}
+					>
+						<a
+							href="https://markazalwahyain.com/"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="inline-flex items-center gap-3 px-8 py-4 bg-[#c3e5a5] text-gray-800 rounded-full hover:bg-[#a1c780] transition-all font-medium text-lg group"
+						>
+							<GraduationCap className="w-6 h-6" />
+							View All Courses
+							<ExternalLink className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+						</a>
+						<p className="text-gray-400 text-sm mt-4">
+							Join our online Islamic education platform for comprehensive courses and workshops
+						</p>
+					</motion.div>
+				</div>
+			</section>
+
 			{/* Mission Section */}
 			<section className="relative py-16">
 				<div className="max-w-7xl mx-auto px-6 lg:px-8">
@@ -347,13 +452,7 @@ const About = () => {
 							</h2>
 							<div className="space-y-6 text-gray-300 text-lg leading-relaxed">
 								<p>
-									To make authentic Islamic knowledge accessible to all seekers, regardless of their background or level of understanding. We believe that every individual deserves access to clear, reliable guidance based on the Quran and Sunnah.
-								</p>
-								<p>
-									Through comprehensive books, thoughtful answers, and educational content, we strive to bridge the gap between classical Islamic scholarship and contemporary needs, fostering spiritual growth and practical understanding.
-								</p>
-								<p>
-									Our goal is to build a community of learners who can apply Islamic principles in their daily lives, contributing to a more just, compassionate, and enlightened society.
+									To fortify the Ummah by providing authentic knowledge and compassionate guidance for the challenges of our time. We strive to dismantle falsehood (Batil) by intellectually engaging with atheism and corrosive modern ideologies, empowering Muslims to navigate the world with unwavering faith (Iman), clarity, and purpose.
 								</p>
 							</div>
 						</motion.div>

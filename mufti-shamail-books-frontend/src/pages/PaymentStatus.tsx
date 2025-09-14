@@ -1,210 +1,200 @@
 import { useEffect, useState } from "react";
-import { useParams, Navigate } from "react-router-dom";
+import { useParams, Navigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { checkPaymentStatus, OrderResponse } from "../apis/payment.api";
-import { formatPrice, PriceType } from "../utils/priceUtils";
-import {
-	Loader2,
-	CheckCircle2,
-	XCircle,
-	ShoppingBag,
-	HomeIcon,
-	PackageCheck,
-} from "lucide-react";
-import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
-import { getAddressIcon } from "../components/user/Addresses";
-import { useAuth } from "../contexts/AuthContext";
+import { Loader2, CheckCircle, XCircle, Home, Package } from "lucide-react";
+import { formatCurrency } from "../utils/priceUtils";
+
+
+interface Order {
+	_id: string;
+	orderNumber: string;
+	amount: number;
+	isGuestOrder?: boolean;
+	contactDetails: {
+		name: string;
+		email: string;
+		phone: string;
+	};
+	items: Array<{
+		book: {
+			name: string;
+			price: number;
+		};
+		quantity: number;
+		price: number;
+	}>;
+	createdAt: string;
+}
 
 const PaymentStatus = () => {
 	const { txnId } = useParams();
-	const { user, isLoading: authLoading } = useAuth();
+	const [order, setOrder] = useState<Order | null>(null);
 	const [loading, setLoading] = useState(true);
-	const [order, setOrder] = useState<OrderResponse["order"]>();
-	const [error, setError] = useState<string>();
-	const [verificationAttempted, setVerificationAttempted] = useState(false);
+	const [error, setError] = useState<string>("");
 
 	useEffect(() => {
-		const verifyPayment = async () => {
-			if (!txnId) {
-				setError("Invalid transaction ID");
+		// Check if this is a Razorpay payment success (from localStorage)
+		const successOrder = localStorage.getItem("successOrder");
+		if (successOrder) {
+			const orderData = JSON.parse(successOrder);
+			console.log("Order data from localStorage:", orderData);
+			setOrder(orderData);
 				setLoading(false);
+			// Don't automatically clear order data - let user clear it manually
 				return;
 			}
 
-			try {
-				// Get cart and address from localStorage
-				const localCart = JSON.parse(localStorage.getItem("localCart") || "[]");
-				const selectedAddress = JSON.parse(localStorage.getItem("selectedAddress") || "{}");
-				const guestInfo = JSON.parse(localStorage.getItem("guestInfo") || "null");
-
-				console.log("Payment verification - localCart:", localCart);
-				console.log("Payment verification - selectedAddress:", selectedAddress);
-				console.log("Payment verification - guestInfo:", guestInfo);
-				console.log("Current user:", user);
-
-				if (!localCart.length) {
-					setError("No order details found");
-					setLoading(false);
-					return;
-				}
-
-				// Wait for user state to be properly initialized
-				if (authLoading) {
-					console.log("Waiting for auth state...");
-					return;
-				}
-
-				// if (!user && !guestInfo) {
-				// 	setError(`Guest information not found ${user}`);
-				// 	setLoading(false);
-				// 	return;
-				// }
-
-				interface GuestCartItem {
-					_id: string;
-					quantity: number;
-					price: number;
-					selectedLanguage?: string;
-				}
-
-				interface PopulatedBook {
-					_id: string;
-					price: PriceType;
-					name?: string;
-					author?: string;
-					description?: string;
-				}
-
-				interface UserCartItem {
-					book: string | PopulatedBook;
-					quantity: number;
-					selectedLanguage?: string;
-				}
-
-				const orderItems = localCart.map((item: GuestCartItem | UserCartItem) => {
-					// Handle both guest cart items (with _id) and user cart items (with book)
-					const bookId = '_id' in item ? item._id : 
-						(typeof item.book === 'string' ? item.book : item.book._id);
-					
-					// For user cart items, we need to get the price from the populated book data
-					// Use formatPrice to handle MongoDB Decimal128 format
-					const rawPrice = '_id' in item ? item.price : 
-						(typeof item.book === 'object' && 'price' in item.book ? item.book.price : 0);
-					const price = formatPrice(rawPrice);
-
-					return {
-						book: bookId,
-						quantity: item.quantity,
-						price: price,
-						selectedLanguage: item.selectedLanguage || 'english'
-					};
-				});
-
-				console.log("Calling checkPaymentStatus with:", {
-					txnId,
-					orderItems,
-					selectedAddress,
-					guestInfo
-				});
-
-				const response = await checkPaymentStatus(
-					txnId,
-					orderItems,
-					selectedAddress,
-					guestInfo,
-				);
-
-				console.log("Payment verification response:", response);
-
-				if (response.success) {
-					setOrder(response.order);
-					// Clear local storage after successful order
-					localStorage.removeItem("selectedAddress");
-					localStorage.removeItem("localCart");
-					localStorage.removeItem("guestInfo");
-					console.log("Order set successfully:", response.order);
-				} else {
-					setError(response.error || "Payment verification failed");
-				}
-			} catch (error) {
-				console.error("Payment verification error:", error);
-				const errorMessage = error instanceof Error ? error.message : "Something went wrong";
-				setError(errorMessage);
-				toast.error(errorMessage);
-			} finally {
-				setLoading(false);
-				setVerificationAttempted(true);
-			}
-		};
-
-		// Only verify if we haven't attempted verification yet and auth is not loading
-		if (!verificationAttempted && !authLoading) {
-			verifyPayment();
+		// For old PhonePe flow, show migration message
+		if (txnId && txnId !== "success") {
+			setTimeout(() => {
+				window.location.href = "/cart";
+			}, 3000);
 		}
-	}, [txnId, authLoading, verificationAttempted, user]);
+					setLoading(false);
+	}, [txnId]);
 
-	// Show loading while auth is being checked
-	if (authLoading) {
-		return (
-			<main className="min-h-screen bg-[#121510] pt-24 grid place-items-center">
-				<div className="text-center space-y-4">
-					<Loader2 className="w-12 h-12 text-[#c3e5a5] animate-spin mx-auto" />
-					<p className="text-gray-400">Loading...</p>
-				</div>
-			</main>
-		);
-	}
-
-	// Check if this is a guest order in progress or user is authenticated
-	const hasGuestInfo = localStorage.getItem("guestInfo");
-	const hasLocalCart = localStorage.getItem("localCart");
-
-	// Only redirect if user is not authenticated AND there's no guest order data
-	if (!user && !hasGuestInfo && !hasLocalCart && !order) {
-		return <Navigate to="/login" replace />;
-	}
+	const clearOrderData = () => {
+		localStorage.removeItem("successOrder");
+	};
 
 	if (loading) {
 		return (
-			<main className="min-h-screen bg-[#121510] pt-24 grid place-items-center">
-				<div className="text-center space-y-4">
-					<Loader2 className="w-12 h-12 text-[#c3e5a5] animate-spin mx-auto" />
-					<p className="text-gray-400">Verifying payment...</p>
+			<main className="min-h-screen bg-[#121510] pt-24">
+				<div className="container mx-auto px-4 py-8">
+					<div className="max-w-md mx-auto bg-[#1a1d16] rounded-lg p-8 text-center">
+						<Loader2 className="w-8 h-8 text-[#c3e5a5] animate-spin mx-auto mb-4" />
+						<p className="text-gray-400">Loading payment status...</p>
+					</div>
 				</div>
 			</main>
 		);
 	}
 
-	if (error) {
+	// Show success page if order exists
+	if (order) {
 		return (
 			<main className="min-h-screen bg-[#121510] pt-24">
-				<div className="max-w-2xl mx-auto px-6 py-16">
+				<div className="container mx-auto px-4 py-8">
 					<motion.div
-						className="bg-[#191b14] rounded-2xl p-8 text-center space-y-6"
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
+						className="max-w-2xl mx-auto"
 					>
-						<XCircle className="w-20 h-20 text-red-500 mx-auto" />
-						<h1 className="text-3xl font-bold text-white">
-							Payment Failed
-						</h1>
-						<p className="text-gray-400">{error}</p>
-						<div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-							<Link
-								to="/cart"
-								className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#24271b] text-[#c3e5a5] rounded-full hover:bg-[#2f332a] transition-all"
+						{/* Success Header */}
+						<div className="bg-[#1a1d16] rounded-lg p-8 text-center mb-6">
+							<motion.div
+								initial={{ scale: 0 }}
+								animate={{ scale: 1 }}
+								transition={{ delay: 0.2, type: "spring" }}
 							>
-								<ShoppingBag className="w-5 h-5" />
-								Return to Cart
-							</Link>
+								<CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+							</motion.div>
+							
+							<h1 className="text-2xl font-bold text-white mb-2">
+								Payment Successful! 🎉
+							</h1>
+							<p className="text-gray-400 mb-4">
+								Thank you for your order. We'll send you a confirmation email shortly.
+							</p>
+							
+							<div className="bg-[#24271b] rounded-lg p-4 mb-6">
+								<div className="flex items-center justify-center gap-2 text-[#c3e5a5] mb-2">
+									<Package className="w-5 h-5" />
+									<span className="font-medium">Order #{order.orderNumber}</span>
+								</div>
+								<p className="text-2xl font-bold text-white">
+									{formatCurrency(order.amount || 0)}
+								</p>
+							</div>
+						</div>
+
+						{/* Order Summary */}
+						<div className="bg-[#1a1d16] rounded-lg p-6 mb-6">
+							<h2 className="text-lg font-semibold text-white mb-4">Order Summary</h2>
+							
+							<div className="space-y-3 mb-4">
+								{order.items.map((item, index) => {
+									// Use item.price if available, otherwise calculate from book.price
+									const itemPrice = item.price || (item.book?.price || 0);
+									const itemTotal = itemPrice * item.quantity;
+									
+									return (
+										<div key={index} className="flex justify-between items-center py-2 border-b border-gray-700 last:border-b-0">
+											<div>
+												<p className="text-white font-medium">{item.book?.name || 'Book'}</p>
+											<p className="text-gray-400 text-sm">
+												Qty: {item.quantity}
+											</p>
+											</div>
+											<p className="text-[#c3e5a5] font-medium">
+												{formatCurrency(itemTotal)}
+											</p>
+										</div>
+									);
+								})}
+							</div>
+
+							{/* Calculate subtotal and delivery charges */}
+							{(() => {
+								const subtotal = order.items.reduce((total, item) => {
+									const itemPrice = item.price || (item.book?.price || 0);
+									return total + (itemPrice * item.quantity);
+								}, 0);
+								
+								const totalQuantity = order.items.reduce((total, item) => total + item.quantity, 0);
+								const deliveryCharges = Math.ceil(totalQuantity / 2) * 50;
+								const calculatedTotal = subtotal + deliveryCharges;
+								
+								return (
+									<div className="border-t border-gray-700 pt-4 space-y-2">
+										<div className="flex justify-between items-center">
+											<span className="text-gray-400">Subtotal</span>
+											<span className="text-gray-400">{formatCurrency(subtotal)}</span>
+										</div>
+										<div className="flex justify-between items-center">
+											<span className="text-gray-400">Delivery Charges</span>
+											<span className="text-gray-400">{formatCurrency(deliveryCharges)}</span>
+										</div>
+										<div className="flex justify-between items-center pt-2 border-t border-gray-600">
+											<span className="text-lg font-semibold text-white">Total</span>
+											<span className="text-lg font-bold text-[#c3e5a5]">
+												{formatCurrency(calculatedTotal)}
+											</span>
+										</div>
+									</div>
+								);
+							})()}
+						</div>
+
+						{/* Customer Details */}
+						<div className="bg-[#1a1d16] rounded-lg p-6 mb-6">
+							<h2 className="text-lg font-semibold text-white mb-4">Delivery Details</h2>
+							<div className="space-y-2">
+								<p className="text-gray-400">
+									<span className="text-white font-medium">{order.contactDetails.name}</span>
+								</p>
+								<p className="text-gray-400">{order.contactDetails.email}</p>
+								<p className="text-gray-400">{order.contactDetails.phone}</p>
+							</div>
+						</div>
+
+						{/* Action Button */}
+						<div className="flex justify-center">
 							<Link
 								to="/"
-								className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#c3e5a5] text-gray-800 rounded-full hover:bg-[#a1c780] transition-all"
+								onClick={clearOrderData}
+								className="flex items-center justify-center gap-2 px-8 py-3 bg-[#c3e5a5] text-gray-800 rounded-lg hover:bg-[#a1c780] transition-colors font-medium"
 							>
-								<HomeIcon className="w-5 h-5" />
+								<Home className="w-5 h-5" />
 								Continue Shopping
 							</Link>
+						</div>
+
+						{/* Email Confirmation Note */}
+						<div className="mt-6 text-center">
+							<p className="text-gray-400 text-sm">
+								A confirmation email has been sent to <span className="text-[#c3e5a5]">{order.contactDetails.email}</span>
+							</p>
 						</div>
 					</motion.div>
 				</div>
@@ -212,86 +202,25 @@ const PaymentStatus = () => {
 		);
 	}
 
+	// Show migration message for old PhonePe flow
 	return (
 		<main className="min-h-screen bg-[#121510] pt-24">
-			<div className="max-w-2xl mx-auto px-6 py-16">
+			<div className="container mx-auto px-4 py-8">
 				<motion.div
-					className="bg-[#191b14] rounded-2xl p-8 text-center space-y-6"
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
+					className="max-w-md mx-auto bg-[#1a1d16] rounded-lg p-8 text-center"
 				>
-					<CheckCircle2 className="w-20 h-20 text-[#c3e5a5] mx-auto" />
-					<h1 className="text-3xl font-bold text-white">
-						Order Confirmed!
-					</h1>
-					<p className="text-gray-400">Thank you for your purchase</p>
-
-					<div className="bg-[#24271b] rounded-xl p-6 space-y-4 text-left">
-						<p className="text-[#c3e5a5]">
-							Order Number: {order?.orderNumber}
-						</p>
-						<div className="space-y-2">
-							<p className="text-gray-400">Shipping Address:</p>
-							{order?.shippingAddress && (
-								<div className="bg-[#24271b] p-4 rounded-lg space-y-3">
-									<div className="flex items-center gap-2">
-										{getAddressIcon(
-											order?.shippingAddress.addressType
-										)}
-										<span className="text-[#c3e5a5] font-medium">
-											{order?.shippingAddress.addressType}
-										</span>
-									</div>
-									<p className="text-white">
-										{order?.shippingAddress.addressLine1}
-									</p>
-									{order?.shippingAddress.addressLine2 && (
-										<p className="text-gray-400">
-											{order?.shippingAddress.addressLine2}
-										</p>
-									)}
-									{order?.shippingAddress.landmark && (
-										<p className="text-gray-400">
-											Landmark: {order?.shippingAddress.landmark}
-										</p>
-									)}
-									<p className="text-gray-400">
-										{`${order?.shippingAddress.city}, ${order?.shippingAddress.state} - ${order?.shippingAddress.pincode}`}
-									</p>
-								</div>
-							)}
-						</div>
-						<div className="space-y-2">
-							<p className="text-gray-400">Contact Details:</p>
-							<p className="text-white">
-								{order?.contactDetails.name}
-							</p>
-							<p className="text-white">
-								{order?.contactDetails.phone}
-							</p>
-							<p className="text-white">
-								{order?.contactDetails.email}
-							</p>
-						</div>
-					</div>
-
-					<div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-						<Link
-							to="/"
-							className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#c3e5a5] text-gray-800 rounded-full hover:bg-[#a1c780] transition-all"
-						>
-							<HomeIcon className="w-5 h-5" />
-							Continue Shopping
-						</Link>
-						{user && (
-							<Link
-								to="/dashboard?tab=orders"
-								className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#24271b] text-[#c3e5a5] rounded-full hover:bg-[#2f332a] transition-all"
-							>
-								<PackageCheck className="w-5 h-5" />
-								View Orders
-							</Link>
-						)}
+					<CheckCircle className="w-12 h-12 text-[#c3e5a5] mx-auto mb-4" />
+					<h2 className="text-xl font-semibold text-white mb-2">
+						Payment System Updated
+					</h2>
+					<p className="text-gray-400 mb-6">
+						We have updated our payment system. Please try placing your order again from the cart.
+					</p>
+					<div className="flex items-center justify-center gap-2 text-gray-400">
+						<Loader2 className="w-4 h-4 animate-spin" />
+						<span>Redirecting to cart...</span>
 					</div>
 				</motion.div>
 			</div>

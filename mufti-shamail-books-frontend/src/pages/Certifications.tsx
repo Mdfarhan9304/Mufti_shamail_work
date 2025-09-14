@@ -78,11 +78,92 @@ const Certifications = () => {
 				>
 					Islamic Ijazahs
 				</motion.h2>
-				<ImageCarousel
-					images={ijazahImages}
-					setSelectedCategory={() => setSelectedCategory("ijazahs")}
-					setSelectedImage={setSelectedImage}
-				/>
+				
+				{/* Qirat Ijazahs */}
+				<div className="mb-16">
+					<motion.h3
+						className="text-2xl md:text-3xl font-bold text-white text-center mb-8"
+						initial={{ opacity: 0, y: 20 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+					>
+						Qirat
+					</motion.h3>
+					<ImageCarousel
+						images={ijazahImages.qirat}
+						setSelectedCategory={() => setSelectedCategory("ijazahs")}
+						setSelectedImage={setSelectedImage}
+					/>
+				</div>
+
+				{/* Quran Ijazahs */}
+				<div className="mb-16">
+					<motion.h3
+						className="text-2xl md:text-3xl font-bold text-white text-center mb-8"
+						initial={{ opacity: 0, y: 20 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+					>
+						Quran
+					</motion.h3>
+					<ImageCarousel
+						images={ijazahImages.quran}
+						setSelectedCategory={() => setSelectedCategory("ijazahs")}
+						setSelectedImage={setSelectedImage}
+					/>
+				</div>
+
+				{/* Hadith Ijazahs */}
+				<div className="mb-16">
+					<motion.h3
+						className="text-2xl md:text-3xl font-bold text-white text-center mb-8"
+						initial={{ opacity: 0, y: 20 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+					>
+						Hadith
+					</motion.h3>
+					<ImageCarousel
+						images={ijazahImages.hadith}
+						setSelectedCategory={() => setSelectedCategory("ijazahs")}
+						setSelectedImage={setSelectedImage}
+					/>
+				</div>
+
+				{/* Fiqh Ijazahs */}
+				<div className="mb-16">
+					<motion.h3
+						className="text-2xl md:text-3xl font-bold text-white text-center mb-8"
+						initial={{ opacity: 0, y: 20 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+					>
+						Fiqh
+					</motion.h3>
+					<ImageCarousel
+						images={ijazahImages.fiqh}
+						setSelectedCategory={() => setSelectedCategory("ijazahs")}
+						setSelectedImage={setSelectedImage}
+					/>
+				</div>
+
+				{/* Arabic Ijazahs */}
+				<div className="mb-16">
+					<motion.h3
+						className="text-2xl md:text-3xl font-bold text-white text-center mb-8"
+						initial={{ opacity: 0, y: 20 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+					>
+						Arabic
+					</motion.h3>
+					<ImageCarousel
+						images={ijazahImages.arabic}
+						setSelectedCategory={() => setSelectedCategory("ijazahs")}
+						setSelectedImage={setSelectedImage}
+					/>
+				</div>
+
 				<motion.div
 					className="flex items-center justify-center mt-5 md:hidden text-[#c3e5a5]"
 					initial={{ opacity: 0, x: -10 }}
@@ -105,7 +186,9 @@ const Certifications = () => {
 					images={
 						selectedCategory === "certificates"
 							? certificateImages
-							: ijazahImages
+							: selectedCategory === "ijazahs"
+							? Object.values(ijazahImages).flat()
+							: []
 					}
 					currentIndex={selectedImage.index}
 					setSelectedImage={setSelectedImage}

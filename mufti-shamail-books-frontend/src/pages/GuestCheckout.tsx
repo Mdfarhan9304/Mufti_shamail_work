@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { useGuestCart } from "../contexts/GuestCartContext";
-import { generatePaymentUrl } from "../apis/payment.api";
+import { createRazorpayOrder } from "../apis/payment.api";
 import { toast } from "react-toastify";
 import { State } from "../apis/addresses.api";
 import { getImageUrl } from "../utils/imageUtils";
@@ -37,7 +37,9 @@ const GuestCheckout = () => {
 		},
 	});
 
-	const shipping = 50;
+	// Calculate shipping based on total quantity (every 2 books = ₹50)
+	const totalQuantity = guestCart.reduce((total, item) => total + item.quantity, 0);
+	const shipping = Math.ceil(totalQuantity / 2) * 50;
 	const total = guestTotal + shipping;
 
 	const handleInfoChange = (
@@ -86,15 +88,60 @@ const GuestCheckout = () => {
 
 		try {
 			setPaymentLoading(true);
-			const { redirectUrl } = await generatePaymentUrl(total);
+			
+			// Prepare cart items for server-side amount calculation
+			// Only send book ID and quantity - server will fetch price from database
+			const cartItems = guestCart.map(item => ({
+				book: item._id,
+				quantity: item.quantity,
+			}));
 
-			if (redirectUrl) {
-				localStorage.setItem("guestInfo", JSON.stringify(guestInfo));
-				localStorage.setItem("localCart", JSON.stringify(guestCart));
-				window.location.href = redirectUrl;
-			} else {
-				throw new Error("No payment URL received");
+			// Create Razorpay order
+			const { success, orderId, amount, currency, key } = await createRazorpayOrder(cartItems);
+			
+			if (!success || !orderId) {
+				throw new Error("Failed to create payment order");
 			}
+
+			// Store data for payment verification
+			localStorage.setItem("guestInfo", JSON.stringify(guestInfo));
+			localStorage.setItem("localCart", JSON.stringify(guestCart));
+			localStorage.setItem("selectedAddress", JSON.stringify(guestInfo.address));
+
+			// Initialize Razorpay payment
+			const options = {
+				key: key,
+				amount: amount,
+				currency: currency,
+				name: "Mufti Shamail Books",
+				description: "Book Purchase",
+				order_id: orderId,
+				handler: function (response: any) {
+					// Redirect to verification page with payment details
+					const params = new URLSearchParams({
+						razorpay_order_id: response.razorpay_order_id,
+						razorpay_payment_id: response.razorpay_payment_id,
+						razorpay_signature: response.razorpay_signature,
+					});
+					window.location.href = `/payment-verification?${params.toString()}`;
+				},
+				prefill: {
+					name: guestInfo.name,
+					email: guestInfo.email,
+					contact: guestInfo.phone,
+				},
+				theme: {
+					color: "#c3e5a5",
+				},
+			};
+
+			const rzp = new (window as any).Razorpay(options);
+			rzp.on('payment.failed', function (response: any) {
+				toast.error("Payment failed. Please try again.");
+				console.error("Payment failed:", response.error);
+			});
+			
+			rzp.open();
 		} catch (error) {
 			toast.error(
 				error instanceof Error

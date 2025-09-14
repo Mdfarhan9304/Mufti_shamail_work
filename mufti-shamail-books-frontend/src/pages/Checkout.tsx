@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { Address, AddressType } from "../apis/addresses.api";
 import { toast } from "react-toastify";
-import { generatePaymentUrl } from "../apis/payment.api";
+import { createRazorpayOrder } from "../apis/payment.api";
 import { getAddressIcon } from "../components/user/Addresses";
 import { getImageUrl } from "../utils/imageUtils";
 
@@ -121,7 +121,8 @@ const Checkout = () => {
 		(total, item) => total + formatPrice(item.price) * item.quantity,
 		0
 	);
-	const shipping = 50;
+	const totalQuantity = user?.cart?.reduce((total, item) => total + item.quantity, 0) || 0;
+	const shipping = Math.ceil(totalQuantity / 2) * 50;
 	const total = (subtotal || 0) + shipping;
 
 	const handlePayment = async () => {
@@ -132,25 +133,50 @@ const Checkout = () => {
 
 		try {
 			setPaymentLoading(true);
-			const { redirectUrl } = await generatePaymentUrl(total);
-			if (redirectUrl) {
-				// Store complete address object instead of just the string
-				localStorage.setItem(
-					"selectedAddress",
-					JSON.stringify({
-						addressLine1: selectedAddress.addressLine1,
-						addressLine2: selectedAddress.addressLine2 || "",
-						landmark: selectedAddress.landmark || "",
-						city: selectedAddress.city,
-						state: selectedAddress.state,
-						pincode: selectedAddress.pincode,
-						addressType: selectedAddress.addressType,
-					})
-				);
+			
+			// Prepare cart items for Razorpay order
+			const cartItems = user?.cart?.filter(item => item._id).map(item => ({
+				book: item._id!,
+				quantity: item.quantity,
+			})) || [];
+
+			const { success, orderId, amount, currency, key } = await createRazorpayOrder(cartItems);
+			
+			if (success && orderId && amount && currency && key) {
+				// Store address and cart data for payment verification
+				localStorage.setItem("selectedAddress", JSON.stringify(selectedAddress));
 				localStorage.setItem("localCart", JSON.stringify(user?.cart));
-				window.location.href = redirectUrl;
+
+				// Initialize Razorpay
+				const options = {
+					key: key,
+					amount: amount,
+					currency: currency,
+					name: "Mufti Shamail Books",
+					description: "Book Purchase",
+					order_id: orderId,
+					handler: function (response: any) {
+						const params = new URLSearchParams({
+							razorpay_order_id: response.razorpay_order_id,
+							razorpay_payment_id: response.razorpay_payment_id,
+							razorpay_signature: response.razorpay_signature,
+						});
+						window.location.href = `/payment-verification?${params.toString()}`;
+					},
+					prefill: {
+						name: user?.name || "",
+						email: user?.email || "",
+						contact: user?.phone || "",
+					},
+					theme: {
+						color: "#c3e5a5",
+					},
+				};
+
+				const rzp = new (window as any).Razorpay(options);
+				rzp.open();
 			} else {
-				throw new Error("No payment URL received");
+				throw new Error("Failed to create Razorpay order");
 			}
 		} catch (error) {
 			toast.error(
@@ -158,6 +184,7 @@ const Checkout = () => {
 					? error.message
 					: "Failed to initiate payment"
 			);
+		} finally {
 			setPaymentLoading(false);
 		}
 	};

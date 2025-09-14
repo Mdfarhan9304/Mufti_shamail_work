@@ -47,10 +47,7 @@ const Cart = () => {
 		0
 	);
 
-	// Debug logging to understand the data structure differences
-	console.log('User cart items:', user?.cart);
-	console.log('Guest cart items:', guestCart);
-	console.log('Valid cart items:', validCartItems);
+
 
 	if (user?.role === "admin") {
 		return <Navigate to="/admin/dashboard" replace />;
@@ -114,6 +111,7 @@ const Cart = () => {
 						)}
 					</div>
 
+
 					{validCartItems.length === 0 ? (
 						<div className="text-center py-16">
 							<ShoppingBag className="w-16 h-16 text-[#c3e5a5]/50 mx-auto mb-4" />
@@ -166,25 +164,6 @@ const Cart = () => {
 												<p className="text-gray-400 text-sm">
 													By {item.author || 'Unknown Author'}
 												</p>
-												{item.selectedLanguage && (
-													<span className="text-xs bg-[#c3e5a5]/20 text-[#c3e5a5] px-2 py-1 rounded-full">
-														{item.selectedLanguage.charAt(0).toUpperCase() + item.selectedLanguage.slice(1)}
-													</span>
-												)}
-												{!item.selectedLanguage && item.availableLanguages && (
-													<div className="flex gap-1">
-														{item.availableLanguages.english && (
-															<span className="text-xs bg-[#c3e5a5]/20 text-[#c3e5a5] px-2 py-1 rounded-full">
-																English
-															</span>
-														)}
-														{item.availableLanguages.urdu && (
-															<span className="text-xs bg-[#c3e5a5]/20 text-[#c3e5a5] px-2 py-1 rounded-full">
-																Urdu
-															</span>
-														)}
-													</div>
-												)}
 											</div>
 											<p className="text-[#c3e5a5] text-lg">
 												{formatCurrency(itemPrice)}
@@ -250,7 +229,7 @@ const Cart = () => {
 										{formatCurrency(totalAmount)}
 									</span>
 								</div>
-								<div className="flex justify-between items-center mb-6">
+								<div className="flex justify-between items-center mb-4">
 									<span className="text-gray-400">
 										Shipping ({totalQuantity} books)
 									</span>

@@ -15,10 +15,6 @@ const AddBook = () => {
 		description: "",
 		author: "",
 		price: "",
-		availableLanguages: {
-			english: true,
-			urdu: false,
-		},
 	});
 	const [images, setImages] = useState<File[]>([]);
 	const { user, isAuthenticated } = useAuth();
@@ -32,15 +28,6 @@ const AddBook = () => {
 		}));
 	};
 
-	const handleLanguageChange = (language: "english" | "urdu") => {
-		setFormData((prev) => ({
-			...prev,
-			availableLanguages: {
-				...prev.availableLanguages,
-				[language]: !prev.availableLanguages[language],
-			},
-		}));
-	};
 
 	const handleImageAdd = (files: FileList) => {
 		setImages((prev) => [...prev, ...Array.from(files)]);
@@ -63,11 +50,6 @@ const AddBook = () => {
 			return;
 		}
 
-		// Check if at least one language is selected
-		if (!formData.availableLanguages.english && !formData.availableLanguages.urdu) {
-			toast.error("Please select at least one available language");
-			return;
-		}
 
 		setIsLoading(true);
 		try {
@@ -79,7 +61,6 @@ const AddBook = () => {
 					description: formData.description,
 					author: formData.author,
 					price: priceValue,
-					availableLanguages: formData.availableLanguages,
 					images: [],
 				},
 				images
@@ -156,30 +137,6 @@ const AddBook = () => {
 									required
 								/>
 
-								{/* Available Languages */}
-								<div className="space-y-3">
-									<label className="text-[#c3e5a5] font-medium">Available Languages:</label>
-									<div className="flex gap-6">
-										<label className="flex items-center gap-2 text-white cursor-pointer">
-											<input
-												type="checkbox"
-												checked={formData.availableLanguages.english}
-												onChange={() => handleLanguageChange("english")}
-												className="w-4 h-4 accent-[#c3e5a5]"
-											/>
-											English
-										</label>
-										<label className="flex items-center gap-2 text-white cursor-pointer">
-											<input
-												type="checkbox"
-												checked={formData.availableLanguages.urdu}
-												onChange={() => handleLanguageChange("urdu")}
-												className="w-4 h-4 accent-[#c3e5a5]"
-											/>
-											Urdu
-										</label>
-									</div>
-								</div>
 								<div className="space-y-2">
 									<label className="text-[#c3e5a5]">
 										Images

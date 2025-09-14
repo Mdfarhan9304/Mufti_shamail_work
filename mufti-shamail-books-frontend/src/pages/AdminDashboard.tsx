@@ -10,12 +10,13 @@ import {
     Search,
     Filter,
     ChevronLeft,
-    ChevronRight
+    ChevronRight,
+    Download
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getAdminOrders, updateOrderStatus } from "../apis/orders.api";
+import { getAdminOrders, updateOrderStatus, exportOrdersCSV } from "../apis/orders.api";
 import { toast } from "react-hot-toast";
 
 interface OrderStats {
@@ -173,6 +174,31 @@ const AdminDashboard = () => {
         navigate(`/admin/orders/${orderId}`);
     };
 
+    const handleExportCSV = async () => {
+        try {
+            const filters = {
+                status: statusFilter !== 'all' ? statusFilter : undefined,
+            };
+            
+            const blob = await exportOrdersCSV(filters);
+            
+            // Create download link
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `orders_export_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+            
+            toast.success("CSV file downloaded successfully!");
+        } catch (error) {
+            console.error("Export failed:", error);
+            toast.error("Failed to export CSV file");
+        }
+    };
+
     const filteredOrders = orders.filter((order) => {
         if (!searchTerm) return true;
         return (
@@ -291,6 +317,15 @@ const AdminDashboard = () => {
                                     <option value="RTO">RTO</option>
                                 </select>
                             </div>
+                            
+                            {/* CSV Export Button */}
+                            <button
+                                onClick={handleExportCSV}
+                                className="flex items-center gap-2 px-4 py-3 bg-[#c3e5a5] text-gray-800 rounded-lg hover:bg-[#a1c780] transition-all font-medium"
+                            >
+                                <Download className="w-5 h-5" />
+                                Export CSV
+                            </button>
                         </div>
                     </div>
                 </motion.div>

@@ -52,22 +52,35 @@ export interface OrderResponse {
   error?: string;
 }
 
-export const generatePaymentUrl = async (
-  totalAmount: number
-): Promise<PaymentResponse> => {
+export interface RazorpayOrderResponse {
+  success: boolean;
+  orderId?: string;
+  amount?: number;
+  currency?: string;
+  key?: string;
+  txnId?: string;
+  error?: string;
+}
+
+export const createRazorpayOrder = async (
+  cartItems: {
+    book: string;
+    quantity: number;
+  }[]
+): Promise<RazorpayOrderResponse> => {
   try {
     const response = await axiosInstance.post(
-      "/payments/generate-payment-url",
+      "/payments/create-razorpay-order",
       {
-        totalAmount,
+        cartItems,
       }
     );
-    console.log(response.data);
+    console.log("Razorpay order created:", response.data);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(
-        error.response?.data?.error || "Failed to generate payment URL"
+        error.response?.data?.error || "Failed to create Razorpay order"
       );
     } else {
       throw new Error("An unexpected error occurred");
@@ -75,35 +88,41 @@ export const generatePaymentUrl = async (
   }
 };
 
-export const checkPaymentStatus = async (
-  merchantTransactionId: string,
+export const verifyRazorpayPayment = async (
+  razorpay_order_id: string,
+  razorpay_payment_id: string,
+  razorpay_signature: string,
   cartItems: {
     book: string;
     quantity: number;
-    price: number;
   }[],
   selectedAddress: Address,
-  guestInfo?: GuestInfo,
- 
-
+  guestInfo?: GuestInfo
 ): Promise<OrderResponse> => {
   try {
-    console.log(cartItems);
+    console.log("Verifying Razorpay payment:", {
+      razorpay_order_id,
+      razorpay_payment_id,
+      cartItems
+    });
+    
     const response = await axiosInstance.post(
-      "/payments/check-order-payment-status",
+      "/payments/verify-razorpay-payment",
       {
-        merchantTransactionId,
+        razorpay_order_id,
+        razorpay_payment_id,
+        razorpay_signature,
         cartItems,
         selectedAddress,
         guestInfo,
       }
     );
-    console.log(response.data);
+    console.log("Payment verification response:", response.data);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(
-        error.response?.data?.error || "Failed to check payment status"
+        error.response?.data?.error || "Failed to verify Razorpay payment"
       );
     } else {
       throw new Error("An unexpected error occurred");

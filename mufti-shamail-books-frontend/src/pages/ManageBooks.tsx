@@ -73,16 +73,6 @@ const ManageBooks = () => {
 		setEditedBook((prevBook) => ({ ...prevBook, [name]: value }));
 	};
 
-	const handleLanguageChange = (language: "english" | "urdu") => {
-		setEditedBook((prev) => ({
-			...prev,
-			availableLanguages: {
-				english: prev.availableLanguages?.english || false,
-				urdu: prev.availableLanguages?.urdu || false,
-				[language]: !prev.availableLanguages?.[language],
-			},
-		}));
-	};
 
 	if (isAuthenticated) {
 		if (user?.role !== "admin") {
@@ -106,6 +96,7 @@ const ManageBooks = () => {
 							Add New Book
 						</Link>
 					</div>
+
 
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 						{books.map((book) => (
@@ -154,7 +145,7 @@ const ManageBooks = () => {
 										<input
 											type="number"
 											name="price"
-											value={editedBook.price || ""}
+											value={typeof editedBook.price === 'number' ? editedBook.price : ""}
 											onChange={handleChange}
 											min="0"
 											step="0.01"
@@ -162,30 +153,6 @@ const ManageBooks = () => {
 											placeholder="Price"
 										/>
 
-										{/* Available Languages */}
-										<div className="space-y-3">
-											<label className="text-[#c3e5a5] font-medium">Available Languages:</label>
-											<div className="flex gap-6">
-												<label className="flex items-center gap-2 text-white cursor-pointer">
-													<input
-														type="checkbox"
-														checked={editedBook.availableLanguages?.english || false}
-														onChange={() => handleLanguageChange("english")}
-														className="w-4 h-4 accent-[#c3e5a5]"
-													/>
-													English
-												</label>
-												<label className="flex items-center gap-2 text-white cursor-pointer">
-													<input
-														type="checkbox"
-														checked={editedBook.availableLanguages?.urdu || false}
-														onChange={() => handleLanguageChange("urdu")}
-														className="w-4 h-4 accent-[#c3e5a5]"
-													/>
-													Urdu
-												</label>
-											</div>
-										</div>
 										<div className="flex justify-end gap-4 pt-4">
 											<button
 												onClick={() =>
@@ -211,29 +178,15 @@ const ManageBooks = () => {
 											<h3 className="text-xl font-bold text-[#c3e5a5] line-clamp-1">
 												{book.name}
 											</h3>
-											<div className="flex items-center justify-between">
-												<p className="text-gray-300 text-sm">
-													By {book.author}
-												</p>
-												<div className="flex gap-2">
-													{book.availableLanguages?.english && (
-														<span className="text-xs bg-[#c3e5a5]/20 text-[#c3e5a5] px-2 py-1 rounded-full">
-															English
-														</span>
-													)}
-													{book.availableLanguages?.urdu && (
-														<span className="text-xs bg-[#c3e5a5]/20 text-[#c3e5a5] px-2 py-1 rounded-full">
-															Urdu
-														</span>
-													)}
-												</div>
-											</div>
+											<p className="text-gray-300 text-sm">
+												By {book.author}
+											</p>
 											<p className="text-gray-400 text-sm line-clamp-2">
 												{book.description}
 											</p>
 											<div className="flex justify-between items-center">
 												<p className="text-white text-lg">
-													₹{book.price}
+													₹{typeof book.price === 'number' ? book.price : 0}
 												</p>
 												<div className="flex gap-2">
 													<button

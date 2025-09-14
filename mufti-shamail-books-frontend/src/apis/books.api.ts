@@ -2,11 +2,6 @@ import axios from "axios";
 import axiosInstance from "../config/axios.config";
 import { PriceType, formatPrice } from "../utils/priceUtils";
 
-export enum BookLanguage {
-	ENGLISH = "english",
-	URDU = "urdu",
-}
-
 export interface Book {
 	_id?: string;
 	name: string;
@@ -14,21 +9,11 @@ export interface Book {
 	author: string;
 	price: PriceType;
 	images: string[];
-	availableLanguages?: {
-		english: boolean;
-		urdu: boolean;
-	};
 }
 
-export interface LanguageOption {
-	value: BookLanguage;
-	label: string;
-}
-
-export const getAllBooks = async (language?: BookLanguage) => {
+export const getAllBooks = async () => {
 	try {
-		const params = language ? { language } : {};
-		const response = await axiosInstance.get(`/books`, { params });
+		const response = await axiosInstance.get(`/books`);
 		console.log(response.data);
 		return response.data;
 	} catch (error) {
@@ -40,18 +25,6 @@ export const getAllBooks = async (language?: BookLanguage) => {
 	}
 };
 
-export const getBookLanguages = async (): Promise<{ success: boolean; data: LanguageOption[] }> => {
-	try {
-		const response = await axiosInstance.get(`/books/languages`);
-		return response.data;
-	} catch (error) {
-		if (axios.isAxiosError(error)) {
-			throw new Error(error.response?.data?.error || "Cannot get languages");
-		} else {
-			throw new Error("An unexpected error occurred");
-		}
-	}
-};
 
 export const getBookById = async (id: string) => {
 	try {
@@ -73,7 +46,6 @@ export const createBook = async (book: Book, images: File[]) => {
 		formData.append("description", book.description);
 		formData.append("author", book.author);
 		formData.append("price", formatPrice(book.price).toString());
-		formData.append("availableLanguages", JSON.stringify(book.availableLanguages));
 		images.forEach((image) => formData.append("images", image));
 
 		const response = await axiosInstance.post(`/books`, formData, {
@@ -96,11 +68,11 @@ export const createBook = async (book: Book, images: File[]) => {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const updateBook = async (id: string, book: Book, _images: File[]) => {
 	console.log(book);
-	const { name, description, author, price, availableLanguages } = book;
+	const { name, description, author, price } = book;
 	try {
 		const response = await axiosInstance.put(
 			`/books/${id}`,
-			{ name, description, author, price: formatPrice(price), availableLanguages: JSON.stringify(availableLanguages) }
+			{ name, description, author, price: formatPrice(price) }
 		);
 		return response.data;
 	} catch (error) {

@@ -113,106 +113,81 @@ export const certificateImages = [
 		category: "Islamic Education"
 	},
 	{
-		image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755628537/arabicSpeech_ep0ac4.jpg",
-		title: "Arabic Speech Certificate",
-		category: "Language"
-	},
-	{
 		image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755628537/fazeelat_hhzzrp.jpg",
 		title: "Fazeelat Certificate",
-		category: "Islamic Education"
-	},
-	{
-		image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755936239/qiraah_gcmhfb.jpg",
-		title: "Qiraah Certificate",
 		category: "Islamic Education"
 	}
 ];
 
-export const ijazahImages = [
-	{
-		image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932569/ijazah7_k88gg1.jpg",
-		title: "Ijazah in Quran Recitation",
-		category: "Islamic"
-	},
-	{
-		image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932572/ijazah4_llhjds.jpg",
-		title: "Ijazah in Hadith Studies",
-		category: "Islamic"
-	},
-	{
-		image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932573/ijazah6_jd1mnq.jpg",
-		title: "Ijazah in Islamic Jurisprudence",
-		category: "Islamic"
-	},
-	{
-		image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932573/ijazah3_cboz5k.jpg",
-		title: "Ijazah in Tafsir",
-		category: "Islamic"
-	},
-	{
-		image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932573/ijazah5_cqnphh.jpg",
-		title: "Ijazah in Arabic Grammar",
-		category: "Islamic"
-	},
-	{
-		image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932576/ijazah8_fpqsvr.jpg",
-		title: "Ijazah in Islamic History",
-		category: "Islamic"
-	},
-	{
-		image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932578/ijazah17_vrgzbm.jpg",
-		title: "Ijazah in Quranic Sciences",
-		category: "Islamic"
-	},
-	{
-		image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932578/ijazah16_np0ecg.jpg",
-		title: "Ijazah in Islamic Philosophy",
-		category: "Islamic"
-	},
-	{
-		image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932579/ijazah15_z5bg2t.jpg",
-		title: "Ijazah in Hadith Methodology",
-		category: "Islamic"
-	},
-	{
-		image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932579/ijazah2_ezzqux.jpg",
-		title: "Ijazah in Islamic Ethics",
-		category: "Islamic"
-	},
-	{
-		image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932580/ijazah13_gmbbgi.jpg",
-		title: "Ijazah in Comparative Religion",
-		category: "Islamic"
-	},
-	{
-		image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932583/ijazah11_nqtudh.jpg",
-		title: "Ijazah in Islamic Theology",
-		category: "Islamic"
-	},
-	{
-		image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932583/ijazah12_ffyydu.jpg",
-		title: "Ijazah in Sufism Studies",
-		category: "Islamic"
-	},
-	{
-		image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932584/ijazah1_lz3ys1.jpg",
-		title: "Ijazah in Islamic Law",
-		category: "Islamic"
-	},
-	{
-		image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932585/ijazah10_hdjigo.jpg",
-		title: "Ijazah in Quranic Memorization",
-		category: "Islamic"
-	},
-	{
-		image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932587/ijazah9_vitfgt.jpg",
-		title: "Ijazah in Islamic Finance",
-		category: "Islamic"
-	},
-	{
-		image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932592/ijazah14_gqzbn7.jpg",
-		title: "Ijazah in Islamic Education",
-		category: "Islamic"
-	}
-];
+export const ijazahImages = {
+	qirat: [
+		{
+			image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932569/ijazah7_k88gg1.jpg",
+			title: "Ijazah in Quran Recitation",
+			category: "Qirat"
+		},
+		{
+			image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932585/ijazah10_hdjigo.jpg",
+			title: "Ijazah in Quranic Memorization",
+			category: "Qirat"
+		},
+		{
+			image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755936239/qiraah_gcmhfb.jpg",
+			title: "Qiraah Certificate",
+			category: "Qirat"
+		}
+	],
+	quran: [
+		{
+			image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932578/ijazah17_vrgzbm.jpg",
+			title: "Ijazah in Quranic Sciences",
+			category: "Quran"
+		},
+		{
+			image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932573/ijazah3_cboz5k.jpg",
+			title: "Ijazah in Tafsir",
+			category: "Quran"
+		}
+	],
+	hadith: [
+		{
+			image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932572/ijazah4_llhjds.jpg",
+			title: "Ijazah in Hadith Studies",
+			category: "Hadith"
+		},
+		{
+			image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932579/ijazah15_z5bg2t.jpg",
+			title: "Ijazah in Hadith Methodology",
+			category: "Hadith"
+		}
+	],
+	fiqh: [
+		{
+			image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932573/ijazah6_jd1mnq.jpg",
+			title: "Ijazah in Islamic Jurisprudence",
+			category: "Fiqh"
+		},
+		{
+			image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932584/ijazah1_lz3ys1.jpg",
+			title: "Ijazah in Islamic Law",
+			category: "Fiqh"
+		},
+		{
+			image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932587/ijazah9_vitfgt.jpg",
+			title: "Ijazah in Islamic Finance",
+			category: "Fiqh"
+		}
+	],
+	arabic: [
+		{
+			image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755628537/arabicSpeech_ep0ac4.jpg",
+			title: "Arabic Speech Certificate",
+			category: "Arabic"
+		},
+		{
+			image: "https://res.cloudinary.com/dwoke3tu3/image/upload/v1755932573/ijazah5_cqnphh.jpg",
+			title: "Ijazah in Arabic Grammar",
+			category: "Arabic"
+		}
+	]
+};

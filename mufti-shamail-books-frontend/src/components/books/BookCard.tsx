@@ -50,21 +50,7 @@ const BookCard = ({ book }: { book: Book }) => {
 					<h3 className="text-lg md:text-xl font-bold text-white line-clamp-2">
 						{book.name}
 					</h3>
-					<div className="flex items-center justify-between">
-						<p className="text-sm text-[#c3e5a5]">By {book.author}</p>
-						<div className="flex gap-1">
-							{book.availableLanguages?.english && (
-								<span className="text-xs bg-[#c3e5a5]/20 text-[#c3e5a5] px-2 py-1 rounded-full">
-									English
-								</span>
-							)}
-							{book.availableLanguages?.urdu && (
-								<span className="text-xs bg-[#c3e5a5]/20 text-[#c3e5a5] px-2 py-1 rounded-full">
-									Urdu
-								</span>
-							)}
-						</div>
-					</div>
+					<p className="text-sm text-[#c3e5a5]">By {book.author}</p>
 					<p className="text-gray-400 line-clamp-2 text-sm">
 						{book.description}
 					</p>
@@ -112,13 +98,13 @@ const BookCard = ({ book }: { book: Book }) => {
 						<button
 							onClick={async () => {
 								if (user) {
-									await addToCart({ ...book, quantity: 1, selectedLanguage: 'english' });
+									await addToCart({ ...book, quantity: 1 });
 								} else {
 									addToGuestCart({
 										...book,
 										quantity: 1,
-										selectedLanguage: 'english',
 										_id: book._id!,
+										price: typeof book.price === 'number' ? book.price : 0,
 									});
 								}
 							}}
