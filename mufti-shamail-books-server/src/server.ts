@@ -28,6 +28,35 @@ import path from "path";
 // 	process.env.NODE_ENV === "production" ? ".env.prod" : ".env.dev";
 dotenv.config();
 
+// Memory monitoring and garbage collection
+const logMemoryUsage = () => {
+  const used = process.memoryUsage();
+  console.log('Memory Usage:', {
+    rss: `${Math.round(used.rss / 1024 / 1024 * 100) / 100} MB`,
+    heapTotal: `${Math.round(used.heapTotal / 1024 / 1024 * 100) / 100} MB`,
+    heapUsed: `${Math.round(used.heapUsed / 1024 / 1024 * 100) / 100} MB`,
+    external: `${Math.round(used.external / 1024 / 1024 * 100) / 100} MB`,
+    arrayBuffers: `${Math.round(used.arrayBuffers / 1024 / 1024 * 100) / 100} MB`
+  });
+  
+  // Force garbage collection if available and memory usage is high
+  if (global.gc && used.heapUsed > 200 * 1024 * 1024) { // 200MB threshold
+    console.log('Forcing garbage collection...');
+    global.gc();
+  }
+};
+
+// Log memory usage every 5 minutes
+setInterval(logMemoryUsage, 5 * 60 * 1000);
+
+// Handle memory warnings
+process.on('warning', (warning) => {
+  if (warning.name === 'MaxListenersExceededWarning' || warning.message.includes('memory')) {
+    console.warn('Memory Warning:', warning.message);
+    logMemoryUsage();
+  }
+});
+
 const app = express();
 
 // Connect to DB
@@ -151,8 +180,9 @@ app.use(
   })
 );
 
-// Middleware
-app.use(express.json());
+// Middleware with memory-efficient limits
+app.use(express.json({ limit: '10mb' })); // Limit request body size
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // Serve static files from the "uploads" directory
 app.use("/api/uploads", express.static(path.join(__dirname, "../uploads")));
@@ -171,8 +201,45 @@ app.use("/api/fatwahs", fatwahRoutes);
 
 app.use(errorHandler);
 
+// Error handling for unhandled rejections and exceptions
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  // Don't exit the process in production, just log the error
+  if (process.env.NODE_ENV !== 'production') {
+    process.exit(1);
+  }
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  // Force garbage collection before exit if available
+  if (global.gc) {
+    global.gc();
+  }
+  process.exit(1);
+});
+
 // Start the server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server running on port https://localhost:${PORT}`);
+  console.log(`Memory limit: ${process.env.NODE_OPTIONS || 'default'}`);
+  logMemoryUsage(); // Log initial memory usage
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received. Performing graceful shutdown...');
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  console.log('SIGINT received. Performing graceful shutdown...');
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
 });

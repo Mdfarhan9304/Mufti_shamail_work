@@ -52,6 +52,7 @@ export const createRazorpayOrder = async (
 		let totalQuantity = 0;
 		const processedItems = [];
 
+		// Validate cart items first
 		for (const item of cartItems) {
 			if (!item.book || !item.quantity) {
 				return res.status(400).json({
@@ -59,9 +60,14 @@ export const createRazorpayOrder = async (
 					error: "Invalid cart item format - missing book ID or quantity",
 				});
 			}
+		}
 
-			// Fetch actual book price from database
-			const bookData = await Book.findById(item.book);
+		// Fetch all books in one query for better performance and memory usage
+		const bookIds = cartItems.map(item => item.book);
+		const books = await Book.find({ _id: { $in: bookIds } }).lean();
+		
+		for (const item of cartItems) {
+			const bookData = books.find(book => book._id.toString() === item.book);
 			if (!bookData) {
 				return res.status(400).json({
 					success: false,
@@ -80,6 +86,9 @@ export const createRazorpayOrder = async (
 				price: actualPrice, // Use actual price from database
 			});
 		}
+		
+		// Clear books array to help garbage collection
+		books.length = 0;
 
 		// Add delivery charges based on total quantity, not amount
 		const deliveryCharges = calculateDeliveryCharges(totalQuantity);
@@ -233,8 +242,11 @@ export const verifyRazorpayPayment = async (
 
 		// Recalculate items with actual prices from database for order creation
 		let processedItems = [];
+		const bookIds = cartItems.map(item => item.book);
+		const books = await Book.find({ _id: { $in: bookIds } }).lean(); // Use lean() for better memory efficiency
+		
 		for (const item of cartItems) {
-			const bookData = await Book.findById(item.book);
+			const bookData = books.find(book => book._id.toString() === item.book);
 			if (!bookData) {
 				return res.status(400).json({
 					success: false,
@@ -247,7 +259,10 @@ export const verifyRazorpayPayment = async (
 				quantity: parseInt(item.quantity),
 				price: parseFloat(bookData.price.toString()), // Use actual price from database
 			});
-			}
+		}
+		
+		// Clear references to help garbage collection
+		books.length = 0;
 
 			// Prepare shipping address based on whether it's a guest order or not
 			const shippingAddress = guestInfo ? {
