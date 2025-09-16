@@ -15,6 +15,7 @@ import {
 	Lightbulb,
 	Package,
 	MapPin,
+	FileText,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, useScroll } from "framer-motion";
@@ -97,12 +98,14 @@ const Navbar = () => {
 				{ label: "Orders", href: "/admin/dashboard", icon: <User className="w-4 h-4" /> },
 				{ label: "Manage Books", href: "/manage-books", icon: <BookOpen className="w-4 h-4" /> },
 				{ label: "Manage Fatwahs", href: "/admin/fatwah", icon: <MessageCircle className="w-4 h-4" /> },
+				{ label: "Manage Articles", href: "/admin/articles", icon: <FileText className="w-4 h-4" /> },
 			];
 		} else {
 			return [
 				{ label: "Home", href: "/", icon: <Home className="w-4 h-4" /> },
 				{ label: "About", href: "/about", icon: <Info className="w-4 h-4" /> },
 				{ label: "Initiatives", href: "/initiatives", icon: <Lightbulb className="w-4 h-4" /> },
+				{ label: "Articles", href: "/articles", icon: <FileText className="w-4 h-4" /> },
 				{ label: "Fatwahs", href: "/fatwah", icon: <MessageCircle className="w-4 h-4" /> },
 			];
 		}

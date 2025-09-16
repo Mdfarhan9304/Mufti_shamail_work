@@ -35,6 +35,11 @@ import AskFatwah from "./pages/AskFatwah";
 import ManageFatwahs from "./pages/ManageFatwahs";
 import FatwahDetail from "./pages/FatwahDetail";
 import Initiatives from "./pages/Initiatives";
+import Articles from "./pages/Articles";
+import ArticleDetail from "./pages/ArticleDetail";
+import ArticleDashboard from "./pages/admin/ArticleDashboard";
+import CreateArticle from "./pages/admin/CreateArticle";
+import EditArticle from "./pages/admin/EditArticle";
 
 const AppContent = () => {
 	// const location = useLocation();
@@ -157,6 +162,21 @@ const AppContent = () => {
 						<Route
 							path="/admin/fatwah"
 							element={<ManageFatwahs />}
+						/>
+						{/* ----- Article Pages ----- */}
+						<Route path="/articles" element={<Articles />} />
+            <Route path="/articles/:id" element={<ArticleDetail />} />
+						<Route
+							path="/admin/articles"
+							element={<ArticleDashboard />}
+						/>
+						<Route
+							path="/admin/articles/create"
+							element={<CreateArticle />}
+						/>
+						<Route
+							path="/admin/articles/edit/:id"
+							element={<EditArticle />}
 						/>
 					</Routes>
 					<Footer />

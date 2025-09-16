@@ -2,33 +2,41 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Loader2, Play, Pause } from "lucide-react";
 import BookCard from "../components/books/BookCard";
+import ArticleCard from "../components/articles/ArticleCard";
 import { useEffect, useState, useRef } from "react";
 import { Book, getAllBooks } from "../apis/books.api";
+import { Article, getRecentArticles } from "../apis/articles.api";
 import { toast } from "react-toastify";
 import Mufti from "../assets/mufti_shamail.jpg";
 
 const Books = () => {
   const [books, setBooks] = useState<Book[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isVideoPlaying, setIsVideoPlaying] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    const fetchBooks = async () => {
+    const fetchData = async () => {
       setIsLoading(true);
       try {
-        const { data } = await getAllBooks();
-        setBooks(data);
+        // Fetch books
+        const { data: booksData } = await getAllBooks();
+        setBooks(booksData);
+
+        // Fetch recent articles
+        const { data: articlesData } = await getRecentArticles(3);
+        setArticles(articlesData);
       } catch (error) {
         toast.error(
-          error instanceof Error ? error.message : "Failed to fetch books"
+          error instanceof Error ? error.message : "Failed to fetch data"
         );
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchBooks();
+    fetchData();
   }, []);
 
   const toggleVideo = () => {
@@ -472,6 +480,65 @@ const Books = () => {
           </p>
         </motion.div>
       </section>
+
+      {/* Recent Articles Section */}
+      {articles.length > 0 && (
+        <section className="relative py-16 md:py-24 bg-gradient-to-b from-[#0f1a0a] to-[#121510]">
+          <div className="max-w-7xl mx-auto px-6 lg:px-8">
+            <motion.div
+              className="text-center mb-16"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#c3e5a5] mb-4">
+                Latest Articles
+              </h2>
+              <p className="text-gray-400 text-lg max-w-3xl mx-auto mb-8">
+                Discover insightful articles and scholarly writings that provide
+                guidance and wisdom for your spiritual journey.
+              </p>
+            </motion.div>
+
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              {articles.map((article, index) => (
+                <motion.div
+                  key={article._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <ArticleCard article={article} />
+                </motion.div>
+              ))}
+            </motion.div>
+
+            <motion.div
+              className="text-center"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              viewport={{ once: true }}
+            >
+              <Link
+                to="/articles"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-[#c3e5a5] text-gray-800 rounded-full font-semibold hover:bg-[#a1c780] transition-all transform hover:scale-105 shadow-lg"
+              >
+                View All Articles
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </motion.div>
+          </div>
+        </section>
+      )}
     </main>
   );
 };
