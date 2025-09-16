@@ -17,6 +17,7 @@ import orderRoutes from "./routes/orderRoutes";
 import passwordRoutes from "./routes/passwordRoutes";
 import uploadRoutes from "./routes/uploadRoutes";
 import fatwahRoutes from "./routes/fatwahRoutes";
+import articleRoutes from "./routes/articleRoutes";
 import { errorHandler } from "./middlewares/errorHandler";
 import {
   sendOrderShippedEmail,
@@ -198,6 +199,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/password", passwordRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/fatwahs", fatwahRoutes);
+app.use("/api/articles", articleRoutes);
 
 app.use(errorHandler);
 

@@ -135,6 +135,10 @@ export const verifyRazorpayPayment = async (
 	next: NextFunction
 ) => {
 	try {
+		console.log("=== RAZORPAY PAYMENT VERIFICATION START ===");
+		console.log("Request body keys:", Object.keys(req.body || {}));
+		console.log("Request headers:", req.headers);
+		
 		const { 
 			razorpay_order_id, 
 			razorpay_payment_id, 
@@ -142,15 +146,16 @@ export const verifyRazorpayPayment = async (
 			cartItems, 
 			selectedAddress, 
 			guestInfo 
-		} = req.body;
+		} = req.body || {};
 
-		console.log("=== RAZORPAY PAYMENT VERIFICATION ===");
+		console.log("=== EXTRACTED DATA ===");
 		console.log("Order ID:", razorpay_order_id);
 		console.log("Payment ID:", razorpay_payment_id);
-	console.log("Cart Items:", JSON.stringify(cartItems, null, 2));
-	console.log("Guest Info:", JSON.stringify(guestInfo, null, 2));
-	console.log("Selected Address:", JSON.stringify(selectedAddress, null, 2));
-	console.log("User:", req.user ? req.user._id : "GUEST");
+		console.log("Signature present:", !!razorpay_signature);
+		console.log("Cart Items count:", cartItems?.length || 0);
+		console.log("Selected Address present:", !!selectedAddress);
+		console.log("Guest Info present:", !!guestInfo);
+		console.log("User:", req.user ? req.user._id : "GUEST");
 
 		// Validate required fields
 		if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !cartItems || !selectedAddress) {
@@ -181,9 +186,16 @@ export const verifyRazorpayPayment = async (
 		console.log("Payment signature verified successfully");
 
 			// Check if the order already exists
-			const existingOrder = await Order.findOne({
-			razorpayPaymentId: razorpay_payment_id,
-			}).populate('items.book');
+			let existingOrder;
+			try {
+				existingOrder = await Order.findOne({
+					razorpayPaymentId: razorpay_payment_id,
+				}).populate('items.book');
+			} catch (dbError) {
+				console.error("Database error checking existing order:", dbError);
+				// Continue with order creation if DB check fails
+				existingOrder = null;
+			}
 			
 			if (existingOrder) {
 				console.log("Found existing order:", existingOrder._id);
@@ -221,14 +233,30 @@ export const verifyRazorpayPayment = async (
 				return;
 			}
 
-		// Fetch payment details from Razorpay
-		const payment = await razorpay.payments.fetch(razorpay_payment_id);
+		// Fetch payment details from Razorpay with error handling
+		let payment;
+		try {
+			console.log("Fetching payment details from Razorpay...");
+			payment = await razorpay.payments.fetch(razorpay_payment_id);
+			console.log("Payment details fetched:", {
+				id: payment.id,
+				status: payment.status,
+				amount: payment.amount,
+				currency: payment.currency
+			});
+		} catch (razorpayError) {
+			console.error("Error fetching payment from Razorpay:", razorpayError);
+			return res.status(500).json({
+				success: false,
+				error: "Failed to verify payment with Razorpay",
+			});
+		}
 		
 		if (payment.status !== 'captured') {
 			console.log("Payment not captured:", payment.status);
 			return res.status(400).json({
 				success: false,
-				error: "Payment not completed",
+				error: `Payment not completed. Status: ${payment.status}`,
 			});
 		}
 
@@ -242,7 +270,8 @@ export const verifyRazorpayPayment = async (
 
 		// Recalculate items with actual prices from database for order creation
 		let processedItems: Array<{book: string; quantity: number; price: number}> = [];
-		const bookIds = cartItems.map((item: {book: string; quantity: number}) => item.book);
+		const bookIds = cartItems.map((item:
+		 {book: string; quantity: number}) => item.book);
 		const books = await Book.find({ _id: { $in: bookIds } }).lean(); // Use lean() for better memory efficiency
 		
 		for (const item of cartItems) {
@@ -301,11 +330,19 @@ export const verifyRazorpayPayment = async (
 
 			console.log("Creating order with data:", JSON.stringify(orderData, null, 2));
 
-			const order = new Order(orderData);
-			await order.save();
-			const populatedOrder = await order.populate('items.book');
-
-			console.log("Order created successfully:", populatedOrder._id);
+			let populatedOrder;
+			try {
+				const order = new Order(orderData);
+				await order.save();
+				populatedOrder = await order.populate('items.book');
+				console.log("Order created successfully:", populatedOrder._id);
+			} catch (dbError) {
+				console.error("Database error creating order:", dbError);
+				return res.status(500).json({
+					success: false,
+					error: "Failed to create order in database",
+				});
+			}
 
 			// Send order confirmation email
 			try {
@@ -335,7 +372,16 @@ export const verifyRazorpayPayment = async (
 		console.log("Sending order response:", JSON.stringify(orderResponse, null, 2));
 			res.status(200).json(orderResponse);
 	} catch (error) {
-		console.error("Error in verifyRazorpayPayment:", error);
-		next(error);
+		console.error("=== CRITICAL ERROR IN PAYMENT VERIFICATION ===");
+		console.error("Error details:", error);
+		console.error("Error stack:", error instanceof Error ? error.stack : 'No stack trace');
+		console.error("Error message:", error instanceof Error ? error.message : 'Unknown error');
+		
+		// Send a more informative error response
+		res.status(500).json({
+			success: false,
+			error: "Payment verification failed due to server error",
+			details: process.env.NODE_ENV === 'development' ? error instanceof Error ? error.message : 'Unknown error' : undefined
+		});
 	}
 };
