@@ -88,7 +88,10 @@ const allowedOrigins = [
   "https://mufti-shamail-books.onrender.com",
   "https://mufti-shamail-work-1.onrender.com",
   "https://mufti-shamail-work.onrender.com",
-  "https://muftishamail.com"
+  "https://muftishamail.com",
+  "http://147.93.103.39:3000",        // Add this - frontend port
+  "http://147.93.103.39:5000",        // Add this - if needed
+  "http://147.93.103.39",             // Add this - without port
   // Add frontend domain here once froneend is deployed
 ];
 
