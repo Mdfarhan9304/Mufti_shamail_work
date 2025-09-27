@@ -59,6 +59,7 @@ process.on('warning', (warning) => {
 });
 
 const app = express();
+app.use("/uploads", express.static(path.resolve(process.cwd(), "uploads")));
 
 // Connect to DB
 connectDB();
@@ -189,7 +190,13 @@ app.use(express.json({ limit: '10mb' })); // Limit request body size
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // Serve static files from the "uploads" directory
-app.use("/api/uploads", express.static(path.join(__dirname, "../uploads")));
+app.use("/api/uploads", express.static(path.join(__dirname, "../uploads"), {
+  setHeaders: (res, path) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET');
+    res.setHeader('Cache-Control', 'public, max-age=31536000');
+  }
+}));
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -225,10 +232,9 @@ process.on('uncaughtException', (error) => {
 });
 
 // Start the server
-const PORT = parseInt(process.env.PORT || '5000', 10);
-const server = app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Server accessible at: http://0.0.0.0:${PORT}`);
+const PORT = process.env.PORT || 5000;
+const server = app.listen(PORT, () => {
+  console.log(`Server running on port https://localhost:${PORT}`);
   console.log(`Memory limit: ${process.env.NODE_OPTIONS || 'default'}`);
   logMemoryUsage(); // Log initial memory usage
 });

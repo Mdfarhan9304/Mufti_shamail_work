@@ -25,10 +25,13 @@ export const upload = multer({
 });
 
 // Ensure uploads directory exists
-const uploadsDir = path.join(__dirname, '../../uploads');
+// top of file (replace your uploadsDir block)
+const uploadsDir = path.resolve(process.cwd(), "uploads"); // <-- robust path
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
+console.log("Uploads directory:", uploadsDir);
+
 
 export const uploadImage = async (req: Request, res: Response) => {
   try {

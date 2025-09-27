@@ -41,7 +41,6 @@ export const processAndSaveImage = async (
     const filename = `images-${timestamp}.png`;
     const filepath = path.join(uploadsDir, filename);
 
-    // Process image with Sharp - convert to PNG for better compatibility
     await sharp(file.buffer)
       .resize(800, 800, {
         fit: "inside",
@@ -50,8 +49,13 @@ export const processAndSaveImage = async (
       .png({ quality: 90 })
       .toFile(filepath);
 
-    console.log(`Image saved: ${filename}`);
-    return filename;
+    // Build absolute URL to serve later. Set BASE_URL in .env on VPS.
+    const baseUrl =
+      (process.env.BASE_URL && process.env.BASE_URL.replace(/\/$/, "")) ||
+      `http://localhost:${process.env.PORT || 5000}`;
+
+    console.log(`Image saved: ${filename} -> ${filepath}`);
+    return `${baseUrl}/uploads/${filename}`;
   } catch (error) {
     console.error("Sharp processing error:", error);
     const errorMessage =
@@ -67,7 +71,7 @@ const upload = multer({
     checkFileType(file, cb);
   },
   limits: {
-    fileSize: 20 * 1024 * 1024, // 10MB limit
+    fileSize: 30 * 1024 * 1024, // 10MB limit
   },
 });
 
