@@ -1,7 +1,8 @@
 {
 	"name": "quotation-builder",
 	"version": "1.0.0",
-	"main": "index.js",
+	
+	"main": "dist/server.js",
 	"license": "MIT",
 	"scripts": {
 		"dev": "nodemon src/server.ts",
