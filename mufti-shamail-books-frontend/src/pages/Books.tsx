@@ -21,16 +21,20 @@ const Books = () => {
       setIsLoading(true);
       try {
         // Fetch books
-        const { data: booksData } = await getAllBooks();
-        setBooks(booksData);
+        const booksResponse = await getAllBooks();
+        setBooks(booksResponse.data || []);
 
         // Fetch recent articles
-        const { data: articlesData } = await getRecentArticles(3);
-        setArticles(articlesData);
+        const articlesResponse = await getRecentArticles(3);
+        setArticles(articlesResponse.data || []);
       } catch (error) {
+        console.error("Error fetching data:", error);
         toast.error(
           error instanceof Error ? error.message : "Failed to fetch data"
         );
+        // Set empty arrays as fallback
+        setBooks([]);
+        setArticles([]);
       } finally {
         setIsLoading(false);
       }
@@ -447,7 +451,7 @@ const Books = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            {books.map((book, index) => (
+            {(books || []).map((book, index) => (
               <motion.div
                 key={book._id}
                 initial={{ opacity: 0, y: 20 }}
@@ -508,7 +512,7 @@ const Books = () => {
               transition={{ duration: 0.8, delay: 0.2 }}
               viewport={{ once: true }}
             >
-              {articles.map((article, index) => (
+              {(articles || []).map((article, index) => (
                 <motion.div
                   key={article._id}
                   initial={{ opacity: 0, y: 20 }}

@@ -142,7 +142,7 @@ const ArticleDetail = () => {
           {/* Category Badge */}
           <div className="absolute bottom-6 left-6">
             <span className="inline-block px-4 py-2 bg-[#c3e5a5] text-gray-800 font-medium rounded-full">
-              {article.category}
+              {article.category || 'General'}
             </span>
           </div>
         </motion.div>
@@ -242,7 +242,7 @@ const ArticleDetail = () => {
                 <Tag className="w-4 h-4" />
                 <span>Tags:</span>
               </div>
-              {article.tags.map((tag, index) => (
+              {(article.tags || []).map((tag: string, index: number) => (
                 <span
                   key={index}
                   className="px-3 py-1 bg-[#191b14] text-[#c3e5a5] text-sm rounded-full border border-gray-800 hover:border-[#c3e5a5] transition-colors"

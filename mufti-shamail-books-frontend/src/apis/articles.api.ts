@@ -12,6 +12,8 @@ export interface Article {
   views: number;
   createdAt: string;
   updatedAt: string;
+  category?: string;
+  tags?: string[];
 }
 
 export interface ArticleListResponse {
