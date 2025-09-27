@@ -225,10 +225,9 @@ process.on('uncaughtException', (error) => {
 });
 
 // Start the server
-const PORT = parseInt(process.env.PORT || '5000', 10);
-const server = app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Server accessible at: http://0.0.0.0:${PORT}`);
+const PORT = process.env.PORT || 5000;
+const server = app.listen(PORT, () => {
+  console.log(`Server running on port https://localhost:${PORT}`);
   console.log(`Memory limit: ${process.env.NODE_OPTIONS || 'default'}`);
   logMemoryUsage(); // Log initial memory usage
 });
